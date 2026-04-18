@@ -1,159 +1,200 @@
-# Turborepo starter
+# 🚀 COURIER – API TESTING PLATFORM (POSTMAN-INSPIRED)
+> ⚡ Built with a modern fullstack architecture using Turborepo, TanStack ecosystem, and scalable backend design.
 
-This Turborepo starter is maintained by the Turborepo core team.
+## 🧩 Project Environment
 
-## Using this example
+- Runtime: **Node.js v22+**  
+- Package manager: **pnpm or npm**  
+- Monorepo: **Turborepo** 
 
-Run the following command:
+- Frontend: **React + Vite + TanStack Router + React Query**  
+- Backend: **NestJS** 
 
-```sh
-npx create-turbo@latest
+- Database: **PostgreSQL (hosted on Supabase)**  
+- ORM: **Prisma ORM**  
+
+- UI: **TailwindCSS + shadcn/ui**
+
+## 👨‍💻 Author
+
+Developed by **Nguyễn Anh Cường (Cường Dev)**  
+Facebook: [ Nguyễn Anh Cường ](https://www.facebook.com/nguyenanh.cuong.600722/)  
+Email: [cuongna.dev@gmail.com](mailto:cuongna.dev@gmail.com) 
+
+Collaborator: **Trần Thành Vinh**  
+Facebook: [ Trần Thành Vinh ](https://www.facebook.com/FearTheNight/)  
+Email: [personal.vinhtran205@gmail.com](mailto:personal.vinhtran205@gmail.com)
+
+## 🎯 Introduction
+
+**Courier** is a modern API testing platform inspired by Postman, designed to:
+
+- Test APIs quickly and intuitively  
+- Automate testing processes  
+- Analyze API performance
+
+The goal is to build an all-in-one API testing solution for developers.
+
+The project aims towards a system:
+
+> **API Testing + Automation + Workflow + Performance Analysis**
+
+## ✨ Core Features
+
+🔹 API Testing (Postman-like)
+- Send HTTP requests (GET, POST, PUT, DELETE…)
+- Customize headers, params, and body
+- Save and manage requests
+
+---
+
+🔹 Advanced Testing Features
+
+📥 Import Swagger / OpenAPI 
+- Automatically import API schemas
+- Generate endpoint collections
+
+
+✅ Response Schema Validation
+- Validate responses using JSON schema
+- Quickly detect API inconsistencies
+
+
+🤖 Auto Test Case Generation
+- Generate test cases from API responses
+- Reduce manual testing effort
+
+
+🔄 API Workflow Testing
+- Chain multiple requests into workflows
+- Example: login → fetch data → update
+
+
+⚡ Performance Testing
+- Measure response time
+- Test concurrent requests
+- Analyze API performance
+
+---
+
+## 🏗️ Monorepo Structure
+
+```bash
+courier/
+├── apps/
+│   ├── web/        # Frontend (React + Vite)
+│   ├── docs/       # Documentation
+│   └── api/        # Backend (NestJS)
+│
+├── packages/       # Shared packages
+├── turbo.json      # Turborepo configuration
+├── README.md       # Project overview and setup guide
+├── COMMIT_GUIDE.md # Commit message conventions and guidelines
+├── ...
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+## 🌐 Frontend Structure (apps/web)
+```bash
+src/
+├── api/
+├── app/
+│   ├── layouts/
+│   ├── pages/
+│   ├── providers/
+│   ├── routes/
+│   ├── index.tsx
+│   ├── router.ts
+│
+├── assets/
+├── components/
+├── configs/
+├── constants/
+├── features/
+├── hooks/
+├── lib/
+├── services/
+├── store/
+├── styles/
+├── types/
+├── main.tsx
+├── ...
 ```
 
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+## 🔧 Backend Structure (apps/api)
+```bash
+prisma/
+src/
+├── common/
+├── configs/
+├── database/
+├── modules/
+├── routes/
+├── app.controller.ts
+├── app.module.ts
+├── app.service.ts
+├── main.ts
+├── ...
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## ⚙️ Installation Guide – Development Mode
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+First, start the development environment:
 
-```sh
-turbo build --filter=docs
+```bash
+# Clone the repository
+git clone git@github.com:cuongnadev/courier.git
+
+# Navigate into the project folder
+cd courier
+
+# Install dependencies
+npm i
+
+# Copy and configure your environment file
+cp .env.example .env
+
+# Run the development server
+npm run dev
 ```
 
-Without global `turbo`:
+## 🌐 Deployed Project
 
-```sh
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+**Render** is a cloud platform that supports deploying both the **frontend** and **backend** of your application.  
+You can try the deployed version of Courier here:
+👉 https://courier.onrender.com (updating)
 
-### Develop
+## 🧠 Learn More
 
-To develop all apps and packages, run the following command:
+To learn more about the technologies used in **Courier**, check out these resources:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+### ⚛️ Frontend
+- [React Documentation](https://react.dev/) – Learn the core concepts of building UI with components.  
+- [Vite Docs](https://vite.dev/) – Lightning-fast frontend tooling and development server. 
+- [TanStack Router Docs](https://tanstack.com/router/latest) – Type-safe routing for modern React apps.
+- [TanStack Query Docs](https://tanstack.com/query/latest) – Powerful data fetching and caching solution. 
+- [TailwindCSS Docs](https://tailwindcss.com/docs/installation/using-vite) – Utility-first CSS framework for rapid UI development. 
+- [shadcn/ui Docs](https://ui.shadcn.com/) – Reusable and accessible UI components built with Radix UI.
 
-```sh
-cd my-turborepo
-turbo dev
-```
+### 🧩 Backend
+- [NestJS Documentation](https://docs.nestjs.com/) – Progressive Node.js framework for building scalable backend applications.
+- [Prisma Docs](https://www.prisma.io/docs) – Next-generation ORM for database access and migrations.
+- [Supabase Documentation](https://supabase.com/docs) – Learn how to manage databases, authentication, and storage.  
 
-Without global `turbo`, use your package manager:
+### ⚙️ Tooling & Infrastructure
+- [Turborepo Docs](https://turborepo.dev/docs) – High-performance build system for JavaScript/TypeScript monorepos. 
+- [TypeScript Docs](https://www.typescriptlang.org/docs/) – Typed superset of JavaScript for scalable applications.
+- [ESLint Docs](https://eslint.org/docs/latest/) – Tooling for identifying and fixing code issues.
+- [Prettier Docs](https://prettier.io/docs/) – Opinionated code formatter.
 
-```sh
-cd my-turborepo
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+### 🌐 Deployment & DevOps  
+- [Docker Documentation](https://docs.docker.com/) – Learn how to containerize and deploy your app.  
+- [Render Docs](https://render.com/docs) – Cloud platform to deploy both frontend and backend services.  
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## ⭐ Notes
+- Built with scalability and maintainability in mind
+- Designed for real-world API testing workflows
+- Suitable for capstone, portfolio, and production use
 
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+---
