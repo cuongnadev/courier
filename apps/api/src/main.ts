@@ -9,7 +9,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
-import { env } from './config';
+import { appConfig } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -35,9 +35,10 @@ async function bootstrap() {
 
   app.enableVersioning({
     type: VersioningType.URI,
+    defaultVersion: '1',
   });
 
-  if (env.NODE_ENV === 'development') {
+  if (appConfig.env === 'development') {
     const config = new DocumentBuilder()
       .setTitle('Courier API')
       .setVersion('1.0')
@@ -50,7 +51,11 @@ async function bootstrap() {
 
   app.useLogger(new Logger());
 
-  await app.listen(env.PORT);
+  console.log(
+    `🚀 Starting server in ${appConfig.env} mode on port ${appConfig.port}...`,
+  );
+
+  await app.listen(appConfig.port);
 }
 
 bootstrap();
