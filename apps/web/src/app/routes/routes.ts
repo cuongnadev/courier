@@ -1,9 +1,30 @@
 import { createRoute } from '@tanstack/react-router'
-import { RootRoute } from './__root'
 import { lazy } from 'react';
 
-export const dashboardRoute = createRoute({
+import { RootRoute } from './__root';
+
+/**
+ * layouts
+ */
+export const authLayoutRoute = createRoute({
   getParentRoute: () => RootRoute,
+  id: 'auth',
+  component: lazy(() => import('@/app/layouts/auth-layout')),
+});
+
+export const mainLayoutRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  id: 'main',
+  component: lazy(() => import('@/app/layouts/main-layout')),
+});
+
+
+/**
+ * Pages
+ */
+
+export const dashboardRoute = createRoute({
+  getParentRoute: () => mainLayoutRoute,
   path: '/',
 
   // fetch data before rendering the route component
@@ -16,8 +37,20 @@ export const dashboardRoute = createRoute({
 
   component: lazy(() => import('@/app/pages/main/dashboard')),
 });
+
+export const loginRoute = createRoute({
+  getParentRoute: () => authLayoutRoute,
+  path: '/login',
+  component: lazy(() => import('@/app/pages/auth/login')),
+});
+export const registerRoute = createRoute({
+  getParentRoute: () => authLayoutRoute,
+  path: '/register',
+  component: lazy(() => import('@/app/pages/auth/register')),
+});
 // ... other routes
 
 export const routeTree = RootRoute.addChildren([
-  dashboardRoute,
+  authLayoutRoute.addChildren([loginRoute, registerRoute]),
+  mainLayoutRoute.addChildren([dashboardRoute]),
 ])
