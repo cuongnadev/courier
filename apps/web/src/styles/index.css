@@ -216,6 +216,16 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  a {
+    cursor: pointer;
+    text-decoration: none;
+  }
 }
 
 /* index.css */
@@ -237,4 +247,22 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(245 245 244);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 9999px;
+  border: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #bdbdbd;
 }
