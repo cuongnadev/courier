@@ -16,7 +16,7 @@ import { GitHubIcon } from "@/components/common/icons/GitHubIcon";
 
 import {
     loginSchema,
-    type LoginSchema,
+    type LoginFormValues,
 } from "@/features/auth/schemas/auth.schema";
 
 import { useLogin } from "@/features/auth/hooks/use-login";
@@ -29,7 +29,7 @@ export default function Login() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<LoginSchema>({
+    } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
     });
 
@@ -55,6 +55,7 @@ export default function Login() {
 
             <form className="mt-8.5" onSubmit={onSubmit}>
                 <FieldGroup className="gap-5">
+                    {/* email */}
                     <Field className='gap-2'>
                         <FieldLabel
                             htmlFor="email"
@@ -123,6 +124,8 @@ export default function Login() {
                         )}
                     </Field>
 
+                    {/* remember me and forgot password */}
+                    {/* TODO: implement /forgot-password routes */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-start gap-2 text-sm text-[#9F9FA9]">
                             <Checkbox id="remember" className="
@@ -150,7 +153,8 @@ export default function Login() {
                             Forgot password?
                         </Link>
                     </div>
-
+                    
+                    {/* submit */}
                     <Button
                         type="submit"
                         disabled={loginMutation.isPending}

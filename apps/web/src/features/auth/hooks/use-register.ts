@@ -3,46 +3,34 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
 
-import { loginApi } from "@/features/auth/api/auth.api";
-import { useAuthStore } from "@/features/auth/store/auth.store";
+import { registerApi } from "@/features/auth/api/auth.api";
 import type { ErrorResponse } from "@/features/auth/types/auth.type";
 
-export function useLogin() {
+export function useRegister() {
     const navigate = useNavigate();
-    const setAuth = useAuthStore(
-        (state) => state.setAuth
-    );
 
     return useMutation({
-        mutationFn: loginApi,
+        mutationFn: registerApi,
 
-        onSuccess: async (data) => {
-            setAuth(
-                data.user,
-                data.accessToken
-            );
-
+        onSuccess: async () => {
             toast.success(
-                "Login successful"
+                "Account created successfully",
             );
 
             await navigate({
-                to: "/",
-                replace: true,
+                to: "/login",
             });
         },
 
         onError: (
-            error: AxiosError<ErrorResponse>
+            error: AxiosError<ErrorResponse>,
         ) => {
             const message =
                 error.response?.data?.message;
 
             switch (message) {
-                case "INVALID_CREDENTIALS":
-                    toast.error(
-                        "Invalid email or password"
-                    );
+                case "EMAIL_ALREADY_EXISTS":
+                    toast.error("Email already exists");
                     break;
 
                 default:

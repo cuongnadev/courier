@@ -1,50 +1,32 @@
 import { create } from "zustand";
 
-import { persist } from "zustand/middleware";
-
 import type { User } from "@/features/auth/types/auth.type";
 
 type AuthStore = {
-    user: User | null;
+  user: User | null;
+  accessToken: string | null;
+  isAuthenticated: boolean;
 
-    accessToken: string | null;
-
-    isAuthenticated: boolean;
-
-    setAuth: (
-        user: User,
-        accessToken: string
-    ) => void;
-
-    clearAuth: () => void;
+  setAuth: (user: User, accessToken: string) => void;
+  clearAuth: () => void;
 };
 
-export const useAuthStore =
-    create<AuthStore>()(
-        persist(
-            (set) => ({
-                user: null,
+export const useAuthStore = create<AuthStore>((set) => ({
+  user: null,
+  accessToken: null,
+  isAuthenticated: false,
 
-                accessToken: null,
+  setAuth: (user, accessToken) =>
+    set({
+      user,
+      accessToken,
+      isAuthenticated: true,
+    }),
 
-                isAuthenticated: false,
-
-                setAuth: (user, accessToken) =>
-                    set({
-                        user,
-                        accessToken,
-                        isAuthenticated: true,
-                    }),
-
-                clearAuth: () =>
-                    set({
-                        user: null,
-                        accessToken: null,
-                        isAuthenticated: false,
-                    }),
-            }),
-            {
-                name: 'auth-storage',
-            }
-        )
-    );
+  clearAuth: () =>
+    set({
+      user: null,
+      accessToken: null,
+      isAuthenticated: false,
+    }),
+}));

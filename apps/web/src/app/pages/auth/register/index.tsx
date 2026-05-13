@@ -1,9 +1,12 @@
 import { Link } from "@tanstack/react-router";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
     Field,
+    FieldDescription,
     FieldGroup,
     FieldLabel,
 } from "@/components/ui/field";
@@ -12,7 +15,49 @@ import { Input } from "@/components/ui/input";
 import { GitHubIcon } from "@/components/common/icons/GitHubIcon";
 import { PasswordField } from "@/components/forms/password-field";
 
+import {
+    registerSchema,
+    type RegisterFormValues,
+} from "@/features/auth/schemas/auth.schema";
+
+import { useRegister } from "@/features/auth/hooks/use-register";
+
 export default function Register() {
+    const registerMutation = useRegister();
+
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        control,
+        formState: { errors },
+    } = useForm<RegisterFormValues>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            fullName: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            terms: false,
+        },
+    });
+
+    const terms = useWatch({
+        control,
+        name: "terms",
+    });
+
+    const onSubmit = handleSubmit(
+        async (values) => {
+            const {
+                confirmPassword,
+                terms,
+                ...payload
+            } = values;
+
+            await registerMutation.mutateAsync(payload);
+        },
+    );
 
     return (
         <div className="p-8 w-105 rounded-[16px] border border-[#2A2A2A] bg-[#181818]">
@@ -26,8 +71,9 @@ export default function Register() {
                 </p>
             </div>
 
-            <form className="mt-8.5">
+            <form className="mt-8.5" onSubmit={onSubmit}>
                 <FieldGroup className="gap-5">
+                    {/* full name */}
                     <Field className='gap-2'>
                         <FieldLabel
                             htmlFor="fullname"
@@ -40,6 +86,8 @@ export default function Register() {
                             id="fullname"
                             type="text"
                             placeholder="John Doe"
+                            aria-invalid={!!errors.fullName}
+                            {...register("fullName")}
                             className="
                                 h-12
                                 border border-[#2A2A2A]
@@ -51,8 +99,15 @@ export default function Register() {
                                 focus-visible:ring-amber-500
                             "
                         />
+
+                        {errors.fullName && (
+                            <FieldDescription className="text-red-400">
+                                {errors.fullName.message}
+                            </FieldDescription>
+                        )}
                     </Field>
 
+                    {/* email */}
                     <Field className='gap-2'>
                         <FieldLabel
                             htmlFor="email"
@@ -65,6 +120,8 @@ export default function Register() {
                             id="email"
                             type="email"
                             placeholder="you@company.com"
+                            aria-invalid={!!errors.email}
+                            {...register("email")}
                             className="
                                 h-12
                                 border border-[#2A2A2A]
@@ -76,8 +133,15 @@ export default function Register() {
                                 focus-visible:ring-amber-500
                             "
                         />
+
+                        {errors.email && (
+                            <FieldDescription className="text-red-400">
+                                {errors.email.message}
+                            </FieldDescription>
+                        )}
                     </Field>
 
+                    {/* password */}
                     <Field className='gap-2'>
                         <FieldLabel
                             htmlFor="password"
@@ -86,7 +150,11 @@ export default function Register() {
                             Password
                         </FieldLabel>
 
-                        <PasswordField 
+                        <PasswordField
+                            id="password"
+                            placeholder="Create a strong password"
+                            aria-invalid={!!errors.password}
+                            {...register("password")}
                             className="
                                 h-12
                                 border border-[#2A2A2A]
@@ -96,11 +164,17 @@ export default function Register() {
                                 placeholder:text-[#52525C]
                                 focus-visible:ring-2
                                 focus-visible:ring-amber-500
-                            " 
-                            placeholder="Create a strong password"
+                            "
                         />
+
+                        {errors.password && (
+                            <FieldDescription className="text-red-400">
+                                {errors.password.message}
+                            </FieldDescription>
+                        )}
                     </Field>
 
+                    {/* confirm password */}
                     <Field className='gap-2'>
                         <FieldLabel
                             htmlFor="confirm-password"
@@ -109,7 +183,11 @@ export default function Register() {
                             Confirm Password
                         </FieldLabel>
 
-                        <PasswordField 
+                        <PasswordField
+                            id="confirmPassword"
+                            placeholder="Re-enter your password"
+                            aria-invalid={!!errors.confirmPassword}
+                            {...register("confirmPassword")}
                             className="
                                 h-12
                                 border border-[#2A2A2A]
@@ -119,59 +197,86 @@ export default function Register() {
                                 placeholder:text-[#52525C]
                                 focus-visible:ring-2
                                 focus-visible:ring-amber-500
-                            " 
-                            placeholder="Re-enter your password"
-                        />
-                    </Field>
-
-                    <div className="flex items-start gap-2 text-sm font-medium text-[#9F9FA9]">
-                        <Checkbox
-                            id="terms"
-                            className="
-                                mt-1
-                                border-[#2A2A2A]
-                                bg-[#111]
-                                data-[state=checked]:bg-[#FE9A00]
-                                data-[state=checked]:border-[#FE9A00]
                             "
                         />
 
-                        <label
-                            htmlFor="terms"
-                            className="block cursor-pointer leading-6"
-                        >
-                            I agree to Courier&apos;s{" "}
+                        {errors.confirmPassword && (
+                            <FieldDescription className="text-red-400">
+                                {errors.confirmPassword.message}
+                            </FieldDescription>
+                        )}
+                    </Field>
 
-                            <Link
-                                to="/register"
+                    {/* terms */}
+                    {/* TODO: implement /terms and /privacy routes */}
+                    <Field className="gap-2">
+                        <div className="flex items-start gap-2 text-sm font-medium text-[#9F9FA9]">
+                            <Checkbox
+                                id="terms"
+                                checked={terms}
+                                onCheckedChange={(checked) =>
+                                    setValue(
+                                        "terms",
+                                        !!checked,
+                                        {
+                                            shouldValidate: true,
+                                        },
+                                    )
+                                }
                                 className="
-                                    inline
-                                    text-[#FE9A00]
-                                    transition-colors
-                                    hover:text-amber-400
+                                    mt-1
+                                    border-[#2A2A2A]
+                                    bg-[#111]
+                                    data-[state=checked]:bg-[#FE9A00]
+                                    data-[state=checked]:border-[#FE9A00]
                                 "
+                            />
+
+                            <label
+                                htmlFor="terms"
+                                className="block cursor-pointer leading-6"
                             >
-                                Terms of Service
-                            </Link>
+                                I agree to Courier&apos;s{" "}
 
-                            {" "}and{" "}
+                                <Link
+                                    to="/terms"
+                                    className="
+                                        inline
+                                        text-[#FE9A00]
+                                        transition-colors
+                                        hover:text-amber-400
+                                    "
+                                >
+                                    Terms of Service
+                                </Link>
 
-                            <Link
-                                to="/register"
-                                className="
-                                    inline
-                                    text-[#FE9A00]
-                                    transition-colors
-                                    hover:text-amber-400
-                                "
-                            >
-                                Privacy Policy
-                            </Link>
-                        </label>
-                    </div>
+                                {" "}and{" "}
 
+                                <Link
+                                    to="/privacy"
+                                    className="
+                                        inline
+                                        text-[#FE9A00]
+                                        transition-colors
+                                        hover:text-amber-400
+                                    "
+                                >
+                                    Privacy Policy
+                                </Link>
+                            </label>
+                        </div>
+
+                        {errors.terms && (
+                            <FieldDescription className="text-red-400">
+                                {errors.terms.message}
+                            </FieldDescription>
+                        )}
+                    </Field>
+
+                    {/* submit */}
                     <Button
                         type="submit"
+                        disabled={registerMutation.isPending}
                         className="
                             h-12
                             rounded-[16px]
@@ -185,7 +290,9 @@ export default function Register() {
                             hover:shadow-amber-500/30
                         "
                     >
-                        Sign up
+                        {registerMutation.isPending
+                            ? "Creating account..."
+                            : "Sign up"}
                     </Button>
                 </FieldGroup>
             </form>
