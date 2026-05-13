@@ -13,4 +13,6 @@ export const appConfig = {
   database: {
     url: env.DATABASE_URL,
   },
+
+  apiUrl: env.VITE_API_URL,
 };
