@@ -1,14 +1,422 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
-  moduleFormat    = "cjs"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum UserGender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum HttpMethod {
+  GET
+  POST
+  PUT
+  PATCH
+  DELETE
+  HEAD
+  OPTIONS
+}
+
+enum RequestBodyType {
+  NONE
+  RAW
+  FORM_DATA
+  X_WWW_FORM_URLENCODED
+  GRAPHQL
+  BINARY
+}
+
+enum BodyParamType {
+  TEXT
+  FILE
+}
+
+enum AuthType {
+  NONE
+  INHERIT
+  BEARER_TOKEN
+  BASIC
+  API_KEY
+}
+
+enum ApiKeyLocation {
+  HEADER
+  QUERY
+}
+
+enum RawBodyLanguage {
+  TEXT
+  JSON
+  XML
+  HTML
+  JAVASCRIPT
+}
+
+enum VariableType {
+  DEFAULT
+  SECRET
+}
+
+enum RequestRunStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELED
+}
+
+model User {
+  id           String            @id @default(uuid()) @db.Uuid
+  fullName     String            @map("full_name")
+  email        String            @unique
+  photoUrl     String            @map("photo_url")
+  passwordHash String            @map("password_hash")
+  age          Int?
+  gender       UserGender        @default(MALE)
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+  workspaces   Workspace[]
+  memberships  WorkspaceMember[]
+  requestRuns  RequestRun[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Workspace {
+  id           String              @id @default(uuid()) @db.Uuid
+  name         String
+  description  String?
+  ownerId      String              @map("owner_id") @db.Uuid
+  activeEnvId  String?             @map("active_environment_id") @db.Uuid
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @updatedAt @map("updated_at")
+  deletedAt    DateTime?           @map("deleted_at")
+  owner        User                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  activeEnv    Environment?        @relation("WorkspaceActiveEnvironment", fields: [activeEnvId], references: [id], onDelete: SetNull)
+  members      WorkspaceMember[]
+  collections  Collection[]
+  environments Environment[]       @relation("WorkspaceEnvironments")
+  variables    WorkspaceVariable[]
+  requestRuns  RequestRun[]
+
+  @@unique([ownerId, name])
+  @@index([activeEnvId])
+  @@index([ownerId])
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id          String        @id @default(uuid()) @db.Uuid
+  workspaceId String        @map("workspace_id") @db.Uuid
+  userId      String        @map("user_id") @db.Uuid
+  role        WorkspaceRole @default(EDITOR)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+  @@map("workspace_members")
+}
+
+model Collection {
+  id          String               @id @default(uuid()) @db.Uuid
+  workspaceId String               @map("workspace_id") @db.Uuid
+  name        String
+  description String?
+  sortOrder   Int                  @default(0) @map("sort_order")
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
+  deletedAt   DateTime?            @map("deleted_at")
+  workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  requests    ApiRequest[]
+  variables   CollectionVariable[]
+
+  @@unique([workspaceId, name])
+  @@index([workspaceId])
+  @@index([workspaceId, sortOrder])
+  @@map("collections")
+}
+
+model ApiRequest {
+  id               String              @id @default(uuid()) @db.Uuid
+  collectionId     String              @map("collection_id") @db.Uuid
+  name             String
+  method           HttpMethod          @default(GET)
+  uri              String
+  bodyType         RequestBodyType     @default(NONE) @map("body_type")
+  rawBodyLanguage  RawBodyLanguage     @default(JSON) @map("raw_body_language")
+  rawBody          String?             @map("raw_body")
+  graphqlQuery     String?             @map("graphql_query")
+  graphqlVariables String?             @map("graphql_variables")
+  description      String?
+  sortOrder        Int                 @default(0) @map("sort_order")
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt @map("updated_at")
+  deletedAt        DateTime?           @map("deleted_at")
+  collection       Collection          @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  auth             RequestAuth?
+  headers          RequestHeader[]
+  queryParams      RequestQueryParam[]
+  pathParams       RequestPathParam[]
+  bodyParams       RequestBodyParam[]
+  cookies          RequestCookie[]
+  examples         RequestExample[]
+  runs             RequestRun[]
+
+  @@index([collectionId])
+  @@index([collectionId, sortOrder])
+  @@map("requests")
+}
+
+model RequestAuth {
+  id             String          @id @default(uuid()) @db.Uuid
+  requestId      String          @unique @map("request_id") @db.Uuid
+  type           AuthType        @default(NONE)
+  bearerToken    String?         @map("bearer_token")
+  username       String?
+  password       String?
+  apiKeyName     String?         @map("api_key_name")
+  apiKeyValue    String?         @map("api_key_value")
+  apiKeyLocation ApiKeyLocation? @map("api_key_location")
+  request        ApiRequest      @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@map("request_auth")
+}
+
+model RequestHeader {
+  id        String     @id @default(uuid()) @db.Uuid
+  requestId String     @map("request_id") @db.Uuid
+  key       String
+  value     String?
+  enabled   Boolean    @default(true)
+  sortOrder Int        @default(0) @map("sort_order")
+  request   ApiRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([requestId, sortOrder])
+  @@map("request_headers")
+}
+
+model RequestQueryParam {
+  id        String     @id @default(uuid()) @db.Uuid
+  requestId String     @map("request_id") @db.Uuid
+  key       String
+  value     String?
+  enabled   Boolean    @default(true)
+  sortOrder Int        @default(0) @map("sort_order")
+  request   ApiRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([requestId, sortOrder])
+  @@map("request_query_params")
+}
+
+model RequestPathParam {
+  id        String     @id @default(uuid()) @db.Uuid
+  requestId String     @map("request_id") @db.Uuid
+  key       String
+  value     String?
+  enabled   Boolean    @default(true)
+  sortOrder Int        @default(0) @map("sort_order")
+  request   ApiRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([requestId, sortOrder])
+  @@map("request_path_params")
+}
+
+model RequestBodyParam {
+  id        String        @id @default(uuid()) @db.Uuid
+  requestId String        @map("request_id") @db.Uuid
+  key       String
+  value     String?
+  type      BodyParamType @default(TEXT)
+  enabled   Boolean       @default(true)
+  sortOrder Int           @default(0) @map("sort_order")
+  request   ApiRequest    @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([requestId, sortOrder])
+  @@map("request_body_params")
+}
+
+model RequestCookie {
+  id        String     @id @default(uuid()) @db.Uuid
+  requestId String     @map("request_id") @db.Uuid
+  name      String
+  value     String?
+  domain    String?
+  path      String?
+  enabled   Boolean    @default(true)
+  sortOrder Int        @default(0) @map("sort_order")
+  request   ApiRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([requestId, sortOrder])
+  @@map("request_cookies")
+}
+
+model Environment {
+  id               String                @id @default(uuid()) @db.Uuid
+  workspaceId      String                @map("workspace_id") @db.Uuid
+  name             String
+  sortOrder        Int                   @default(0) @map("sort_order")
+  createdAt        DateTime              @default(now()) @map("created_at")
+  updatedAt        DateTime              @updatedAt @map("updated_at")
+  workspace        Workspace             @relation("WorkspaceEnvironments", fields: [workspaceId], references: [id], onDelete: Cascade)
+  activeWorkspaces Workspace[]           @relation("WorkspaceActiveEnvironment")
+  variables        EnvironmentVariable[]
+  requestRuns      RequestRun[]
+
+  @@unique([workspaceId, name])
+  @@index([workspaceId])
+  @@index([workspaceId, sortOrder])
+  @@map("environments")
+}
+
+model EnvironmentVariable {
+  id            String       @id @default(uuid()) @db.Uuid
+  environmentId String       @map("environment_id") @db.Uuid
+  key           String
+  value         String?
+  initialValue  String?      @map("initial_value")
+  type          VariableType @default(DEFAULT)
+  enabled       Boolean      @default(true)
+  sortOrder     Int          @default(0) @map("sort_order")
+  environment   Environment  @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+
+  @@unique([environmentId, key])
+  @@index([environmentId])
+  @@index([environmentId, sortOrder])
+  @@map("environment_variables")
+}
+
+model WorkspaceVariable {
+  id          String       @id @default(uuid()) @db.Uuid
+  workspaceId String       @map("workspace_id") @db.Uuid
+  key         String
+  value       String?
+  type        VariableType @default(DEFAULT)
+  enabled     Boolean      @default(true)
+  sortOrder   Int          @default(0) @map("sort_order")
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, key])
+  @@index([workspaceId])
+  @@index([workspaceId, sortOrder])
+  @@map("workspace_variables")
+}
+
+model CollectionVariable {
+  id           String       @id @default(uuid()) @db.Uuid
+  collectionId String       @map("collection_id") @db.Uuid
+  key          String
+  value        String?
+  type         VariableType @default(DEFAULT)
+  enabled      Boolean      @default(true)
+  sortOrder    Int          @default(0) @map("sort_order")
+  collection   Collection   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, key])
+  @@index([collectionId])
+  @@index([collectionId, sortOrder])
+  @@map("collection_variables")
+}
+
+model RequestExample {
+  id             String                 @id @default(uuid()) @db.Uuid
+  requestId      String                 @map("request_id") @db.Uuid
+  name           String
+  statusCode     Int?                   @map("status_code")
+  responseBody   String?                @map("response_body")
+  responseTimeMs Int?                   @map("response_time_ms")
+  sortOrder      Int                    @default(0) @map("sort_order")
+  createdAt      DateTime               @default(now()) @map("created_at")
+  updatedAt      DateTime               @updatedAt @map("updated_at")
+  request        ApiRequest             @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  headers        RequestExampleHeader[]
+
+  @@index([requestId])
+  @@index([requestId, sortOrder])
+  @@map("request_examples")
+}
+
+model RequestExampleHeader {
+  id        String         @id @default(uuid()) @db.Uuid
+  exampleId String         @map("example_id") @db.Uuid
+  key       String
+  value     String?
+  example   RequestExample @relation(fields: [exampleId], references: [id], onDelete: Cascade)
+
+  @@index([exampleId])
+  @@map("request_example_headers")
+}
+
+model RequestRun {
+  id              String                     @id @default(uuid()) @db.Uuid
+  workspaceId     String                     @map("workspace_id") @db.Uuid
+  requestId       String?                    @map("request_id") @db.Uuid
+  userId          String?                    @map("user_id") @db.Uuid
+  environmentId   String?                    @map("environment_id") @db.Uuid
+  method          HttpMethod
+  uri             String
+  status          RequestRunStatus           @default(PENDING)
+  statusCode      Int?                       @map("status_code")
+  durationMs      Int?                       @map("duration_ms")
+  requestBody     String?                    @map("request_body")
+  responseBody    String?                    @map("response_body")
+  responseSize    Int?                       @map("response_size")
+  errorMessage    String?                    @map("error_message")
+  createdAt       DateTime                   @default(now()) @map("created_at")
+  workspace       Workspace                  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  request         ApiRequest?                @relation(fields: [requestId], references: [id], onDelete: SetNull)
+  user            User?                      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  environment     Environment?               @relation(fields: [environmentId], references: [id], onDelete: SetNull)
+  requestHeaders  RequestRunHeader[]
+  responseHeaders RequestRunResponseHeader[]
+
+  @@index([workspaceId])
+  @@index([requestId])
+  @@index([userId])
+  @@index([environmentId])
+  @@index([createdAt])
+  @@map("request_runs")
+}
+
+model RequestRunHeader {
+  id    String     @id @default(uuid()) @db.Uuid
+  runId String     @map("run_id") @db.Uuid
+  key   String
+  value String?
+  run   RequestRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@map("request_run_headers")
+}
+
+model RequestRunResponseHeader {
+  id    String     @id @default(uuid()) @db.Uuid
+  runId String     @map("run_id") @db.Uuid
+  key   String
+  value String?
+  run   RequestRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@map("request_run_response_headers")
 }

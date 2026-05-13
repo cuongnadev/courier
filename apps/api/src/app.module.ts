@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { PrismaModule } from './database/prisma.module';
 import { envSchema } from './config/env.schema';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { envSchema } from './config/env.schema';
       validate: (config) => envSchema.parse(config),
     }),
     PrismaModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

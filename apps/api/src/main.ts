@@ -18,7 +18,7 @@ async function bootstrap() {
     origin: '*',
   });
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api.courier.dev');
 
   app.use(helmet());
 
