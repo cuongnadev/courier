@@ -13,7 +13,7 @@ export const envSchema = z.object({
 
   JWT_EXPIRES_IN: z.string().default('1d'),
 
-  VITE_API_URL: z.string().min(1),
+  WEB_URL: z.string().min(1),
 });
 
 export type Env = z.infer<typeof envSchema>;
