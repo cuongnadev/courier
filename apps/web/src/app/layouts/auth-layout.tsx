@@ -6,8 +6,8 @@ import { Link } from '@tanstack/react-router';
 
 export default function AuthLayout() {
     return (
-        <div className="flex w-full min-h-screen bg-[#0D0D0D]">
-            <aside className="relative min-h-screen overflow-hidden flex flex-col items-start justify-start w-[45%] bg-[linear-gradient(135deg,#181818_0%,#161616_16.67%,#131313_33.33%,#111_50%,#0F0F0F_66.67%,#0C0C0C_83.33%,#0A0A0A_100%)]">
+        <div className="flex w-full h-screen overflow-hidden bg-[#0D0D0D]">
+            <aside className="relative h-full overflow-hidden flex flex-col items-start justify-start w-[45%] bg-[linear-gradient(135deg,#181818_0%,#161616_16.67%,#131313_33.33%,#111_50%,#0F0F0F_66.67%,#0C0C0C_83.33%,#0A0A0A_100%)]">
                 <div className="w-[80%] h-full flex flex-col items-start justify-between p-12">
                     <div className="h-full flex flex-col items-start justify-start gap-6">
                         {/* logo */}
@@ -66,7 +66,7 @@ export default function AuthLayout() {
                 <div className="absolute top-1/2 -right-42 -translate-y-1/2 w-2/4 h-2/4 rounded-full bg-[rgba(254,154,0,0.05)] blur-[128px] pointer-events-none" />
                 <div className="absolute top-1/2 -left-42 -translate-y-1/2 w-2/4 h-2/4 rounded-full bg-[rgba(254,154,0,0.05)] blur-[128px] pointer-events-none" />
             </aside>
-            <main className="flex-1 flex flex-col items-center justify-center gap-8 p-12">
+            <main className="flex-1 flex flex-col items-center gap-8 p-12 overflow-y-auto">
                 <Outlet />
 
                 <div className="flex items-center justify-center gap-4 text-sm text-gray-500">

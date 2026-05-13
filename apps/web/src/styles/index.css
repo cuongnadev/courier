@@ -217,3 +217,24 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* index.css */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(214 211 209);
+  border-radius: 999px;
+  border: 2px solid #111111;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(245 245 244);
+}
