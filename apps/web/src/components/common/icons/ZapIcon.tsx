@@ -1,6 +1,6 @@
 import type { IconProps } from "@/types/common";
 
-export function PerformanceIcon({
+export function ZapIcon({
     iconColor = "#404040",
     width = 16,
     height = 16,

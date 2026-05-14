@@ -7,7 +7,7 @@ import {
     MockIcon,
     DocumentationIcon,
     TestIcon,
-    PerformanceIcon,
+    ZapIcon,
     SettingIcon, 
     TeamIcon 
 } from "@/components/common/icons";
@@ -60,7 +60,7 @@ export const toolItems: ToolSidebarItem[] = [
     {
         to: "/performance",
         label: "Performance",
-        icon: PerformanceIcon,
+        icon: ZapIcon,
     },
     {
         to: "/documentation",
