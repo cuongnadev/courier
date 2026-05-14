@@ -1,21 +1,15 @@
 import { Link } from "@tanstack/react-router";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-
-type Method =
-    | "GET"
-    | "POST"
-    | "PUT"
-    | "PATCH"
-    | "DELETE";
+import type { RequestMethod } from "@/types/api";
 
 type SidebarSubItemProps = {
     to: string;
-    method: Method;
+    method: RequestMethod;
     label: string;
 };
 
-const methodStyles: Record<Method, string> = {
+const methodStyles: Record<RequestMethod, string> = {
     GET: "bg-[#FEF3C6] text-[#7B3306]",
     POST: "bg-[#DCFCE7] text-[#008236]",
     PUT: "bg-[#DBEAFE] text-[#1D4ED8]",
