@@ -266,3 +266,24 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #bdbdbd;
 }
+
+.dashboard-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-thumb {
+  background: #D4D4D4;
+  border-radius: 9999px;
+  border: none;
+  background-clip: content-box;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #BDBDBD;
+  border-radius: 9999px;
+  background-clip: content-box;
+}

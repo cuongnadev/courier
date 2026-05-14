@@ -1,9 +1,28 @@
-export function CheckCircleIcon() {
+import type { IconProps } from "@/types/common";
+
+export function CheckCircleIcon({
+    iconColor = "#00BC7D",
+    width = 12,
+    height = 12,
+}: IconProps) {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={width} height={height}
+            viewBox="0 0 12 12"
+            fill="none"
+        >
             <g clip-path="url(#clip0_2_31)">
-                <path d="M6 11C8.76142 11 11 8.76142 11 6C11 3.23858 8.76142 1 6 1C3.23858 1 1 3.23858 1 6C1 8.76142 3.23858 11 6 11Z" stroke="#00BC7D" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M4.5 6L5.5 7L7.5 5" stroke="#00BC7D" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M6 11C8.76142 11 11 8.76142 11 6C11 3.23858 8.76142 1 6 1C3.23858 1 1 3.23858 1 6C1 8.76142 3.23858 11 6 11Z"
+                    stroke={iconColor}
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+                <path d="M4.5 6L5.5 7L7.5 5"
+                    stroke={iconColor}
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
             </g>
             <defs>
                 <clipPath id="clip0_2_31">

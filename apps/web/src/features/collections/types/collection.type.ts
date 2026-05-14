@@ -13,3 +13,11 @@ export type Collection = {
     color: string;
     requests: CollectionRequest[];
 };
+
+export type CollectionVariant =
+    | "blue"
+    | "green"
+    | "orange"
+    | "purple"
+    | "red"
+    | "pink";

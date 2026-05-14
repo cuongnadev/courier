@@ -42,7 +42,7 @@ export function Sidebar() {
             {/* logo */}
             <Link to="/" className="pl-3 w-full h-16 flex items-center gap-2 border-b-[1.25px] border-[#E5E5E5]">
                 <Logo width={16} height={16} className="w-8 h-8" />
-                <h1 className="text-[16px] font-semibold text-[#171717]">Courier</h1>
+                <h2 className="text-[16px] font-semibold text-[#171717]">Courier</h2>
             </Link>
 
             {/* search */}

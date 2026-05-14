@@ -19,3 +19,6 @@ export { ExportIcon } from "./ExportIcon";
 export { SparklesIcon } from "./SparklesIcon";
 export { ShareIcon } from "./ShareIcon";
 export { BellIcon } from "./BellIcon";
+export { SendIcon } from "./SendIcon";
+export { ActivityIcon } from "./ActivityIcon";
+export { ClockIcon } from "./ClockIcon";
