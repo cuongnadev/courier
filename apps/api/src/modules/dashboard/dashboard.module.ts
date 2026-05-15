@@ -1,11 +1,18 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../../database/prisma.module';
-import { CommonModule } from '../common';
+import { CollectionsModule } from '../collections';
+import { FlowsModule } from '../flows';
+import { RequestsModule } from '../requests';
+import { WorkspacesModule } from '../workspaces';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
 
 @Module({
-  imports: [CommonModule, PrismaModule],
+  imports: [
+    CollectionsModule,
+    FlowsModule,
+    RequestsModule,
+    WorkspacesModule,
+  ],
   controllers: [DashboardController],
   providers: [DashboardService],
 })
