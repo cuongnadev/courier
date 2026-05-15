@@ -1,14 +1,18 @@
 import {
   Controller,
   Get,
-  Headers,
   Param,
   ParseUUIDPipe,
+  Req,
+  UseGuards,
   Version,
 } from '@nestjs/common';
+import { AuthGuard } from '../../common/guards/auth.guard';
+import type { AuthenticatedRequest } from '../../common/types/authenticated-request.type';
 import { DashboardService } from './dashboard.service';
 
 @Controller('workspaces/:workspaceId/dashboard')
+@UseGuards(AuthGuard)
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
@@ -16,8 +20,8 @@ export class DashboardController {
   @Get('metrics')
   getMetrics(
     @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
-    @Headers('x-user-id') userId?: string,
+    @Req() request: AuthenticatedRequest,
   ) {
-    return this.dashboardService.getMetrics(workspaceId, userId);
+    return this.dashboardService.getMetrics(workspaceId, request.user.sub);
   }
 }
