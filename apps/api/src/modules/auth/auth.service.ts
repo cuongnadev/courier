@@ -7,35 +7,22 @@ import { createHmac, pbkdf2, randomBytes, timingSafeEqual } from 'crypto';
 import { promisify } from 'util';
 import { appConfig } from '../../config';
 import { PrismaService } from '../../database/prisma.service';
+import {
+  HASH_ALGORITHM,
+  HASH_ITERATIONS,
+  HASH_KEY_LENGTH,
+} from './constants/auth.constants';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
+import type { AuthResponse, AuthUser } from './types/auth.types';
 
 const pbkdf2Async = promisify(pbkdf2);
-const HASH_ALGORITHM = 'sha256';
-const HASH_ITERATIONS = 210_000;
-const HASH_KEY_LENGTH = 64;
-
-export interface AuthUser {
-  id: string;
-  fullName: string;
-  email: string;
-  photoUrl: string;
-  age: number | null;
-  gender: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface AuthResponse {
-  user: AuthUser;
-  accessToken: string;
-}
 
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async signup(signupDto: SignupDto): Promise<AuthResponse> {
+  async register(signupDto: SignupDto): Promise<AuthResponse> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: signupDto.email },
       select: { id: true },
@@ -46,15 +33,33 @@ export class AuthService {
     }
 
     const passwordHash = await this.hashPassword(signupDto.password);
+    const fullName = signupDto.fullName.trim();
 
-    const user = await this.prisma.user.create({
-      data: {
-        fullName: signupDto.fullName.trim(),
-        email: signupDto.email,
-        photoUrl: '',
-        passwordHash,
-      },
-      select: this.userSelect(),
+    const user = await this.prisma.$transaction(async (tx) => {
+      const createdUser = await tx.user.create({
+        data: {
+          fullName,
+          email: signupDto.email,
+          photoUrl: '',
+          passwordHash,
+        },
+        select: this.userSelect(),
+      });
+
+      await tx.workspace.create({
+        data: {
+          name: `${fullName}'s Workspace`,
+          ownerId: createdUser.id,
+          members: {
+            create: {
+              userId: createdUser.id,
+              role: 'OWNER',
+            },
+          },
+        },
+      });
+
+      return createdUser;
     });
 
     return this.authResponse(user);
@@ -106,7 +111,14 @@ export class AuthService {
   ): Promise<boolean> {
     const [strategy, algorithm, iterations, salt, hash] = storedHash.split('$');
 
-    if (!strategy || strategy !== 'pbkdf2' || !algorithm || !iterations || !salt || !hash) {
+    if (
+      !strategy ||
+      strategy !== 'pbkdf2' ||
+      !algorithm ||
+      !iterations ||
+      !salt ||
+      !hash
+    ) {
       return false;
     }
 
