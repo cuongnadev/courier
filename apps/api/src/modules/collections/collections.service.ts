@@ -31,16 +31,19 @@ export class CollectionsService {
   async findAll(workspaceId: string, userId?: string, limit?: number) {
     await this.assertWorkspaceAccess(workspaceId, userId);
 
-    return this.prisma.collection.findMany({
+    const collections = await this.prisma.collection.findMany({
       where: {
         workspaceId,
         deletedAt: null,
       },
+      include: this.collectionWithRequestsInclude(),
       orderBy: {
         sortOrder: 'asc',
       },
       take: limit,
     });
+
+    return collections.map((collection) => this.withRequestsCount(collection));
   }
 
   async findOne(collectionId: string, workspaceId: string, userId?: string) {
@@ -52,13 +55,14 @@ export class CollectionsService {
         workspaceId,
         deletedAt: null,
       },
+      include: this.collectionWithRequestsInclude(),
     });
 
     if (!collection) {
       throw new NotFoundException('Collection not found');
     }
 
-    return collection;
+    return this.withRequestsCount(collection);
   }
 
   async update(
@@ -124,5 +128,36 @@ export class CollectionsService {
     if (!collection) {
       throw new NotFoundException('Collection not found');
     }
+  }
+
+  private collectionWithRequestsInclude = () => ({
+    requests: {
+      where: {
+        deletedAt: null,
+      },
+      orderBy: {
+        sortOrder: 'asc' as const,
+      },
+    },
+    _count: {
+      select: {
+        requests: {
+          where: {
+            deletedAt: null,
+          },
+        },
+      },
+    },
+  });
+
+  private withRequestsCount<T extends { _count: { requests: number } }>(
+    collection: T,
+  ) {
+    const { _count, ...data } = collection;
+
+    return {
+      ...data,
+      requestsCount: _count.requests,
+    };
   }
 }

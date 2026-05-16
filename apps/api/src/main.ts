@@ -24,7 +24,7 @@ async function bootstrap() {
 
   app.use(helmet());
 
-  app.use(cookieParser())
+  app.use(cookieParser());
 
   app.useGlobalPipes(
     new ValidationPipe({
