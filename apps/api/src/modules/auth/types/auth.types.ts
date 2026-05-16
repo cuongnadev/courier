@@ -1,3 +1,5 @@
+import { AuthTokens } from '../../../common/types/authenticated-request.type';
+
 export interface AuthUser {
   id: string;
   fullName: string;
@@ -9,7 +11,6 @@ export interface AuthUser {
   updatedAt: Date;
 }
 
-export interface AuthResponse {
+export type AuthResponse = {
   user: AuthUser;
-  accessToken: string;
-}
+} & AuthTokens;

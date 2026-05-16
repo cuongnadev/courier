@@ -15,6 +15,7 @@ import {
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import type { AuthResponse, AuthUser } from './types/auth.types';
+import { verifyJwtToken } from '../../common/utils/jwt.util';
 
 const pbkdf2Async = promisify(pbkdf2);
 
@@ -86,6 +87,31 @@ export class AuthService {
     return this.authResponse(safeUser);
   }
 
+  async getMe(userId: string): Promise<AuthUser> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: this.userSelect(),
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return user;
+  }
+
+  async refresh(refreshToken: string): Promise<AuthResponse> {
+    const payload = verifyJwtToken(refreshToken);
+
+    if (payload.type !== 'refresh') {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const user = await this.getMe(payload.sub);
+
+    return this.authResponse(user);
+  }
+
   private async hashPassword(password: string): Promise<string> {
     const salt = randomBytes(16).toString('base64url');
     const derivedKey = await pbkdf2Async(
@@ -141,17 +167,33 @@ export class AuthService {
   private authResponse(user: AuthUser): AuthResponse {
     return {
       user,
-      accessToken: this.signJwt({
-        sub: user.id,
-        email: user.email,
-      }),
+
+      accessToken: this.signJwt(
+        {
+          sub: user.id,
+          email: user.email,
+          type: 'access',
+        },
+        appConfig.jwt.expiresIn,
+      ),
+
+      refreshToken: this.signJwt(
+        {
+          sub: user.id,
+          email: user.email,
+          type: 'refresh',
+        },
+        '7d',
+      ),
     };
   }
 
-  private signJwt(payload: Record<string, string>): string {
-    const expiresInSeconds = this.parseExpiresIn(appConfig.jwt.expiresIn);
+  private signJwt(payload: Record<string, string>, expiresIn: string): string {
+    const expiresInSeconds = this.parseExpiresIn(expiresIn);
     const now = Math.floor(Date.now() / 1000);
+
     const header = { alg: 'HS256', typ: 'JWT' };
+
     const body = {
       ...payload,
       iat: now,
