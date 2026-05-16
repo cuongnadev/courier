@@ -6,16 +6,20 @@ import { RootRoute } from './__root';
 /**
  * layouts
  */
+
+import AuthLayout from '@/app/layouts/auth-layout';
+import MainLayout from '@/app/layouts/main-layout';
+
 export const authLayoutRoute = createRoute({
   getParentRoute: () => RootRoute,
   id: 'auth',
-  component: lazy(() => import('@/app/layouts/auth-layout')),
+  component: AuthLayout,
 });
 
 export const mainLayoutRoute = createRoute({
   getParentRoute: () => RootRoute,
   id: 'main',
-  component: lazy(() => import('@/app/layouts/main-layout')),
+  component: MainLayout,
 });
 
 
@@ -53,4 +57,4 @@ export const registerRoute = createRoute({
 export const routeTree = RootRoute.addChildren([
   authLayoutRoute.addChildren([loginRoute, registerRoute]),
   mainLayoutRoute.addChildren([dashboardRoute]),
-])
+]);

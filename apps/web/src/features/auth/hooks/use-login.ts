@@ -17,10 +17,9 @@ export function useLogin() {
         mutationFn: loginApi,
 
         onSuccess: async (data) => {
-            setAuth(
-                data.user,
-                data.accessToken
-            );
+            const { user, accessToken } = data
+
+            setAuth(user, accessToken);
 
             toast.success(
                 "Login successful"
@@ -37,7 +36,7 @@ export function useLogin() {
         ) => {
             const message =
                 error.response?.data?.message;
-
+            
             switch (message) {
                 case "INVALID_CREDENTIALS":
                     toast.error(
