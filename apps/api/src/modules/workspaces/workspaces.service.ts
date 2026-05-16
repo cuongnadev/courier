@@ -9,9 +9,7 @@ import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 
 @Injectable()
 export class WorkspacesService {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(userId: string, dto: CreateWorkspaceDto) {
     return this.prisma.workspace.create({

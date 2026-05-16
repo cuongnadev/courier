@@ -82,7 +82,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const { passwordHash: _passwordHash, ...safeUser } = user;
+    const { passwordHash, ...safeUser } = user;
+    void passwordHash;
 
     return this.authResponse(safeUser);
   }

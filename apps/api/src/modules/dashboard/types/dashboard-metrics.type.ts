@@ -4,7 +4,7 @@ export interface DashboardMetrics {
   collections_count: number;
   active_flows_count: number;
   team_members: number;
-  recent_requests: any[],
-  latest_collections: any[],
-  active_flows: any[],
+  recent_requests: any[];
+  latest_collections: any[];
+  active_flows: any[];
 }
