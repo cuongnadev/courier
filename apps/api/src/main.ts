@@ -10,6 +10,7 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { appConfig } from './config';
+import cookieParser from 'cookie-parser'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,6 +23,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api.courier.dev');
 
   app.use(helmet());
+
+  app.use(cookieParser())
 
   app.useGlobalPipes(
     new ValidationPipe({
