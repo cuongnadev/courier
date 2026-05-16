@@ -10,7 +10,7 @@ export class AuthController {
   @Version('1')
   @Post('register')
   register(@Body() signupDto: SignupDto) {
-    return this.authService.signup(signupDto);
+    return this.authService.register(signupDto);
   }
 
   @Version('1')
