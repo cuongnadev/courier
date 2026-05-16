@@ -11,7 +11,6 @@ export default function MainLayout() {
 
   const accessToken = useAuthStore((state) => state.accessToken);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const user = useAuthStore((state) => state.user);
 
   const shouldShowLoading = !accessToken && isLoading;
 

@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Plus } from "lucide-react";
+import { Check, ChevronDown, LogOut, Plus } from "lucide-react";
 
 import { SearchInput } from "@/components/forms/search-input";
 import { Button } from "@/components/ui/button";
@@ -25,28 +25,21 @@ import {
     ShareIcon,
     BellIcon
 } from "@/components/common/icons";
-
-// Fake data for now, replace with backend query later
-const workspaces = [
-    {
-        id: 1,
-        name: "Acme Corp Engineering",
-        short: "AC",
-    },
-    {
-        id: 2,
-        name: "Design Team",
-        short: "DT",
-    },
-    {
-        id: 3,
-        name: "Marketing",
-        short: "MK",
-    },
-];
-const currentWorkspace = workspaces[0];
+import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
+import { mapWorkspaceHeader } from "@/features/workspaces/utils/map-workspace";
+import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useLogout } from '@/features/auth/hooks/use-logout';
 
 export function Header() {
+    const user = useAuthStore((state) => state.user);
+    const { data: workspaces = [] } = useWorkspaces();
+
+    const workspaceItems = workspaces.map(mapWorkspaceHeader);
+
+    const currentWorkspace = workspaceItems[0];
+
+    const { mutate: logout, isPending } = useLogout();
+
     return (
         <header className="px-6 w-full h-16 flex items-center justify-between border-b-[1.25px] border-[#E5E5E5] bg-white">
             <div className="flex items-center gap-4">
@@ -79,11 +72,11 @@ export function Header() {
                             "
                         >
                             <div className="flex h-6 w-6 items-center justify-center rounded-[4px] bg-[linear-gradient(135deg,#1C1917_0%,#1E2939_100%)] text-xs font-semibold uppercase text-white">
-                                {currentWorkspace.short}
+                                {currentWorkspace?.short}
                             </div>
 
                             <span className="max-w-[180px] truncate text-sm font-medium text-neutral-800">
-                                {currentWorkspace.name}
+                                {currentWorkspace?.name}
                             </span>
 
                             <ChevronDown className="h-4 w-4 text-neutral-500" />
@@ -102,7 +95,7 @@ export function Header() {
                             shadow-[0_8px_30px_rgba(0,0,0,0.08)]
                         "
                     >
-                        {workspaces.map((workspace) => (
+                        {workspaceItems.map((workspace) => (
                             <DropdownMenuItem
                                 key={workspace.id}
                                 className="
@@ -406,7 +399,11 @@ export function Header() {
                                 "
                             >
                                 <img
-                                    src="https://i.pravatar.cc/150?img=12"
+                                    src={
+                                        user?.photoUrl ?
+                                            user?.photoUrl :
+                                            "https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=Sophie"
+                                    }
                                     alt="User avatar"
                                     className="h-full w-full rounded-full object-cover"
                                 />
@@ -427,6 +424,8 @@ export function Header() {
                             "
                         >
                             <DropdownMenuItem
+                                disabled={isPending}
+                                onClick={() => logout()}
                                 className="
                                     cursor-pointer rounded-lg px-3 py-2
                                     text-neutral-800 outline-none
@@ -441,7 +440,11 @@ export function Header() {
                                     data-[highlighted]:text-neutral-900
                                 "
                             >
-                                Logout
+                                {isPending ? 'Logging out...' : 'Logout'}
+
+                                <DropdownMenuShortcut>
+                                    <LogOut className="h-4 w-4 text-neutral-500" />
+                                </DropdownMenuShortcut>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

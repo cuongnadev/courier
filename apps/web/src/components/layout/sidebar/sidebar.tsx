@@ -31,7 +31,7 @@ const currentPlan = {
 };
 
 export function Sidebar() {
-    const { data: workspaces = [], isLoading: isWorkspaceLoading } = useWorkspaces();
+    const { data: workspaces = [] } = useWorkspaces();
 
     const currentWorkspace = workspaces[0];
 
@@ -39,10 +39,9 @@ export function Sidebar() {
         collections,
         openCollections,
         toggleCollection,
-        isLoading,
     } = useCollectionSidebar(currentWorkspace?.id);
 
-    const { toolCounts } = useToolCounts();
+    const { toolCounts } = useToolCounts(currentWorkspace?.id);
 
     return (
         <aside className="flex w-63.75 h-screen shrink-0 flex-col border-r-[1.25px] border-[#E5E5E5]">
