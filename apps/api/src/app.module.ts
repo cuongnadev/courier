@@ -6,16 +6,25 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { PrismaModule } from './database/prisma.module';
 import { envSchema } from './config/env.schema';
 import { AuthModule } from './modules/auth/auth.module';
+import { CollectionsModule } from './modules/collections';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { FlowsModule } from './modules/flows';
+import { RequestsModule } from './modules/requests';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     ConfigModule.forRoot({
       isGlobal: true,
       validate: (config) => envSchema.parse(config),
     }),
     PrismaModule,
     AuthModule,
+    CollectionsModule,
+    DashboardModule,
+    FlowsModule,
+    RequestsModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

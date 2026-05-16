@@ -78,6 +78,38 @@ enum RequestRunStatus {
   CANCELED
 }
 
+enum FlowStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum FlowNodeType {
+  API_REQUEST
+  CONDITION
+  LOOP
+  TRANSFORM
+  DELAY
+  SCRIPT
+}
+
+enum FlowRunStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELED
+}
+
+enum FlowNodeRunStatus {
+  PENDING
+  RUNNING
+  SKIPPED
+  SUCCESS
+  FAILED
+  CANCELED
+}
+
 model User {
   id           String            @id @default(uuid()) @db.Uuid
   fullName     String            @map("full_name")
@@ -91,6 +123,7 @@ model User {
   workspaces   Workspace[]
   memberships  WorkspaceMember[]
   requestRuns  RequestRun[]
+  flowRuns     FlowRun[]
 
   @@index([email])
   @@map("users")
@@ -112,6 +145,8 @@ model Workspace {
   environments Environment[]       @relation("WorkspaceEnvironments")
   variables    WorkspaceVariable[]
   requestRuns  RequestRun[]
+  flows        Flow[]
+  flowRuns     FlowRun[]
 
   @@unique([ownerId, name])
   @@index([activeEnvId])
@@ -154,22 +189,22 @@ model Collection {
 }
 
 model ApiRequest {
-  id               String              @id @default(uuid()) @db.Uuid
-  collectionId     String              @map("collection_id") @db.Uuid
+  id               String               @id @default(uuid()) @db.Uuid
+  collectionId     String               @map("collection_id") @db.Uuid
   name             String
-  method           HttpMethod          @default(GET)
+  method           HttpMethod           @default(GET)
   uri              String
-  bodyType         RequestBodyType     @default(NONE) @map("body_type")
-  rawBodyLanguage  RawBodyLanguage     @default(JSON) @map("raw_body_language")
-  rawBody          String?             @map("raw_body")
-  graphqlQuery     String?             @map("graphql_query")
-  graphqlVariables String?             @map("graphql_variables")
+  bodyType         RequestBodyType      @default(NONE) @map("body_type")
+  rawBodyLanguage  RawBodyLanguage      @default(JSON) @map("raw_body_language")
+  rawBody          String?              @map("raw_body")
+  graphqlQuery     String?              @map("graphql_query")
+  graphqlVariables String?              @map("graphql_variables")
   description      String?
-  sortOrder        Int                 @default(0) @map("sort_order")
-  createdAt        DateTime            @default(now()) @map("created_at")
-  updatedAt        DateTime            @updatedAt @map("updated_at")
-  deletedAt        DateTime?           @map("deleted_at")
-  collection       Collection          @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  sortOrder        Int                  @default(0) @map("sort_order")
+  createdAt        DateTime             @default(now()) @map("created_at")
+  updatedAt        DateTime             @updatedAt @map("updated_at")
+  deletedAt        DateTime?            @map("deleted_at")
+  collection       Collection           @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   auth             RequestAuth?
   headers          RequestHeader[]
   queryParams      RequestQueryParam[]
@@ -178,10 +213,216 @@ model ApiRequest {
   cookies          RequestCookie[]
   examples         RequestExample[]
   runs             RequestRun[]
+  flowRequestNodes FlowNodeApiRequest[]
 
   @@index([collectionId])
   @@index([collectionId, sortOrder])
   @@map("requests")
+}
+
+model Flow {
+  id          String         @id @default(uuid()) @db.Uuid
+  workspaceId String         @map("workspace_id") @db.Uuid
+  name        String
+  description String?
+  status      FlowStatus     @default(DRAFT)
+  sortOrder   Int            @default(0) @map("sort_order")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  deletedAt   DateTime?      @map("deleted_at")
+  workspace   Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  nodes       FlowNode[]
+  edges       FlowEdge[]
+  variables   FlowVariable[]
+  runs        FlowRun[]
+
+  @@unique([workspaceId, name])
+  @@index([workspaceId])
+  @@index([workspaceId, sortOrder])
+  @@index([workspaceId, status])
+  @@map("flows")
+}
+
+model FlowNode {
+  id            String              @id @default(uuid()) @db.Uuid
+  flowId        String              @map("flow_id") @db.Uuid
+  type          FlowNodeType
+  label         String
+  description   String?
+  positionX     Int                 @default(0) @map("position_x")
+  positionY     Int                 @default(0) @map("position_y")
+  sortOrder     Int                 @default(0) @map("sort_order")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+  flow          Flow                @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  apiRequest    FlowNodeApiRequest?
+  condition     FlowNodeCondition?
+  loop          FlowNodeLoop?
+  transform     FlowNodeTransform?
+  delay         FlowNodeDelay?
+  script        FlowNodeScript?
+  outgoingEdges FlowEdge[]          @relation("FlowEdgeSourceNode")
+  incomingEdges FlowEdge[]          @relation("FlowEdgeTargetNode")
+  nodeRuns      FlowNodeRun[]
+
+  @@unique([id, flowId])
+  @@index([flowId])
+  @@index([flowId, sortOrder])
+  @@index([flowId, type])
+  @@map("flow_nodes")
+}
+
+model FlowEdge {
+  id                  String   @id @default(uuid()) @db.Uuid
+  flowId              String   @map("flow_id") @db.Uuid
+  sourceNodeId        String   @map("source_node_id") @db.Uuid
+  targetNodeId        String   @map("target_node_id") @db.Uuid
+  label               String?
+  sourceHandle        String?  @map("source_handle")
+  targetHandle        String?  @map("target_handle")
+  conditionExpression String?  @map("condition_expression")
+  sortOrder           Int      @default(0) @map("sort_order")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+  flow                Flow     @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  sourceNode          FlowNode @relation("FlowEdgeSourceNode", fields: [sourceNodeId, flowId], references: [id, flowId], onDelete: Cascade)
+  targetNode          FlowNode @relation("FlowEdgeTargetNode", fields: [targetNodeId, flowId], references: [id, flowId], onDelete: Cascade)
+
+  @@unique([flowId, sourceNodeId, targetNodeId, sourceHandle, targetHandle])
+  @@index([flowId])
+  @@index([sourceNodeId])
+  @@index([targetNodeId])
+  @@index([flowId, sortOrder])
+  @@map("flow_edges")
+}
+
+model FlowNodeApiRequest {
+  id              String      @id @default(uuid()) @db.Uuid
+  nodeId          String      @unique @map("node_id") @db.Uuid
+  requestId       String?     @map("request_id") @db.Uuid
+  method          HttpMethod  @default(GET)
+  uri             String
+  timeoutMs       Int         @default(30000) @map("timeout_ms")
+  continueOnError Boolean     @default(false) @map("continue_on_error")
+  node            FlowNode    @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  request         ApiRequest? @relation(fields: [requestId], references: [id], onDelete: SetNull)
+
+  @@index([requestId])
+  @@map("flow_node_api_requests")
+}
+
+model FlowNodeCondition {
+  id         String   @id @default(uuid()) @db.Uuid
+  nodeId     String   @unique @map("node_id") @db.Uuid
+  expression String
+  node       FlowNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  @@map("flow_node_conditions")
+}
+
+model FlowNodeLoop {
+  id              String   @id @default(uuid()) @db.Uuid
+  nodeId          String   @unique @map("node_id") @db.Uuid
+  itemsExpression String   @map("items_expression")
+  itemAlias       String   @default("item") @map("item_alias")
+  maxIterations   Int?     @map("max_iterations")
+  node            FlowNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  @@map("flow_node_loops")
+}
+
+model FlowNodeTransform {
+  id         String   @id @default(uuid()) @db.Uuid
+  nodeId     String   @unique @map("node_id") @db.Uuid
+  expression String
+  node       FlowNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  @@map("flow_node_transforms")
+}
+
+model FlowNodeDelay {
+  id         String   @id @default(uuid()) @db.Uuid
+  nodeId     String   @unique @map("node_id") @db.Uuid
+  durationMs Int      @map("duration_ms")
+  node       FlowNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  @@map("flow_node_delays")
+}
+
+model FlowNodeScript {
+  id       String   @id @default(uuid()) @db.Uuid
+  nodeId   String   @unique @map("node_id") @db.Uuid
+  language String   @default("javascript")
+  source   String
+  node     FlowNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  @@map("flow_node_scripts")
+}
+
+model FlowVariable {
+  id        String       @id @default(uuid()) @db.Uuid
+  flowId    String       @map("flow_id") @db.Uuid
+  key       String
+  value     String?
+  type      VariableType @default(DEFAULT)
+  enabled   Boolean      @default(true)
+  sortOrder Int          @default(0) @map("sort_order")
+  flow      Flow         @relation(fields: [flowId], references: [id], onDelete: Cascade)
+
+  @@unique([flowId, key])
+  @@index([flowId])
+  @@index([flowId, sortOrder])
+  @@map("flow_variables")
+}
+
+model FlowRun {
+  id            String        @id @default(uuid()) @db.Uuid
+  flowId        String        @map("flow_id") @db.Uuid
+  workspaceId   String        @map("workspace_id") @db.Uuid
+  userId        String?       @map("user_id") @db.Uuid
+  environmentId String?       @map("environment_id") @db.Uuid
+  status        FlowRunStatus @default(PENDING)
+  startedAt     DateTime?     @map("started_at")
+  completedAt   DateTime?     @map("completed_at")
+  durationMs    Int?          @map("duration_ms")
+  errorMessage  String?       @map("error_message")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  flow          Flow          @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  workspace     Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user          User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  environment   Environment?  @relation(fields: [environmentId], references: [id], onDelete: SetNull)
+  nodeRuns      FlowNodeRun[]
+
+  @@index([flowId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([environmentId])
+  @@index([createdAt])
+  @@map("flow_runs")
+}
+
+model FlowNodeRun {
+  id           String            @id @default(uuid()) @db.Uuid
+  flowRunId    String            @map("flow_run_id") @db.Uuid
+  nodeId       String?           @map("node_id") @db.Uuid
+  requestRunId String?           @map("request_run_id") @db.Uuid
+  status       FlowNodeRunStatus @default(PENDING)
+  input        String?
+  output       String?
+  errorMessage String?           @map("error_message")
+  startedAt    DateTime?         @map("started_at")
+  completedAt  DateTime?         @map("completed_at")
+  durationMs   Int?              @map("duration_ms")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  flowRun      FlowRun           @relation(fields: [flowRunId], references: [id], onDelete: Cascade)
+  node         FlowNode?         @relation(fields: [nodeId], references: [id], onDelete: SetNull)
+  requestRun   RequestRun?       @relation(fields: [requestRunId], references: [id], onDelete: SetNull)
+
+  @@index([flowRunId])
+  @@index([nodeId])
+  @@index([requestRunId])
+  @@index([createdAt])
+  @@map("flow_node_runs")
 }
 
 model RequestAuth {
@@ -283,6 +524,7 @@ model Environment {
   activeWorkspaces Workspace[]           @relation("WorkspaceActiveEnvironment")
   variables        EnvironmentVariable[]
   requestRuns      RequestRun[]
+  flowRuns         FlowRun[]
 
   @@unique([workspaceId, name])
   @@index([workspaceId])
@@ -390,6 +632,7 @@ model RequestRun {
   environment     Environment?               @relation(fields: [environmentId], references: [id], onDelete: SetNull)
   requestHeaders  RequestRunHeader[]
   responseHeaders RequestRunResponseHeader[]
+  flowNodeRuns    FlowNodeRun[]
 
   @@index([workspaceId])
   @@index([requestId])
