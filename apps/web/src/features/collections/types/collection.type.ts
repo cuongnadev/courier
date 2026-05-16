@@ -4,13 +4,13 @@ export type CollectionRequest = {
     id: string;
     name: string;
     method: RequestMethod;
-    path: string;
+    uri: string;
 };
 
-export type Collection = {
+export type CollectionResponse = {
     id: string;
     name: string;
-    color: string;
+    variant: CollectionVariant;
     requests: CollectionRequest[];
 };
 

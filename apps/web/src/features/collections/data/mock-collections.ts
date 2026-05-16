@@ -1,60 +1,60 @@
-import type { Collection } from "@/features/collections/types/collection.type";
+import type { CollectionResponse } from "@/features/collections/types/collection.type";
 
-export const collections: Collection[] = [
+export const collections: CollectionResponse[] = [
     {
         id: "auth",
         name: "User Authentication API",
-        color: "#3B82F6",
+        variant: "blue",
         requests: [
             {
                 id: "login",
                 method: "POST",
                 name: "User Login",
-                path: "/collections/auth/login",
+                uri: "/collections/auth/login",
             },
             {
                 id: "profile",
                 method: "GET",
                 name: "Get User Profile",
-                path: "/collections/auth/profile",
+                uri: "/collections/auth/profile",
             },
             {
                 id: "refresh",
                 method: "POST",
                 name: "Refresh Token",
-                path: "/collections/auth/refresh",
+                uri: "/collections/auth/refresh",
             },
         ],
     },
     {
         id: "products",
         name: "E-Commerce Products",
-        color: "#10B981",
+        variant: "green",
         requests: [
             {
                 id: "get-products",
                 method: "GET",
                 name: "Get Products",
-                path: "/collections/products",
+                uri: "/collections/products",
             },
             {
                 id: "create-product",
                 method: "POST",
                 name: "Create Product",
-                path: "/collections/products/create",
+                uri: "/collections/products/create",
             },
         ],
     },
     {
         id: "payment",
         name: "Payment Gateway",
-        color: "#F59E0B",
+        variant: "orange",
         requests: [
             {
                 id: "create-payment",
                 method: "POST",
                 name: "Create Payment",
-                path: "/collections/payment/create",
+                uri: "/collections/payment/create",
             },
         ],
     },

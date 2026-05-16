@@ -1,9 +1,13 @@
 import { useState } from "react";
 
 // Fake data for now, replace with backend query later
-import { collections } from "@/features/collections/data/mock-collections";
+// import { collections } from "@/features/collections/data/mock-collections";
 
-export function useCollectionSidebar() {
+import { useCollections } from "@/features/collections/hooks/use-collections";
+
+export function useCollectionSidebar(workspaceId?: string) {
+    const { data: collections = [], isLoading } = useCollections(workspaceId);
+
     const [openCollections, setOpenCollections] = useState<
         Record<string, boolean>
     >({
@@ -23,5 +27,6 @@ export function useCollectionSidebar() {
         collections,
         openCollections,
         toggleCollection,
+        isLoading,
     };
 }
