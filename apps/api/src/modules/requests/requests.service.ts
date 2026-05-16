@@ -4,7 +4,7 @@ import { CollectionsService } from '../collections';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { WorkspacesService } from '../workspaces';
-import {getTodayRange} from '../../common/utils/date-range.util';
+import { getTodayRange } from '../../common/utils/date-range.util';
 
 @Injectable()
 export class RequestsService {
@@ -59,7 +59,11 @@ export class RequestsService {
     });
   }
 
-  async findAllByWorkspace(workspaceId: string, userId?: string, limit?: number) {
+  async findAllByWorkspace(
+    workspaceId: string,
+    userId?: string,
+    limit?: number,
+  ) {
     await this.assertWorkspaceAccess(workspaceId, userId);
 
     return this.prisma.apiRequest.findMany({
@@ -76,7 +80,7 @@ export class RequestsService {
       take: limit,
     });
   }
-  
+
   async findOne(requestId: string, workspaceId: string, userId?: string) {
     await this.workspaceService.assertAccess(workspaceId, userId);
 

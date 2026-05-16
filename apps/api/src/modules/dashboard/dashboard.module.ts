@@ -7,12 +7,7 @@ import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
 
 @Module({
-  imports: [
-    CollectionsModule,
-    FlowsModule,
-    RequestsModule,
-    WorkspacesModule,
-  ],
+  imports: [CollectionsModule, FlowsModule, RequestsModule, WorkspacesModule],
   controllers: [DashboardController],
   providers: [DashboardService],
 })
