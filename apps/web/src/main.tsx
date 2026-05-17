@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { Toaster } from "sonner";
 
 import { AppProvider } from './app/providers/app-provider'
+import { TooltipProvider } from './components/ui/tooltip';
 import App from './app'
 
 import './styles/index.css'
@@ -11,10 +12,12 @@ import './styles/index.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AppProvider>
-      <Toaster richColors position="top-right" />
+    <TooltipProvider delayDuration={500}>
+      <AppProvider>
+        <Toaster richColors position="top-right" />
 
-      <App />
-    </AppProvider>
+        <App />
+      </AppProvider>
+    </TooltipProvider>
   </StrictMode>,
 )
