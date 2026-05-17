@@ -81,6 +81,53 @@ export class RequestsService {
     });
   }
 
+  async findRecentRunsByWorkspace(
+    workspaceId: string,
+    userId?: string,
+    limit?: number,
+  ) {
+    await this.assertWorkspaceAccess(workspaceId, userId);
+
+    const runs = await this.prisma.requestRun.findMany({
+      where: {
+        workspaceId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+      select: {
+        id: true,
+        method: true,
+        uri: true,
+        status: true,
+        statusCode: true,
+        durationMs: true,
+        createdAt: true,
+        request: {
+          select: {
+            name: true,
+            deletedAt: true,
+          },
+        },
+      },
+    });
+
+    return runs.map((run) => ({
+      id: run.id,
+      method: run.method,
+      name:
+        run.request && !run.request.deletedAt
+          ? run.request.name
+          : 'Untitled Request',
+      uri: run.uri,
+      status: run.status,
+      statusCode: run.statusCode,
+      durationMs: run.durationMs,
+      createdAt: run.createdAt.toISOString(),
+    }));
+  }
+
   async findOne(requestId: string, workspaceId: string, userId?: string) {
     await this.workspaceService.assertAccess(workspaceId, userId);
 

@@ -35,7 +35,7 @@ export class DashboardService {
       this.collectionsService.countByWorkspace(workspaceId),
       this.flowsService.countActiveByWorkspace(workspaceId),
       this.workspacesService.countTeamMembers(workspaceId),
-      this.requestsService.findAllByWorkspace(workspaceId, userId, 5),
+      this.requestsService.findRecentRunsByWorkspace(workspaceId, userId, 5),
       this.collectionsService.findAll(workspaceId, userId, 5),
       this.flowsService.findAll(workspaceId, userId, true),
     ]);
