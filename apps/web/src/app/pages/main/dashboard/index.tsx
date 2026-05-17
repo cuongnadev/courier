@@ -1,107 +1,86 @@
 import { Button } from "@/components/ui/button";
-import { ActivityIcon, FlowsIcon, FolderIcon, Logo, SendIcon, TeamIcon } from "@/components/common/icons";
+import { ActivityIcon, Logo } from "@/components/common/icons";
 
 import { DashboardStatCard } from "@/features/dashboard/components/dashboard-stat-card";
 import { RecentActivityItem } from "@/features/dashboard/components/recent-activity-item";
 import { DashboardCollectionItem } from "@/features/dashboard/components/dashboard-collection-item";
-
-import type { DashboardCollection, RecentActivity } from "@/features/dashboard/types/dashboard.type";
 import { DashboardFlowItem } from "@/features/dashboard/components/dashboard-active-flows-item";
 
-const stats = [
-  {
-    label: "Total Requests",
-    value: "1,247",
-    icon: SendIcon,
-    badge: "+12.3%",
-  },
-  {
-    label: "Collections",
-    value: "3",
-    icon: FolderIcon,
-    badge: "+2",
-  },
-  {
-    label: "Active Flows",
-    value: "2",
-    icon: FlowsIcon,
-  },
-  {
-    label: "Team Members",
-    value: "4",
-    icon: TeamIcon,
-    badge: "+1",
-  },
-];
+import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
+import { useDashboardMetrics } from "@/features/dashboard/hooks/use-dashboard-metrics";
+import { getStableVariant } from "@/features/collections/utils/get-stable-variant";
+
+import { DASHBOARD_STATS } from "@/constants/dashboard-stats";
+
+import type { DashboardCollection, DashboardFlow } from "@/features/dashboard/types/dashboard.type";
+import type { RecentActivity } from "@/features/requests/types/request.type";
 
 const recentActivities: RecentActivity[] = [
   {
     id: 1,
     method: "POST",
     name: "User Login",
-    url: "https://api.example.com/v1/auth/login",
-    time: "245ms",
+    uri: "https://api.example.com/v1/auth/login",
+    durationMs: 245,
     timestamp: "21:30:15",
-    status: "200 OK",
+    statusCode: 200,
+    status: "SUCCESS",
     success: true,
   },
   {
     id: 2,
     method: "GET",
     name: "List Product",
-    url: "https://api.shop.com/v2/products?page=1&limit=20",
-    time: "189ms",
+    uri: "https://api.shop.com/v2/products?page=1&limit=20",
+    durationMs: 189,
     timestamp: "21:25:42",
-    status: "200 OK",
+    statusCode: 200,
+    status: "SUCCESS",
     success: true,
   },
   {
     id: 3,
     method: "GET",
     name: "Get User Profile",
-    url: "https://api.example.com/v1/users/me",
-    time: "102ms",
+    uri: "https://api.example.com/v1/users/me",
+    durationMs: 102,
     timestamp: "21:20:10",
-    status: "401 Unauthorized",
+    statusCode: 401,
+    status: "FAILED",
     success: false,
   },
 ];
 
-const collections: DashboardCollection[] = [
-  {
-    id: 1,
-    name: "User Authentication API",
-    requests: 3,
-    variant: "blue",
-  },
-  {
-    id: 2,
-    name: "E-Commerce Products",
-    requests: 2,
-    variant: "green",
-  },
-  {
-    id: 3,
-    name: "Payment Gateway",
-    requests: 1,
-    variant: "orange",
-  },
-];
-
-const activeFlows = [
-  {
-    id: 1,
-    name: "User Onboarding Flow",
-    nodes: 4,
-  },
-  {
-    id: 2,
-    name: "Payment Processing",
-    nodes: 0,
-  },
-];
-
 export default function DashboardPage() {
+  const user = useAuthStore((state) => state.user);
+
+  const { data: workspaces = [] } = useWorkspaces();
+  const currentWorkspace = workspaces.find((workspace) => workspace.ownerId === user?.id);
+
+  const { data: dashboardOverview } = useDashboardMetrics(currentWorkspace?.id);
+
+  const stats = DASHBOARD_STATS.map((stat) => ({
+    ...stat,
+    value: dashboardOverview?.[stat.key]?.toLocaleString?.() ?? "0",
+    badge: '+1', // fake data 
+  }));
+
+  const collections: DashboardCollection[] =
+    dashboardOverview?.latest_collections?.map((collection: DashboardCollection) => ({
+      id: collection.id,
+      name: collection.name,
+      requestsCount: collection.requestsCount,
+      variant: getStableVariant(collection.id),
+    })) ?? [];
+
+  const activeFlows =
+    dashboardOverview?.active_flows?.map((flow: DashboardFlow) => ({
+      id: flow.id,
+      name: flow.name,
+      nodes: flow.nodes ?? 0,
+    })) ?? [];
+
   return (
     <div className="p-6 h-full w-full overflow-y-auto dashboard-scrollbar">
       <div className="space-y-6">
@@ -113,7 +92,7 @@ export default function DashboardPage() {
             </h1>
 
             <p className="mt-2 w-[80%] text-[18px] text-[#D6D3D1]">
-              You have 4 successful requests today
+              You have {dashboardOverview?.success_requests_today ?? 0} successful requests today
             </p>
 
             <div className="mt-4 flex items-center gap-2">
@@ -138,11 +117,12 @@ export default function DashboardPage() {
 
         {/* stats */}
         <section className="grid grid-cols-4 gap-4">
-          {stats.map((stat) => {
+          {stats.map((stat, index) => {
             const Icon = stat.icon;
 
             return (
               <DashboardStatCard
+                key={index}
                 label={stat.label}
                 value={stat.value}
                 badge={stat.badge}

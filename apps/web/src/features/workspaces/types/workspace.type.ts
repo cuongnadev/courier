@@ -7,6 +7,7 @@ export type WorkspaceResponse = {
 
 export type WorkspaceHeaderItem = {
   id: string;
+  ownerId: string
   name: string;
   short: string;
 };

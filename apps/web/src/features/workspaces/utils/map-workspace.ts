@@ -17,6 +17,7 @@ export function mapWorkspaceHeader(
 ): WorkspaceHeaderItem {
   return {
     id: workspace.id,
+    ownerId: workspace.ownerId,
     name: workspace.name,
     short: getWorkspaceShort(workspace.name),
   };

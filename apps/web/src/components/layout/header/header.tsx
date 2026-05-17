@@ -36,7 +36,7 @@ export function Header() {
 
     const workspaceItems = workspaces.map(mapWorkspaceHeader);
 
-    const currentWorkspace = workspaceItems[0];
+    const currentWorkspace = workspaceItems.find((workspace) => workspace.ownerId === user?.id);
 
     const { mutate: logout, isPending } = useLogout();
 
@@ -122,7 +122,7 @@ export function Header() {
                                     </span>
                                 </div>
 
-                                {workspace.id === currentWorkspace.id && (
+                                {workspace.id === currentWorkspace?.id && (
                                     <DropdownMenuShortcut>
                                         <Check className="h-4 w-4 text-neutral-500" />
                                     </DropdownMenuShortcut>
@@ -175,7 +175,7 @@ export function Header() {
                                 shadow-lg shadow-black/20
                             "
                         >
-                            New Request
+                            New Workspace
                         </TooltipContent>
                     </Tooltip>
 

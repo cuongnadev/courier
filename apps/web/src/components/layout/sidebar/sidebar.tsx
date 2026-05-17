@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 
 import { SearchInput } from "@/components/forms/search-input";
 import { Button } from "@/components/ui/button";
-import { workspaceItems, teamItems, toolItems } from "@/constants/sidebar";
+import { WORKSPACEITEMS, TOOLITEMS, TEAMITEMS } from "@/constants/sidebar";
 
 import {
     Logo,
@@ -17,11 +17,12 @@ import {
     SidebarSubItem
 } from "@/components/layout/sidebar";
 
+import type { CollectionVariant } from "@/features/collections/types/collection.type";
 
-import { useCollectionSidebar } from "@/features/collections/hooks/use-collections-sidebar";
+import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useToolCounts } from "@/features/tools/hooks/use-tool-counts";
 import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
-import type { CollectionVariant } from "@/features/collections/types/collection.type";
+import { useCollectionSidebar } from "@/features/collections/hooks/use-collections-sidebar";
 
 // Fake data for now, replace with backend response later
 const currentPlan = {
@@ -31,9 +32,10 @@ const currentPlan = {
 };
 
 export function Sidebar() {
+    const user = useAuthStore((state) => state.user);
     const { data: workspaces = [] } = useWorkspaces();
 
-    const currentWorkspace = workspaces[0];
+    const currentWorkspace = workspaces.find((workspace) => workspace.ownerId === user?.id);
 
     const {
         collections,
@@ -66,7 +68,7 @@ export function Sidebar() {
             >
                 {/* workspace */}
                 <SidebarSection title="WORKSPACE">
-                    {workspaceItems.map((item) => {
+                    {WORKSPACEITEMS.map((item) => {
                         const Icon = item.icon;
 
                         return (
@@ -138,7 +140,7 @@ export function Sidebar() {
 
                 {/* tools */}
                 <SidebarSection title="TOOLS">
-                    {toolItems.map((item) => {
+                    {TOOLITEMS.map((item) => {
                         const Icon = item.icon;
 
                         return (
@@ -155,7 +157,7 @@ export function Sidebar() {
 
                 {/* team */}
                 <SidebarSection title="TEAM">
-                    {teamItems.map((item) => {
+                    {TEAMITEMS.map((item) => {
                         const Icon = item.icon;
 
                         return (

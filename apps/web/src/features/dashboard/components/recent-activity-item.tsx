@@ -1,8 +1,7 @@
 import type { RequestMethod } from "@/types/api";
 
 import { ActivityIcon, CheckCircleIcon, ClockIcon } from "@/components/common/icons";
-
-import type { RecentActivity } from "@/features/dashboard/types/dashboard.type";
+import type { RecentActivity } from "@/features/requests/types/request.type";
 
 type RecentActivityItemProps = {
   activity: RecentActivity
@@ -59,13 +58,13 @@ export function RecentActivityItem({ activity }: RecentActivityItemProps) {
         </div>
 
         <p className="mt-1 truncate text-xs font-normal text-neutral-500">
-          {activity.url}
+          {activity.uri}
         </p>
 
         <div className="mt-1 flex items-center gap-2 text-xs font-normal text-[#A1A1A1]">
           <div className="flex items-center gap-1">
             <ClockIcon />
-            <span>{activity.time}</span>
+            <span>{activity.durationMs}ms</span>
           </div>
           <span>{activity.timestamp}</span>
           <span
@@ -75,7 +74,7 @@ export function RecentActivityItem({ activity }: RecentActivityItemProps) {
                 : "font-medium text-[#E7000B]"
             }
           >
-            {activity.status}
+            {activity.statusCode}
           </span>
         </div>
       </div>

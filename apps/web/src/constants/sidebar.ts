@@ -15,7 +15,7 @@ import {
 import type { StaticSidebarItem } from "@/types/common";
 import type { ToolSidebarItem } from "@/features/tools/types/tool.type";
 
-export const workspaceItems: StaticSidebarItem[] = [
+export const WORKSPACEITEMS: StaticSidebarItem[] = [
     {
         to: "/",
         label: "Dashboard",
@@ -33,7 +33,7 @@ export const workspaceItems: StaticSidebarItem[] = [
     },
 ];
 
-export const toolItems: ToolSidebarItem[] = [
+export const TOOLITEMS: ToolSidebarItem[] = [
     {
         to: "/flows",
         label: "Flows",
@@ -69,7 +69,7 @@ export const toolItems: ToolSidebarItem[] = [
     },
 ];
 
-export const teamItems: StaticSidebarItem[] = [
+export const TEAMITEMS: StaticSidebarItem[] = [
     {
         to: "/team",
         label: "Team & Comments",
