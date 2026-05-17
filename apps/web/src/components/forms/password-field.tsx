@@ -23,6 +23,7 @@ export function PasswordField({ className, ...props }: Props) {
 
             <button
                 type="button"
+                tabIndex={-1}
                 onClick={() =>
                     setShowPassword((prev) => !prev)
                 }

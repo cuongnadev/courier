@@ -53,7 +53,15 @@ export default function Login() {
                 </p>
             </div>
 
-            <form className="mt-8.5" onSubmit={onSubmit}>
+            <form
+                className="mt-8.5"
+                onSubmit={onSubmit}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        void onSubmit(e);
+                    }
+                }}
+            >
                 <FieldGroup className="gap-5">
                     {/* email */}
                     <Field className='gap-2'>
@@ -143,6 +151,7 @@ export default function Login() {
 
                         <Link
                             to="/forgot-password"
+                            tabIndex={-1}
                             className="
                                 text-sm
                                 text-[#FE9A00]
@@ -153,7 +162,7 @@ export default function Login() {
                             Forgot password?
                         </Link>
                     </div>
-                    
+
                     {/* submit */}
                     <Button
                         type="submit"

@@ -71,7 +71,15 @@ export default function Register() {
                 </p>
             </div>
 
-            <form className="mt-8.5" onSubmit={onSubmit}>
+            <form
+                className="mt-8.5"
+                onSubmit={onSubmit}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        void onSubmit(e);
+                    }
+                }}
+            >
                 <FieldGroup className="gap-5">
                     {/* full name */}
                     <Field className='gap-2'>
@@ -240,6 +248,7 @@ export default function Register() {
 
                                 <Link
                                     to="/terms"
+                                    tabIndex={-1}
                                     className="
                                         inline
                                         text-[#FE9A00]
@@ -254,6 +263,7 @@ export default function Register() {
 
                                 <Link
                                     to="/privacy"
+                                    tabIndex={-1}
                                     className="
                                         inline
                                         text-[#FE9A00]

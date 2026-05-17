@@ -1,15 +1,6 @@
 import { create } from "zustand";
 
-import type { User } from "@/features/auth/types/auth.type";
-
-type AuthStore = {
-  user: User | null;
-  accessToken: string | null;
-  isAuthenticated: boolean;
-
-  setAuth: (user: User, accessToken: string) => void;
-  clearAuth: () => void;
-};
+import type { AuthStore } from "@/features/auth/types/auth.type";
 
 export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
