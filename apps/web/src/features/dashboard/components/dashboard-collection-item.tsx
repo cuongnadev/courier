@@ -71,7 +71,7 @@ export function DashboardCollectionItem({
         </p>
 
         <p className="text-xs font-normal text-neutral-500">
-          {collection.requests} requests
+          {collection.requestsCount} requests
         </p>
       </div>
     </div>

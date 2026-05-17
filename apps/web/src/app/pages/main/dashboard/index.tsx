@@ -9,48 +9,13 @@ import { DashboardFlowItem } from "@/features/dashboard/components/dashboard-act
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 import { useDashboardMetrics } from "@/features/dashboard/hooks/use-dashboard-metrics";
+
 import { getStableVariant } from "@/features/collections/utils/get-stable-variant";
+import { mapRecentActivityResponseToRecentActivity } from "@/features/dashboard/utils/recent-activity.mapper";
 
 import { DASHBOARD_STATS } from "@/constants/dashboard-stats";
 
 import type { DashboardCollection, DashboardFlow } from "@/features/dashboard/types/dashboard.type";
-import type { RecentActivity } from "@/features/requests/types/request.type";
-
-const recentActivities: RecentActivity[] = [
-  {
-    id: 1,
-    method: "POST",
-    name: "User Login",
-    uri: "https://api.example.com/v1/auth/login",
-    durationMs: 245,
-    timestamp: "21:30:15",
-    statusCode: 200,
-    status: "SUCCESS",
-    success: true,
-  },
-  {
-    id: 2,
-    method: "GET",
-    name: "List Product",
-    uri: "https://api.shop.com/v2/products?page=1&limit=20",
-    durationMs: 189,
-    timestamp: "21:25:42",
-    statusCode: 200,
-    status: "SUCCESS",
-    success: true,
-  },
-  {
-    id: 3,
-    method: "GET",
-    name: "Get User Profile",
-    uri: "https://api.example.com/v1/users/me",
-    durationMs: 102,
-    timestamp: "21:20:10",
-    statusCode: 401,
-    status: "FAILED",
-    success: false,
-  },
-];
 
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user);
@@ -65,6 +30,11 @@ export default function DashboardPage() {
     value: dashboardOverview?.[stat.key]?.toLocaleString?.() ?? "0",
     badge: '+1', // fake data 
   }));
+
+  const recentActivities =
+    dashboardOverview?.recent_requests?.map(
+      mapRecentActivityResponseToRecentActivity,
+    ) ?? [];
 
   const collections: DashboardCollection[] =
     dashboardOverview?.latest_collections?.map((collection: DashboardCollection) => ({
