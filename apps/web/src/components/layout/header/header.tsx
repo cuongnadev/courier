@@ -428,22 +428,21 @@ export function Header() {
                                 onClick={() => logout()}
                                 className="
                                     cursor-pointer rounded-lg px-3 py-2
-                                    text-neutral-800 outline-none
+                                    text-red-600 hover:bg-red-50 outline-none
 
-                                    hover:bg-[#F5F5F5]
-                                    hover:text-neutral-900
+                                    hover:text-red-600
 
-                                    focus:bg-[#F5F5F5]
-                                    focus:text-neutral-900
+                                    focus:bg-red-50
+                                    focus:text-red-600
 
-                                    data-[highlighted]:bg-[#F5F5F5]
-                                    data-[highlighted]:text-neutral-900
+                                    data-[highlighted]:bg-red-50
+                                    data-[highlighted]:text-red-600
                                 "
                             >
                                 {isPending ? 'Logging out...' : 'Logout'}
 
                                 <DropdownMenuShortcut>
-                                    <LogOut className="h-4 w-4 text-neutral-500" />
+                                    <LogOut className="h-4 w-4 text-red-600" />
                                 </DropdownMenuShortcut>
                             </DropdownMenuItem>
                         </DropdownMenuContent>

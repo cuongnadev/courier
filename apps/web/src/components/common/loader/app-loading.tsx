@@ -49,7 +49,17 @@ export function AppLoading({
     }, [progress, onFinish]);
 
     return (
-        <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-[#181818]">
+        <div
+            className="
+            relative flex h-screen w-screen 
+            items-center justify-center 
+            overflow-hidden 
+            bg-[#181818] 
+            pointer-events-none 
+            select-none 
+            cursor-none
+        "
+        >
             <div className="relative z-10 w-[420px]">
                 <div className="relative h-28">
                     {/* moving marker */}
