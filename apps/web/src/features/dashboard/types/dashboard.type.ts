@@ -1,12 +1,12 @@
+import { COLLECTION_COLORS } from "@/constants/collection";
 import type { RecentActivityResponse } from "@/features/requests/types/request.type";
-import type { CollectionVariant } from "@/features/collections/types/collection.type";
 
 
 export type DashboardCollection = {
   id: string | number;
   name: string;
+  color: typeof COLLECTION_COLORS[number];
   requestsCount: number;
-  variant: CollectionVariant;
 };
 
 export type DashboardFlow = {

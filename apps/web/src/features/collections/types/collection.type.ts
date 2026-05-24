@@ -1,23 +1,11 @@
 import type { RequestMethod } from "@/types/api";
+import type { COLLECTION_COLORS } from "@/constants/collection";
 
 export type CollectionRequest = {
     id: string;
     name: string;
+    color: typeof COLLECTION_COLORS[number];
     method: RequestMethod;
     uri: string;
-};
-
-export type CollectionResponse = {
-    id: string;
-    name: string;
-    variant: CollectionVariant;
     requests: CollectionRequest[];
 };
-
-export type CollectionVariant =
-    | "blue"
-    | "green"
-    | "orange"
-    | "purple"
-    | "red"
-    | "pink";

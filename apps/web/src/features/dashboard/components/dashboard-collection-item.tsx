@@ -1,5 +1,5 @@
 import { FolderIcon } from "@/components/common/icons";
-import type { CollectionVariant } from "@/features/collections/types/collection.type";
+import { COLLECTION_COLORS } from "@/constants/collection";
 
 import type { DashboardCollection } from "@/features/dashboard/types/dashboard.type";
 
@@ -7,49 +7,28 @@ type DashboardCollectionItemProps = {
   collection: DashboardCollection;
 };
 
-const collectionVariantStyles: Record<
-  CollectionVariant,
-  {
-    backgroundColor: string;
-    iconColor: string;
-  }
+const collectionBackgroundStyles: Record<
+  (typeof COLLECTION_COLORS)[number],
+  string
 > = {
-  blue: {
-    backgroundColor: "bg-[#3B82F615]",
-    iconColor: "#3B82F6",
-  },
+  "#3B82F6": "bg-[#3B82F615]",
 
-  green: {
-    backgroundColor: "bg-[#10B98115]",
-    iconColor: "#10B981",
-  },
+  "#10B981": "bg-[#10B98115]",
 
-  orange: {
-    backgroundColor: "bg-[#F59E0B15]",
-    iconColor: "#F59E0B",
-  },
-  
-  purple: {
-    backgroundColor: "bg-[#8B5CF615]",
-    iconColor: "#8B5CF6",
-  },
+  "#F59E0B": "bg-[#F59E0B15]",
 
-  red: {
-    backgroundColor: "bg-[#EF444415]",
-    iconColor: "#EF4444",
-  },
+  "#8B5CF6": "bg-[#8B5CF615]",
 
-  pink: {
-    backgroundColor: "bg-[#EC489915]",
-    iconColor: "#EC4899",
-  },
+  "#EF4444": "bg-[#EF444415]",
+
+  "#EC4899": "bg-[#EC489915]",
 };
 
 export function DashboardCollectionItem({
   collection,
 }: DashboardCollectionItemProps) {
-  const styles =
-    collectionVariantStyles[collection.variant];
+  const backgroundColor =
+    collectionBackgroundStyles[collection.color];
 
   return (
     <div className="flex items-center gap-3 p-2 hover:bg-neutral-50 rounded-[12px]">
@@ -57,11 +36,11 @@ export function DashboardCollectionItem({
         className={`
             flex h-8 w-8 items-center justify-center
             rounded-[12px]
-            ${styles.backgroundColor}
+            ${backgroundColor}
         `}
       >
         <FolderIcon
-          iconColor={styles.iconColor}
+          iconColor={collection.color}
         />
       </div>
 

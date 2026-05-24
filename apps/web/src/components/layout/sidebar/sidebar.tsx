@@ -17,8 +17,6 @@ import {
     SidebarSubItem
 } from "@/components/layout/sidebar";
 
-import type { CollectionVariant } from "@/features/collections/types/collection.type";
-
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useToolCounts } from "@/features/tools/hooks/use-tool-counts";
 import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
@@ -84,58 +82,25 @@ export function Sidebar() {
 
                 {/* collections */}
                 <SidebarSection title="COLLECTIONS" action={<Plus className="size-4 text-[#8A8A8A]" />}>
-                    {collections.map((collection) => {
-                        const collectionVariantStyles: Record<
-                            CollectionVariant,
-                            {
-                                iconColor: string;
-                            }
-                        > = {
-                            blue: {
-                                iconColor: "#3B82F6",
-                            },
-
-                            green: {
-                                iconColor: "#10B981",
-                            },
-
-                            orange: {
-                                iconColor: "#F59E0B",
-                            },
-
-                            purple: {
-                                iconColor: "#8B5CF6",
-                            },
-
-                            red: {
-                                iconColor: "#EF4444",
-                            },
-
-                            pink: {
-                                iconColor: "#EC4899",
-                            },
-                        };
-
-                        return (
-                            <SidebarCollectionItem
-                                key={collection.id}
-                                icon={<FolderIcon iconColor={collectionVariantStyles[collection.variant].iconColor} />}
-                                label={collection.name}
-                                count={collection.requests.length}
-                                open={Boolean(openCollections[collection.id])}
-                                onToggle={() => toggleCollection(collection.id)}
-                            >
-                                {collection.requests.map((request) => (
-                                    <SidebarSubItem
-                                        key={request.id}
-                                        to={request.uri}
-                                        method={request.method}
-                                        label={request.name}
-                                    />
-                                ))}
-                            </SidebarCollectionItem>
-                        );
-                    })}
+                    {collections.map((collection) => (
+                        <SidebarCollectionItem
+                            key={collection.id}
+                            icon={<FolderIcon iconColor={collection.color} />}
+                            label={collection.name}
+                            count={collection.requests.length}
+                            open={Boolean(openCollections[collection.id])}
+                            onToggle={() => toggleCollection(collection.id)}
+                        >
+                            {collection.requests.map((request) => (
+                                <SidebarSubItem
+                                    key={request.id}
+                                    to={request.uri}
+                                    method={request.method}
+                                    label={request.name}
+                                />
+                            ))}
+                        </SidebarCollectionItem>
+                    ))}
                 </SidebarSection>
 
                 {/* tools */}
