@@ -42,6 +42,13 @@ export const dashboardRoute = createRoute({
   component: lazy(() => import('@/app/pages/main/dashboard')),
 });
 
+export const collectionsRoute = createRoute({
+  getParentRoute: () => mainLayoutRoute,
+  path: '/collections',
+
+  component: lazy(() => import('@/app/pages/main/collections')),
+});
+
 export const loginRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
   path: '/login',
@@ -56,5 +63,5 @@ export const registerRoute = createRoute({
 
 export const routeTree = RootRoute.addChildren([
   authLayoutRoute.addChildren([loginRoute, registerRoute]),
-  mainLayoutRoute.addChildren([dashboardRoute]),
+  mainLayoutRoute.addChildren([dashboardRoute, collectionsRoute]),
 ]);

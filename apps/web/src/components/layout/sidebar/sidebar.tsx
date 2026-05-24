@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
 
 import { SearchInput } from "@/components/forms/search-input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { WORKSPACEITEMS, TOOLITEMS, TEAMITEMS } from "@/constants/sidebar";
 import {
     Logo,
     FolderIcon,
+    PlusIcon,
 } from "@/components/common/icons";
 
 import {
@@ -81,7 +81,7 @@ export function Sidebar() {
                 </SidebarSection>
 
                 {/* collections */}
-                <SidebarSection title="COLLECTIONS" action={<Plus className="size-4 text-[#8A8A8A]" />}>
+                <SidebarSection title="COLLECTIONS" action={<PlusIcon iconColor="#8A8A8A" />}>
                     {collections.map((collection) => (
                         <SidebarCollectionItem
                             key={collection.id}

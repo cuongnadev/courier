@@ -1,13 +1,5 @@
-import { COLLECTION_COLORS } from "@/constants/collection";
+import type { CollectionRequest } from "@/features/collections/types/collection.type";
 import type { RecentActivityResponse } from "@/features/requests/types/request.type";
-
-
-export type DashboardCollection = {
-  id: string | number;
-  name: string;
-  color: typeof COLLECTION_COLORS[number];
-  requestsCount: number;
-};
 
 export type DashboardFlow = {
   id: string | number;
@@ -24,7 +16,7 @@ export interface DashboardMetrics {
 
   recent_requests: RecentActivityResponse[];
 
-  latest_collections: DashboardCollection[];
+  latest_collections: CollectionRequest[];
 
   active_flows: DashboardFlow[];
 }

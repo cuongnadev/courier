@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 type SidebarSectionProps = {
   title: string;
   action?: React.ReactNode;
@@ -16,7 +18,12 @@ export function SidebarSection({
           {title}
         </h2>
 
-        {action}
+        <Button
+          className="p-1 w-5.5 h-5.5 rounded-[4px] bg-transparent
+            hover:bg-neutral-100"
+        >
+          {action}
+        </Button>
       </div>
 
       <nav className="space-y-1">
