@@ -1,11 +1,24 @@
-import type { CollectionRequest } from "@/features/collections/types/collection.type";
-import type { RecentActivityResponse } from "@/features/requests/types/request.type";
+import type { CollectionResponse } from "@/features/collections/types/collection.type";
+import type { RecentActivityResponse } from "@/features/requests/types/request-run.type";
 
 export type DashboardFlow = {
   id: string | number;
   name: string;
   nodes: number;
 };
+
+export type DashboardCollection = Omit<
+  CollectionResponse,
+  "method" |
+  "uri" |
+  "requests" |
+  "workspaceId" |
+  "description" |
+  "createdAt" |
+  "updatedAt" |
+  "deletedAt" |
+  "sortOrder"
+>;
 
 export interface DashboardMetrics {
   success_requests_today: number;
@@ -16,7 +29,7 @@ export interface DashboardMetrics {
 
   recent_requests: RecentActivityResponse[];
 
-  latest_collections: CollectionRequest[];
+  latest_collections: CollectionResponse[];
 
   active_flows: DashboardFlow[];
 }

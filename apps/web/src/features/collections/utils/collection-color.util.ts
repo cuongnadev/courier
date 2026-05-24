@@ -1,7 +1,7 @@
-import { COLLECTION_COLORS } from "@/constants/collection";
+import type { CollectionColor } from "@/features/collections/types/collection.type";
 
 export const collectionBackgroundStyles: Record<
-  (typeof COLLECTION_COLORS)[number],
+  CollectionColor,
   string
 > = {
   "#3B82F6": "bg-[#3B82F615]",

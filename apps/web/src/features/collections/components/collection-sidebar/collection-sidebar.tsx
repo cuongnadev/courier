@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/forms/search-input";
 import { UploadIcon, PlusIcon } from "@/components/common/icons";
@@ -10,7 +8,15 @@ import { useCollections } from "@/features/collections/hooks/use-collections";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 
-export default function CollectionSidebar() {
+type CollectionSidebarProps = {
+  selectedCollectionId?: string | null;
+  onSelectCollection?: (collectionId: string) => void;
+};
+
+export default function CollectionSidebar({
+  selectedCollectionId,
+  onSelectCollection,
+}: CollectionSidebarProps) {
   const user = useAuthStore((state) => state.user);
   const { data: workspaces = [] } = useWorkspaces();
 
@@ -18,13 +24,8 @@ export default function CollectionSidebar() {
 
   const { data: collections = [], isLoading } = useCollections(currentWorkspace?.id);
 
-  const [selectedCollectionId, setSelectedCollectionId] =
-    useState<string | null>(null);
-
   const activeCollectionId =
-    selectedCollectionId ??
-    collections[0]?.id ??
-    "";
+    selectedCollectionId ?? collections[0]?.id ?? "";
 
   return (
     <aside className="w-[320px] bg-white border-r-[1.25px] border-r-[#E5E5E5]">
@@ -33,7 +34,7 @@ export default function CollectionSidebar() {
           <h1 className="text-[20px] font-semibold text-[#171717]">Collections</h1>
 
           <div className="flex items-center gap-1">
-            <TooltipCustom 
+            <TooltipCustom
               label="Import"
               side="bottom"
               sideOffset={8}
@@ -42,8 +43,8 @@ export default function CollectionSidebar() {
                 <UploadIcon iconColor="#525252" />
               </Button>
             </TooltipCustom>
-            
-            <TooltipCustom 
+
+            <TooltipCustom
               label="New Collection"
               side="bottom"
               sideOffset={8}
@@ -68,7 +69,7 @@ export default function CollectionSidebar() {
           <CollectionSidebarList
             collections={collections}
             activeCollectionId={activeCollectionId}
-            onSelectCollection={setSelectedCollectionId}
+            onSelectCollection={onSelectCollection}
           />
         )}
       </div>

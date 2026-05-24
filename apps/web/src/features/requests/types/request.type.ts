@@ -1,30 +1,63 @@
 import type { RequestMethod } from "@/types/api";
 
-export type RequestRunStatus =
-  | "PENDING"
-  | "SUCCESS"
-  | "FAILED"
-  | "CANCELED";
+export type RequestBodyType =
+  | "NONE"
+  | "RAW"
+  | "FORM_DATA"
+  | "X_WWW_FORM_URLENCODED"
+  | "GRAPHQL";
 
-export type RecentActivityResponse = {
+export type RawBodyLanguage =
+  | "JSON"
+  | "TEXT"
+  | "XML"
+  | "HTML"
+  | "JAVASCRIPT";
+
+export type ApiRequestResponse = {
   id: string;
-  method: RequestMethod;
+  collectionId: string;
+
   name: string;
+  method: RequestMethod;
   uri: string;
-  status: RequestRunStatus;
-  statusCode: number | null;
-  durationMs: number | null;
+
+  bodyType: RequestBodyType;
+  rawBodyLanguage: RawBodyLanguage;
+  rawBody: string | null;
+
+  graphqlQuery: string | null;
+  graphqlVariables: string | null;
+
+  description: string | null;
+
+  sortOrder: number;
+
   createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+
+  headersCount?: number;
+  queryParamsCount?: number;
+  pathParamsCount?: number;
+  bodyParamsCount?: number;
+  cookiesCount?: number;
 };
 
-export type RecentActivity = {
-  id: string | number;
-  method: RequestMethod;
+export type ApiRequestListItem = {
+  id: string;
+  collectionId: string;
+
   name: string;
+  method: RequestMethod;
   uri: string;
-  durationMs: number | null;
-  timestamp: string;
-  statusCode: number | null;
-  status: RequestRunStatus;
-  success: boolean;
+
+  description: string | null;
+
+  bodyType: RequestBodyType;
+
+  headersCount: number;
+  hasBody: boolean;
+
+  updatedAt: string;
 };

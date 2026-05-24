@@ -1,10 +1,11 @@
-import type { RecentActivity, RecentActivityResponse } from "@/features/requests/types/request.type";
+import type { RecentActivity, RecentActivityResponse } from "@/features/requests/types/request-run.type";
 
 export function mapRecentActivityResponseToRecentActivity(
   run: RecentActivityResponse,
 ): RecentActivity {
   return {
     id: run.id,
+    requestId: run.requestId,
     method: run.method,
     name: run.name,
     uri: run.uri,
