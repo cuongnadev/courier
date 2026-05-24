@@ -174,15 +174,22 @@ model Collection {
   workspaceId String               @map("workspace_id") @db.Uuid
   name        String
   description String?
+
+  color       String               @default("#F59E0B")
+
   sortOrder   Int                  @default(0) @map("sort_order")
+
   createdAt   DateTime             @default(now()) @map("created_at")
   updatedAt   DateTime             @updatedAt @map("updated_at")
   deletedAt   DateTime?            @map("deleted_at")
+
   workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
   requests    ApiRequest[]
   variables   CollectionVariable[]
 
   @@unique([workspaceId, name])
+  
   @@index([workspaceId])
   @@index([workspaceId, sortOrder])
   @@map("collections")
