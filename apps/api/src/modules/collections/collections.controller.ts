@@ -51,11 +51,10 @@ export class CollectionsController {
     @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
     @Req() request: AuthenticatedRequest,
   ) {
-    await this.collectionsService.assertWorkspaceAccess(
+    const count = await this.collectionsService.countByWorkspace(
       workspaceId,
       request.user.sub,
     );
-    const count = await this.collectionsService.countByWorkspace(workspaceId);
 
     return { count };
   }

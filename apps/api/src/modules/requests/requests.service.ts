@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { CollectionsService } from '../collections';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { WorkspacesService } from '../workspaces';
 import { getTodayRange } from '../../common/utils/date-range.util';
+import { AppException } from '@/common/exceptions/app.exceptions';
+import {
+  HttpMethod,
+  RawBodyLanguage,
+  RequestBodyType,
+} from '@/generated/prisma/enums';
 
 @Injectable()
 export class RequestsService {
@@ -23,7 +29,7 @@ export class RequestsService {
     await this.workspaceService.assertAccess(workspaceId, userId);
     await this.collectionsService.assertInWorkspace(collectionId, workspaceId);
 
-    return this.prisma.apiRequest.create({
+    const request = await this.prisma.apiRequest.create({
       data: {
         collectionId,
         name: dto.name,
@@ -38,6 +44,8 @@ export class RequestsService {
         sortOrder: dto.sortOrder,
       },
     });
+
+    return this.findOne(request.id, workspaceId, userId);
   }
 
   async findAllByCollection(
@@ -48,7 +56,7 @@ export class RequestsService {
     await this.workspaceService.assertAccess(workspaceId, userId);
     await this.collectionsService.assertInWorkspace(collectionId, workspaceId);
 
-    return this.prisma.apiRequest.findMany({
+    const requests = await this.prisma.apiRequest.findMany({
       where: {
         collectionId,
         deletedAt: null,
@@ -56,7 +64,16 @@ export class RequestsService {
       orderBy: {
         sortOrder: 'asc',
       },
+      include: {
+        _count: {
+          select: {
+            headers: true,
+          },
+        },
+      },
     });
+
+    return requests.map((request) => this.toRequestListItem(request));
   }
 
   async findAllByWorkspace(
@@ -66,7 +83,7 @@ export class RequestsService {
   ) {
     await this.assertWorkspaceAccess(workspaceId, userId);
 
-    return this.prisma.apiRequest.findMany({
+    const requests = await this.prisma.apiRequest.findMany({
       where: {
         deletedAt: null,
         collection: {
@@ -78,7 +95,16 @@ export class RequestsService {
         sortOrder: 'asc',
       },
       take: limit,
+      include: {
+        _count: {
+          select: {
+            headers: true,
+          },
+        },
+      },
     });
+
+    return requests.map((request) => this.toRequestListItem(request));
   }
 
   async findRecentRunsByWorkspace(
@@ -98,6 +124,7 @@ export class RequestsService {
       take: limit,
       select: {
         id: true,
+        requestId: true,
         method: true,
         uri: true,
         status: true,
@@ -116,6 +143,7 @@ export class RequestsService {
     return runs.map((run) => ({
       id: run.id,
       method: run.method,
+      requestId: run.requestId,
       name:
         run.request && !run.request.deletedAt
           ? run.request.name
@@ -140,13 +168,90 @@ export class RequestsService {
           deletedAt: null,
         },
       },
+
+      include: {
+        collection: {
+          select: {
+            id: true,
+            name: true,
+            workspaceId: true,
+          },
+        },
+
+        auth: true,
+        headers: {
+          orderBy: {
+            sortOrder: 'asc',
+          },
+        },
+
+        queryParams: {
+          orderBy: {
+            sortOrder: 'asc',
+          },
+        },
+
+        pathParams: {
+          orderBy: {
+            sortOrder: 'asc',
+          },
+        },
+
+        bodyParams: {
+          orderBy: {
+            sortOrder: 'asc',
+          },
+        },
+
+        cookies: {
+          orderBy: {
+            sortOrder: 'asc',
+          },
+        },
+
+        examples: {
+          orderBy: {
+            sortOrder: 'asc',
+          },
+          include: {
+            headers: true,
+          },
+        },
+        _count: {
+          select: {
+            headers: true,
+            queryParams: true,
+            pathParams: true,
+            bodyParams: true,
+            cookies: true,
+            examples: true,
+          },
+        },
+      },
     });
 
     if (!request) {
-      throw new NotFoundException('Request not found');
+      throw new AppException({
+        code: 'NOT_FOUND',
+        message: 'Request not found.',
+        status: 404,
+        hint: 'The requested API request does not exist.',
+        docs: '',
+      });
     }
 
-    return request;
+    const { _count, ...data } = request;
+
+    return {
+      ...data,
+      headersCount: _count.headers,
+      queryParamsCount: _count.queryParams,
+      pathParamsCount: _count.pathParams,
+      bodyParamsCount: _count.bodyParams,
+      cookiesCount: _count.cookies,
+      examplesCount: _count.examples,
+      hasBody: data.bodyType !== 'NONE',
+    };
   }
 
   async update(
@@ -157,12 +262,14 @@ export class RequestsService {
   ) {
     await this.findOne(requestId, workspaceId, userId);
 
-    return this.prisma.apiRequest.update({
+    await this.prisma.apiRequest.update({
       where: {
         id: requestId,
       },
       data: dto,
     });
+
+    return this.findOne(requestId, workspaceId, userId);
   }
 
   async remove(requestId: string, workspaceId: string, userId?: string) {
@@ -218,5 +325,37 @@ export class RequestsService {
     userId?: string,
   ): Promise<void> {
     await this.workspaceService.assertAccess(workspaceId, userId);
+  }
+
+  private toRequestListItem(request: {
+    id: string;
+    collectionId: string;
+    name: string;
+    method: HttpMethod;
+    uri: string;
+    bodyType: RequestBodyType;
+    rawBodyLanguage: RawBodyLanguage;
+    rawBody: string | null;
+    graphqlQuery: string | null;
+    graphqlVariables: string | null;
+    description: string | null;
+    sortOrder: number;
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt: Date | null;
+    _count: {
+      headers: number;
+    };
+  }) {
+    const { _count, ...data } = request;
+
+    return {
+      ...data,
+      createdAt: data.createdAt.toISOString(),
+      updatedAt: data.updatedAt.toISOString(),
+      deletedAt: data.deletedAt?.toISOString() ?? null,
+      headersCount: _count.headers,
+      hasBody: data.bodyType !== 'NONE',
+    };
   }
 }

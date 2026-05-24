@@ -5,12 +5,15 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
+
+import { AppException } from './common/exceptions/app.exceptions';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
-import helmet from 'helmet';
+
 import { AppModule } from './app.module';
 import { appConfig } from './config';
-import cookieParser from 'cookie-parser'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,6 +33,19 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      exceptionFactory: (errors) => {
+        const fields = errors.reduce<Record<string, string[]>>((acc, error) => {
+          acc[error.property] = Object.values(error.constraints ?? {});
+          return acc;
+        }, {});
+
+        return new AppException({
+          code: 'VALIDATION_FAILED',
+          message: 'Validation failed.',
+          status: 400,
+          fields,
+        });
+      },
     }),
   );
 
