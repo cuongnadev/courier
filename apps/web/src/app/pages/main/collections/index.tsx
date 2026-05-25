@@ -26,14 +26,14 @@ export default function CollectionsPage() {
   const activeCollection = collections.find(
     (collection) => collection.id === activeCollectionId,
   );
-  
+
   return (
-    <div className="flex h-full w-full overflow-y-auto dashboard-scrollbar">
+    <div className="flex h-full min-h-0 w-full overflow-hidden">
       <CollectionSidebar
         selectedCollectionId={selectedCollectionId}
         onSelectCollection={setSelectedCollectionId}
       />
-      
+
       <CollectionDetail collection={activeCollection} />
     </div>
   );
