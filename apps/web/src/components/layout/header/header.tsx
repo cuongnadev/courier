@@ -1,5 +1,3 @@
-import { Check, ChevronDown, LogOut, Plus } from "lucide-react";
-
 import { SearchInput } from "@/components/forms/search-input";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +17,11 @@ import {
     SparklesIcon,
     ZapIcon,
     ShareIcon,
-    BellIcon
+    BellIcon,
+    ChevronDownIcon,
+    CheckCircleIcon,
+    PlusIcon,
+    LogOutIcon
 } from "@/components/common/icons";
 import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 import { mapWorkspaceHeader } from "@/features/workspaces/utils/map-workspace";
@@ -75,7 +77,7 @@ export function Header() {
                                 {currentWorkspace?.name}
                             </span>
 
-                            <ChevronDown className="h-4 w-4 text-neutral-500" />
+                            <ChevronDownIcon iconColor="#A1A1A1" />
                         </Button>
                     </DropdownMenuTrigger>
 
@@ -108,19 +110,22 @@ export function Header() {
                                     data-[highlighted]:text-neutral-900
                                 "
                             >
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-900 text-xs font-semibold text-white">
+                                <div className="flex items-center gap-3 overflow-hidden">
+                                    <div className="
+                                        flex h-8 w-8 shrink-0 items-center justify-center 
+                                        rounded-md bg-neutral-900 text-xs font-semibold text-white
+                                    ">
                                         {workspace.short}
                                     </div>
 
-                                    <span className="text-sm font-medium">
+                                    <span className="text-sm font-medium truncate">
                                         {workspace.name}
                                     </span>
                                 </div>
 
                                 {workspace.id === currentWorkspace?.id && (
                                     <DropdownMenuShortcut>
-                                        <Check className="h-4 w-4 text-neutral-500" />
+                                        <CheckCircleIcon  />
                                     </DropdownMenuShortcut>
                                 )}
                             </DropdownMenuItem>
@@ -144,7 +149,7 @@ export function Header() {
                                 data-[highlighted]:text-neutral-900
                             "
                         >
-                            <Plus className="mr-2 h-4 w-4" />
+                            <PlusIcon iconColor="currentColor" />
                             Create workspace
                         </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -159,7 +164,7 @@ export function Header() {
                         sideOffset={8}
                     >
                         <Button className="h-9 flex items-center rounded-[12px] bg-[#FE9A00] px-3 py-2 hover:bg-amber-400">
-                            <Plus className="h-4 w-4" />
+                            <PlusIcon iconColor="#101828" />
                             <span className="text-sm font-medium text-[#101828] leading-[24px]">New</span>
                         </Button>
                     </TooltipCustom>
@@ -374,7 +379,7 @@ export function Header() {
                                 {isPending ? 'Logging out...' : 'Logout'}
 
                                 <DropdownMenuShortcut>
-                                    <LogOut className="h-4 w-4 text-red-600" />
+                                    <LogOutIcon iconColor="#EF4444" />
                                 </DropdownMenuShortcut>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
