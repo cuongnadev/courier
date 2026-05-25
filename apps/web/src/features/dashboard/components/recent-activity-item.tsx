@@ -1,18 +1,9 @@
-import type { RequestMethod } from "@/types/api";
-
 import { ActivityIcon, CheckCircleIcon, ClockIcon } from "@/components/common/icons";
-import type { RecentActivity } from "@/features/requests/types/request.type";
+import type { RecentActivity } from "@/features/requests/types/request-run.type";
+import { requestMethodStyles } from "@/features/requests/utils/request-method-style.util";
 
 type RecentActivityItemProps = {
   activity: RecentActivity
-};
-
-const methodStyles: Record<RequestMethod, string> = {
-  GET: "bg-[#FEF3C6] text-[#7B3306]",
-  POST: "bg-[#DCFCE7] text-[#008236]",
-  PUT: "bg-[#DBEAFE] text-[#1D4ED8]",
-  PATCH: "bg-[#FCE7F3] text-[#BE185D]",
-  DELETE: "bg-[#FEE2E2] text-[#B91C1C]",
 };
 
 export function RecentActivityItem({ activity }: RecentActivityItemProps) {
@@ -46,7 +37,7 @@ export function RecentActivityItem({ activity }: RecentActivityItemProps) {
             className={`
                 rounded px-2 py-0.5
                 text-xs font-semibold
-                ${methodStyles[activity.method]}
+                ${requestMethodStyles[activity.method]}
             `}
           >
             {activity.method}

@@ -22,3 +22,8 @@ export { BellIcon } from "./BellIcon";
 export { SendIcon } from "./SendIcon";
 export { ActivityIcon } from "./ActivityIcon";
 export { ClockIcon } from "./ClockIcon";
+export { UploadIcon } from "./UploadIcon";
+export { PlusIcon } from "./PlusIcon";
+export { MoreIcon } from "./MoreIcon";
+export { DownloadIcon } from "./DownloadIcon";
+export { ChevronRightIcon } from "./ChevronRightIcon";

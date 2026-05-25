@@ -10,7 +10,6 @@ import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 import { useDashboardMetrics } from "@/features/dashboard/hooks/use-dashboard-metrics";
 
-import { getStableVariant } from "@/features/collections/utils/get-stable-variant";
 import { mapRecentActivityResponseToRecentActivity } from "@/features/dashboard/utils/recent-activity.mapper";
 
 import { DASHBOARD_STATS } from "@/constants/dashboard-stats";
@@ -41,7 +40,7 @@ export default function DashboardPage() {
       id: collection.id,
       name: collection.name,
       requestsCount: collection.requestsCount,
-      variant: getStableVariant(collection.id),
+      color: collection.color,
     })) ?? [];
 
   const activeFlows =

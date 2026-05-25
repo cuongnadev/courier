@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipCustom } from "@/components/common/tooltip/tooltip-custom";
 import type { RequestMethod } from "@/types/api";
 
 type SidebarSubItemProps = {
@@ -23,48 +23,39 @@ export function SidebarSubItem({
     label,
 }: SidebarSubItemProps) {
     return (
-        <Link
-            to={to}
-            activeProps={{
-                className:
-                    "bg-[#F5F5F5]",
-            }}
-            className="
-                flex h-9 items-center gap-2 rounded-lg px-2 py-1.5
-                text-sm font-normal text-[#525252]
-                transition-colors
-                hover:bg-[#F5F5F5]
-            "
+        <TooltipCustom 
+            label={label}
+            side="right"
+            sideOffset={8}
         >
-            <span
-                className={`
-                    rounded px-1.5 py-0.5 text-[10px] font-semibold
-                    ${methodStyles[method]}
-                `}
+            <Link
+                to={to}
+                activeProps={{
+                    className:
+                        "bg-[#F5F5F5]",
+                }}
+                className="
+                    flex h-9 items-center gap-2 rounded-lg px-2 py-1.5
+                    text-sm font-normal text-[#525252]
+                    transition-colors
+                    hover:bg-[#F5F5F5]
+                "
             >
-                {method}
-            </span>
-
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <span className="truncate">
-                        {label}
-                    </span>
-                </TooltipTrigger>
-
-                <TooltipContent
-                    side="right"
-                    sideOffset={20}
-                    className="
-                        rounded-full border border-[#2A2A2A]
-                        bg-[#181818] px-3 py-2
-                        text-xs font-medium text-white
-                    "
+                <span
+                    className={`
+                        rounded px-1.5 py-0.5 text-[10px] font-semibold
+                        ${methodStyles[method]}
+                    `}
                 >
-                    {label}
-                </TooltipContent>
-            </Tooltip>
+                    {method}
+                </span>
 
-        </Link>
+
+                <span className="truncate">
+                    {label}
+                </span>
+
+            </Link>
+        </TooltipCustom>
     );
 }

@@ -11,11 +11,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger
-} from "@/components/ui/tooltip";
+import { TooltipCustom } from "@/components/common/tooltip/tooltip-custom";
 
 import {
     ImportIcon,
@@ -156,84 +152,52 @@ export function Header() {
 
                 <div className="ps-2 flex items-center gap-1 border-l-[1.25px] border-l-[#E5E5E5]">
                     {/* new workspace */}
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button className="h-9 flex items-center rounded-[12px] bg-[#FE9A00] px-3 py-2 hover:bg-amber-400">
-                                <Plus className="h-4 w-4" />
-                                <span className="text-sm font-medium text-[#101828] leading-[24px]">New</span>
-                            </Button>
-                        </TooltipTrigger>
-
-                        <TooltipContent
-                            side="bottom"
-                            align="center"
-                            sideOffset={10}
-                            className="
-                                rounded-full border border-[#2A2A2A]
-                                bg-[#181818] px-3 py-2
-                                text-xs font-medium text-white
-                                shadow-lg shadow-black/20
-                            "
-                        >
-                            New Workspace
-                        </TooltipContent>
-                    </Tooltip>
+                    <TooltipCustom
+                        label="New Workspace"
+                        side="bottom"
+                        align="center"
+                        sideOffset={8}
+                    >
+                        <Button className="h-9 flex items-center rounded-[12px] bg-[#FE9A00] px-3 py-2 hover:bg-amber-400">
+                            <Plus className="h-4 w-4" />
+                            <span className="text-sm font-medium text-[#101828] leading-[24px]">New</span>
+                        </Button>
+                    </TooltipCustom>
 
                     {/* icon actions */}
                     <div className="flex items-center gap-1">
                         {/* Import from Swagger/OpenAPI */}
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="p-2 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors"
-                                >
-                                    <ImportIcon />
-                                </Button>
-                            </TooltipTrigger>
-
-                            <TooltipContent
-                                side="bottom"
-                                align="center"
-                                sideOffset={10}
-                                className="
-                                rounded-full border border-[#2A2A2A]
-                                bg-[#181818] px-3 py-2
-                                text-xs font-medium text-white
-                                shadow-lg shadow-black/20
-                            "
+                        <TooltipCustom
+                            label="Import from Swagger/OpenAPI"
+                            side="bottom"
+                            align="center"
+                            sideOffset={8}
+                        >
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="p-2 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors"
                             >
-                                Import from Swagger/OpenAPI
-                            </TooltipContent>
-                        </Tooltip>
+                                <ImportIcon />
+                            </Button>
+                        </TooltipCustom>
 
                         {/* Export */}
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="p-2 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors"
-                                >
-                                    <ExportIcon />
-                                </Button>
-                            </TooltipTrigger>
 
-                            <TooltipContent
-                                side="bottom"
-                                align="center"
-                                sideOffset={10}
-                                className="
-                                rounded-full border border-[#2A2A2A]
-                                bg-[#181818] px-3 py-2
-                                text-xs font-medium text-white
-                                shadow-lg shadow-black/20
-                            "
+                        <TooltipCustom
+                            label="Export"
+                            side="bottom"
+                            align="center"
+                            sideOffset={8}
+                        >
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="p-2 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors"
                             >
-                                Export
-                            </TooltipContent>
-                        </Tooltip>
+                                <ExportIcon />
+                            </Button>
+                        </TooltipCustom>
                     </div>
                 </div>
             </div>
@@ -269,104 +233,72 @@ export function Header() {
                 {/* actions */}
                 <div className="pl-2 h-8 flex items-center gap-1 border-l-[1.25px] border-l-[#E5E5E5]">
                     {/* Run Collection */}
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="
+                    <TooltipCustom
+                        label="Run Collection"
+                        side="bottom"
+                        align="center"
+                        sideOffset={8}
+                    >
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="
                                     p-2 rounded-lg
                                     hover:bg-neutral-50
                                 "
-                            >
-                                <ZapIcon iconColor="#525252" />
-                            </Button>
-                        </TooltipTrigger>
-
-                        <TooltipContent
-                            side="bottom"
-                            align="center"
-                            sideOffset={10}
-                            className="
-                                rounded-full border border-[#2A2A2A]
-                                bg-[#181818] px-3 py-2
-                                text-xs font-medium text-white
-                                shadow-lg shadow-black/20
-                            "
                         >
-                            Run Collection
-                        </TooltipContent>
-                    </Tooltip>
+                            <ZapIcon iconColor="#525252" />
+                        </Button>
+                    </TooltipCustom>
 
                     {/* Share */}
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="
+                    <TooltipCustom
+                        label="Share"
+                        side="bottom"
+                        align="center"
+                        sideOffset={8}
+                    >
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="
                                     p-2 rounded-lg
                                     hover:bg-neutral-50
                                 "
-                            >
-                                <ShareIcon />
-                            </Button>
-                        </TooltipTrigger>
-
-                        <TooltipContent
-                            side="bottom"
-                            align="center"
-                            sideOffset={10}
-                            className="
-                                rounded-full border border-[#2A2A2A]
-                                bg-[#181818] px-3 py-2
-                                text-xs font-medium text-white
-                                shadow-lg shadow-black/20
-                            "
                         >
-                            Share
-                        </TooltipContent>
-                    </Tooltip>
+                            <ShareIcon />
+                        </Button>
+                    </TooltipCustom>
 
 
                     {/* Notifications */}
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="
+
+                    <TooltipCustom
+                        label="Notifications"
+                        side="bottom"
+                        align="center"
+                        sideOffset={8}
+                    >
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="
                                     relative
                                     p-2 rounded-lg
                                     hover:bg-neutral-50
                                 "
-                            >
-                                <BellIcon />
+                        >
+                            <BellIcon />
 
-                                <span
-                                    className="
+                            <span
+                                className="
                                         absolute right-1.5 top-1.5
                                         h-2 w-2 rounded-full
                                         bg-[#FB2C36]
                                     "
-                                />
-                            </Button>
-                        </TooltipTrigger>
-
-                        <TooltipContent
-                            side="bottom"
-                            align="center"
-                            sideOffset={10}
-                            className="
-                                rounded-full border border-[#2A2A2A]
-                                bg-[#181818] px-3 py-2
-                                text-xs font-medium text-white
-                                shadow-lg shadow-black/20
-                            "
-                        >
-                            Notifications
-                        </TooltipContent>
-                    </Tooltip>
+                            />
+                        </Button>
+                    </TooltipCustom>
                 </div>
 
                 {/* profile */}

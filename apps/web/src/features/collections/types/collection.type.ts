@@ -1,23 +1,28 @@
-import type { RequestMethod } from "@/types/api";
+import type { COLLECTION_COLORS } from "@/constants/collection";
+import type { ApiRequestListItem } from "@/features/requests/types/request.type";
 
-export type CollectionRequest = {
-    id: string;
-    name: string;
-    method: RequestMethod;
-    uri: string;
-};
+export type CollectionColor =
+  (typeof COLLECTION_COLORS)[number];
 
 export type CollectionResponse = {
-    id: string;
-    name: string;
-    variant: CollectionVariant;
-    requests: CollectionRequest[];
+  id: string;
+  workspaceId: string;
+
+  name: string;
+  description: string | null;
+
+  color: CollectionColor;
+
+  sortOrder: number;
+
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+
+  requestsCount: number;
 };
 
-export type CollectionVariant =
-    | "blue"
-    | "green"
-    | "orange"
-    | "purple"
-    | "red"
-    | "pink";
+export type CollectionDetailResponse =
+  CollectionResponse & {
+    requests: ApiRequestListItem[];
+  };

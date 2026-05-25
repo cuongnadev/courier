@@ -1,12 +1,8 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import type { AuthenticatedRequest } from '../types/authenticated-request.type';
 import { verifyJwtToken } from '../utils/jwt.util';
+import { AppException } from '../exceptions/app.exceptions';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -23,13 +19,23 @@ export class AuthGuard implements CanActivate {
     const authorization = request.headers.authorization;
 
     if (!authorization) {
-      throw new UnauthorizedException('Authorization header is required');
+      throw new AppException({
+        code: 'UNAUTHORIZED',
+        message: 'Authorization header is required.',
+        status: 401,
+        hint: 'Provide a valid Bearer access token.',
+      });
     }
 
     const [scheme, token] = authorization.split(' ');
 
     if (scheme !== 'Bearer' || !token) {
-      throw new UnauthorizedException('Bearer token is required');
+      throw new AppException({
+        code: 'UNAUTHORIZED',
+        message: 'Bearer token is required.',
+        status: 401,
+        hint: 'Authorization header must use the format: Bearer <token>.',
+      });
     }
 
     return token;

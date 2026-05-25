@@ -1,14 +1,14 @@
-import { UnauthorizedException } from '@nestjs/common';
 import { createHmac, timingSafeEqual } from 'crypto';
 
-import { appConfig } from '../../config';
 import type { JwtPayload } from '../types/authenticated-request.type';
+import { AppException } from '../exceptions/app.exceptions';
+import { appConfig } from '../../config';
 
 export function verifyJwtToken(token: string): JwtPayload {
   const [encodedHeader, encodedPayload, signature] = token.split('.');
 
   if (!encodedHeader || !encodedPayload || !signature) {
-    throw new UnauthorizedException('Invalid token');
+    throwInvalidToken();
   }
 
   const expectedSignature = createHmac('sha256', appConfig.jwt.secret)
@@ -16,14 +16,24 @@ export function verifyJwtToken(token: string): JwtPayload {
     .digest('base64url');
 
   if (!isSafeEqual(signature, expectedSignature)) {
-    throw new UnauthorizedException('Invalid token');
+    throwInvalidToken();
   }
 
   const payload = parsePayload(encodedPayload);
   const now = Math.floor(Date.now() / 1000);
 
-  if (!payload.sub || !payload.email || !payload.exp || payload.exp <= now) {
-    throw new UnauthorizedException('Token has expired');
+  if (!payload.sub || !payload.email || !payload.exp) {
+    throwInvalidToken();
+  }
+
+  if (payload.exp <= now) {
+    throw new AppException({
+      code: 'TOKEN_EXPIRED',
+      message: 'Access token has expired.',
+      status: 401,
+      hint: 'Use the refresh token endpoint to obtain a new access token.',
+      docs: '',
+    });
   }
 
   return payload;
@@ -35,7 +45,7 @@ function parsePayload(encodedPayload: string): JwtPayload {
       Buffer.from(encodedPayload, 'base64url').toString('utf8'),
     ) as JwtPayload;
   } catch {
-    throw new UnauthorizedException('Invalid token');
+    throwInvalidToken();
   }
 }
 
@@ -47,4 +57,14 @@ function isSafeEqual(value: string, expectedValue: string): boolean {
     valueBuffer.length === expectedValueBuffer.length &&
     timingSafeEqual(valueBuffer, expectedValueBuffer)
   );
+}
+
+function throwInvalidToken(): never {
+  throw new AppException({
+    code: 'INVALID_TOKEN',
+    message: 'Access token is invalid.',
+    status: 401,
+    hint: 'Provide a valid access token.',
+    docs: '',
+  });
 }

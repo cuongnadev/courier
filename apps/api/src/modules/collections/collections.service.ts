@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { CreateCollectionDto } from './dto/create-collection.dto';
 import { UpdateCollectionDto } from './dto/update-collection.dto';
 import { WorkspacesService } from '../workspaces';
+import { AppException } from '@/common/exceptions/app.exceptions';
 
 @Injectable()
 export class CollectionsService {
@@ -18,18 +19,26 @@ export class CollectionsService {
   ) {
     await this.workspaceService.assertAccess(workspaceId, userId);
 
-    return this.prisma.collection.create({
+    await this.assertNameAvailable(workspaceId, dto.name);
+
+    const sortOrder =
+      dto.sortOrder ?? (await this.getNextSortOrder(workspaceId));
+
+    const collection = await this.prisma.collection.create({
       data: {
         workspaceId,
         name: dto.name,
         description: dto.description,
-        sortOrder: dto.sortOrder,
+        color: dto.color,
+        sortOrder,
       },
     });
+
+    return this.findOne(collection.id, workspaceId, userId);
   }
 
   async findAll(workspaceId: string, userId?: string, limit?: number) {
-    await this.assertWorkspaceAccess(workspaceId, userId);
+    await this.workspaceService.assertAccess(workspaceId, userId);
 
     const collections = await this.prisma.collection.findMany({
       where: {
@@ -43,7 +52,9 @@ export class CollectionsService {
       take: limit,
     });
 
-    return collections.map((collection) => this.withRequestsCount(collection));
+    return collections.map((collection) =>
+      this.toCollectionResponse(collection),
+    );
   }
 
   async findOne(collectionId: string, workspaceId: string, userId?: string) {
@@ -59,10 +70,16 @@ export class CollectionsService {
     });
 
     if (!collection) {
-      throw new NotFoundException('Collection not found');
+      throw new AppException({
+        code: 'NOT_FOUND',
+        message: 'Collection not found.',
+        status: 404,
+        hint: 'The requested collection does not exist or has been deleted.',
+        docs: '',
+      });
     }
 
-    return this.withRequestsCount(collection);
+    return this.toCollectionResponse(collection);
   }
 
   async update(
@@ -71,14 +88,29 @@ export class CollectionsService {
     userId: string | undefined,
     dto: UpdateCollectionDto,
   ) {
-    await this.findOne(collectionId, workspaceId, userId);
+    const currentCollection = await this.findOne(
+      collectionId,
+      workspaceId,
+      userId,
+    );
 
-    return this.prisma.collection.update({
+    if (dto.name && dto.name !== currentCollection.name) {
+      await this.assertNameAvailable(workspaceId, dto.name, collectionId);
+    }
+
+    await this.prisma.collection.update({
       where: {
         id: collectionId,
       },
-      data: dto,
+      data: {
+        name: dto.name,
+        description: dto.description,
+        color: dto.color,
+        sortOrder: dto.sortOrder,
+      },
     });
+
+    return this.findOne(collectionId, workspaceId, userId);
   }
 
   async remove(collectionId: string, workspaceId: string, userId?: string) {
@@ -94,20 +126,18 @@ export class CollectionsService {
     });
   }
 
-  async countByWorkspace(workspaceId: string): Promise<number> {
+  async countByWorkspace(
+    workspaceId: string,
+    userId?: string,
+  ): Promise<number> {
+    await this.workspaceService.assertAccess(workspaceId, userId);
+
     return this.prisma.collection.count({
       where: {
         workspaceId,
         deletedAt: null,
       },
     });
-  }
-
-  async assertWorkspaceAccess(
-    workspaceId: string,
-    userId?: string,
-  ): Promise<void> {
-    await this.workspaceService.assertAccess(workspaceId, userId);
   }
 
   async assertInWorkspace(
@@ -126,8 +156,63 @@ export class CollectionsService {
     });
 
     if (!collection) {
-      throw new NotFoundException('Collection not found');
+      throw new AppException({
+        code: 'NOT_FOUND',
+        message: 'Collection not found.',
+        status: 404,
+        hint: 'The collection does not exist in this workspace.',
+        docs: '',
+      });
     }
+  }
+
+  private async assertNameAvailable(
+    workspaceId: string,
+    name: string,
+    excludeCollectionId?: string,
+  ) {
+    const collection = await this.prisma.collection.findFirst({
+      where: {
+        workspaceId,
+        name,
+        deletedAt: null,
+        id: excludeCollectionId
+          ? {
+              not: excludeCollectionId,
+            }
+          : undefined,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (collection) {
+      throw new AppException({
+        code: 'CONFLICT',
+        message: 'Collection name already exists.',
+        status: 409,
+        hint: 'Use a different collection name in this workspace.',
+        docs: '',
+      });
+    }
+  }
+
+  private async getNextSortOrder(workspaceId: string) {
+    const lastCollection = await this.prisma.collection.findFirst({
+      where: {
+        workspaceId,
+        deletedAt: null,
+      },
+      orderBy: {
+        sortOrder: 'desc',
+      },
+      select: {
+        sortOrder: true,
+      },
+    });
+
+    return (lastCollection?.sortOrder ?? -1) + 1;
   }
 
   private collectionWithRequestsInclude = () => ({
@@ -137,6 +222,13 @@ export class CollectionsService {
       },
       orderBy: {
         sortOrder: 'asc' as const,
+      },
+      include: {
+        _count: {
+          select: {
+            headers: true,
+          },
+        },
       },
     },
     _count: {
@@ -150,14 +242,45 @@ export class CollectionsService {
     },
   });
 
-  private withRequestsCount<T extends { _count: { requests: number } }>(
-    collection: T,
-  ) {
-    const { _count, ...data } = collection;
+  private toCollectionResponse<
+    T extends {
+      createdAt: Date;
+      updatedAt: Date;
+      deletedAt: Date | null;
+      requests: Array<{
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        bodyType: string;
+        _count: {
+          headers: number;
+        };
+      }>;
+      _count: {
+        requests: number;
+      };
+    },
+  >(collection: T) {
+    const { _count, requests, ...data } = collection;
 
     return {
       ...data,
+      createdAt: data.createdAt.toISOString(),
+      updatedAt: data.updatedAt.toISOString(),
+      deletedAt: data.deletedAt?.toISOString() ?? null,
       requestsCount: _count.requests,
+      requests: requests.map((request) => {
+        const { _count: requestCount, ...requestData } = request;
+
+        return {
+          ...requestData,
+          createdAt: requestData.createdAt.toISOString(),
+          updatedAt: requestData.updatedAt.toISOString(),
+          deletedAt: requestData.deletedAt?.toISOString() ?? null,
+          headersCount: requestCount.headers,
+          hasBody: requestData.bodyType !== 'NONE',
+        };
+      }),
     };
   }
 }
