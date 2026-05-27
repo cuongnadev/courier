@@ -7,9 +7,8 @@ import { TooltipCustom } from "@/components/common/tooltip/tooltip-custom";
 import { CollectionSidebarList } from "./collection-sidebar-list";
 
 import { useCollections } from "@/features/collections/hooks/use-collections";
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 import { CreateCollectionModal } from "@/features/collections/components/collection-create/create-collection-modal";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 type CollectionSidebarProps = {
   selectedCollectionId?: string | null;
@@ -21,12 +20,9 @@ export default function CollectionSidebar({
   onSelectCollection,
 }: CollectionSidebarProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const user = useAuthStore((state) => state.user);
-  const { data: workspaces = [] } = useWorkspaces();
+  const { currentWorkspaceId } = useCurrentWorkspace();
 
-  const currentWorkspace = workspaces.find((workspace) => workspace.ownerId === user?.id);
-
-  const { data: collections = [], isLoading } = useCollections(currentWorkspace?.id);
+  const { data: collections = [], isLoading } = useCollections(currentWorkspaceId);
 
   const activeCollectionId =
     selectedCollectionId ?? collections[0]?.id ?? "";
@@ -54,7 +50,7 @@ export default function CollectionSidebar({
                 side="bottom"
                 sideOffset={8}
               >
-                <Button 
+                <Button
                   className="p-2 rounded-[12px] bg-transparent hover:bg-amber-50"
                   onClick={() => setIsCreateOpen(true)}
                 >
@@ -86,7 +82,7 @@ export default function CollectionSidebar({
       <CreateCollectionModal
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
-        workspaceId={currentWorkspace?.id}
+        workspaceId={currentWorkspaceId}
       />
     </>
   );

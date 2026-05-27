@@ -6,8 +6,6 @@ import { RecentActivityItem } from "@/features/dashboard/components/recent-activ
 import { DashboardCollectionItem } from "@/features/dashboard/components/dashboard-collection-item";
 import { DashboardFlowItem } from "@/features/dashboard/components/dashboard-active-flows-item";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 import { useDashboardMetrics } from "@/features/dashboard/hooks/use-dashboard-metrics";
 
 import { mapRecentActivityResponseToRecentActivity } from "@/features/dashboard/utils/recent-activity.mapper";
@@ -15,14 +13,12 @@ import { mapRecentActivityResponseToRecentActivity } from "@/features/dashboard/
 import { DASHBOARD_STATS } from "@/constants/dashboard-stats";
 
 import type { DashboardCollection, DashboardFlow } from "@/features/dashboard/types/dashboard.type";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 export default function DashboardPage() {
-  const user = useAuthStore((state) => state.user);
+  const { currentWorkspaceId } = useCurrentWorkspace();
 
-  const { data: workspaces = [] } = useWorkspaces();
-  const currentWorkspace = workspaces.find((workspace) => workspace.ownerId === user?.id);
-
-  const { data: dashboardOverview } = useDashboardMetrics(currentWorkspace?.id);
+  const { data: dashboardOverview } = useDashboardMetrics(currentWorkspaceId);
 
   const stats = DASHBOARD_STATS.map((stat) => ({
     ...stat,

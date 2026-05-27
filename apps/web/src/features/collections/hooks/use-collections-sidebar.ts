@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { useCollections } from "@/features/collections/hooks/use-collections";
 
-export function useCollectionSidebar(workspaceId?: string) {
+export function useCollectionSidebar(workspaceId: string | null) {
     const { data: collections = [], isLoading } = useCollections(workspaceId);
 
     const [openCollections, setOpenCollections] = useState<

@@ -19,11 +19,10 @@ import {
     SidebarSubItem
 } from "@/components/layout/sidebar";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useToolCounts } from "@/features/tools/hooks/use-tool-counts";
-import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 import { useCollectionSidebar } from "@/features/collections/hooks/use-collections-sidebar";
 import { CreateCollectionModal } from "@/features/collections/components/collection-create/create-collection-modal";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 // Fake data for now, replace with backend response later
 const currentPlan = {
@@ -35,18 +34,15 @@ const currentPlan = {
 export function Sidebar() {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-    const user = useAuthStore((state) => state.user);
-    const { data: workspaces = [] } = useWorkspaces();
-
-    const currentWorkspace = workspaces.find((workspace) => workspace.ownerId === user?.id);
+    const { currentWorkspaceId } = useCurrentWorkspace();
 
     const {
         collections,
         openCollections,
         toggleCollection,
-    } = useCollectionSidebar(currentWorkspace?.id);
+    } = useCollectionSidebar(currentWorkspaceId);
 
-    const { toolCounts } = useToolCounts(currentWorkspace?.id);
+    const { toolCounts } = useToolCounts(currentWorkspaceId);
 
     return (
         <>
@@ -182,7 +178,7 @@ export function Sidebar() {
             <CreateCollectionModal
                 open={isCreateOpen}
                 onOpenChange={setIsCreateOpen}
-                workspaceId={currentWorkspace?.id}
+                workspaceId={currentWorkspaceId}
             />
         </>
     );
