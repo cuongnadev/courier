@@ -30,8 +30,6 @@ import { Input } from "@/components/ui/input";
 
 import { COLLECTION_COLORS } from "@/constants/collection";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 import { mapWorkspaceHeader } from "@/features/workspaces/utils/map-workspace";
 
 import {
@@ -40,6 +38,7 @@ import {
 } from "@/features/collections/schemas/create-collection.schema";
 
 import { useCreateCollection } from "@/features/collections/hooks/use-create-collection";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 type CreateCollectionModalProps = {
   open: boolean;
@@ -52,29 +51,27 @@ export function CreateCollectionModal({
   onOpenChange,
   workspaceId,
 }: CreateCollectionModalProps) {
-  const user = useAuthStore((state) => state.user);
-
-  const { data: workspaces = [] } = useWorkspaces();
+  const {
+    workspaces,
+    currentWorkspace,
+    currentWorkspaceId
+  } = useCurrentWorkspace();
 
   const workspaceItems = workspaces.map(mapWorkspaceHeader);
 
-  const defaultWorkspace =
-    workspaceItems.find((workspace) => workspace.ownerId === user?.id) ??
-    workspaceItems[0];
-
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<
     string | undefined
-  >(workspaceId ?? defaultWorkspace?.id);
+  >(workspaceId ?? currentWorkspaceId);
 
   useEffect(() => {
     if (open) {
-      setSelectedWorkspaceId(workspaceId ?? defaultWorkspace?.id);
+      setSelectedWorkspaceId(workspaceId ?? currentWorkspaceId);
     }
-  }, [open, workspaceId, defaultWorkspace?.id]);
+  }, [open, workspaceId, currentWorkspaceId]);
 
   const selectedWorkspace =
     workspaceItems.find((workspace) => workspace.id === selectedWorkspaceId) ??
-    defaultWorkspace;
+    (currentWorkspace ? mapWorkspaceHeader(currentWorkspace) : null);
 
   const createCollectionMutation = useCreateCollection(selectedWorkspaceId);
 
@@ -239,6 +236,9 @@ export function CreateCollectionModal({
 
               <Input
                 id="name"
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
                 placeholder="My API Collection"
                 aria-invalid={!!errors.name}
                 {...register("name")}
@@ -267,6 +267,9 @@ export function CreateCollectionModal({
 
               <textarea
                 id="description"
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
                 placeholder="Optional description for this collection..."
                 aria-invalid={!!errors.description}
                 {...register("description")}

@@ -1,21 +1,15 @@
 import { useState } from "react";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useCollections } from "@/features/collections/hooks/use-collections";
-import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 
 import CollectionSidebar from "@/features/collections/components/collection-sidebar/collection-sidebar";
 import { CollectionDetail } from "@/features/collections/components/collection-detail/collection-detail";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 export default function CollectionsPage() {
-  const user = useAuthStore((state) => state.user);
-  const { data: workspaces = [] } = useWorkspaces();
+  const { currentWorkspaceId } = useCurrentWorkspace();
 
-  const currentWorkspace = workspaces.find(
-    (workspace) => workspace.ownerId === user?.id,
-  );
-
-  const { data: collections = [] } = useCollections(currentWorkspace?.id);
+  const { data: collections = [] } = useCollections(currentWorkspaceId);
 
   const [selectedCollectionId, setSelectedCollectionId] =
     useState<string | null>(null);

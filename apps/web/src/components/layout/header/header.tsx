@@ -23,18 +23,23 @@ import {
     PlusIcon,
     LogOutIcon
 } from "@/components/common/icons";
-import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 import { mapWorkspaceHeader } from "@/features/workspaces/utils/map-workspace";
-import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useLogout } from '@/features/auth/hooks/use-logout';
+import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+import { useAuthStore } from "@/features/auth/store/auth.store";
 
 export function Header() {
     const user = useAuthStore((state) => state.user);
-    const { data: workspaces = [] } = useWorkspaces();
+    const {
+        workspaces,
+        currentWorkspace,
+    } = useCurrentWorkspace()
 
     const workspaceItems = workspaces.map(mapWorkspaceHeader);
 
-    const currentWorkspace = workspaceItems.find((workspace) => workspace.ownerId === user?.id);
+    const currentWorkspaceItem = currentWorkspace
+    ? mapWorkspaceHeader(currentWorkspace)
+    : null;
 
     const { mutate: logout, isPending } = useLogout();
 
@@ -70,11 +75,11 @@ export function Header() {
                             "
                         >
                             <div className="flex h-6 w-6 items-center justify-center rounded-[4px] bg-[linear-gradient(135deg,#1C1917_0%,#1E2939_100%)] text-xs font-semibold uppercase text-white">
-                                {currentWorkspace?.short}
+                                {currentWorkspaceItem?.short}
                             </div>
 
                             <span className="max-w-[180px] truncate text-sm font-medium text-neutral-800">
-                                {currentWorkspace?.name}
+                                {currentWorkspaceItem?.name}
                             </span>
 
                             <ChevronDownIcon iconColor="#A1A1A1" />
@@ -123,9 +128,9 @@ export function Header() {
                                     </span>
                                 </div>
 
-                                {workspace.id === currentWorkspace?.id && (
+                                {workspace.id === currentWorkspaceItem?.id && (
                                     <DropdownMenuShortcut>
-                                        <CheckCircleIcon  />
+                                        <CheckCircleIcon />
                                     </DropdownMenuShortcut>
                                 )}
                             </DropdownMenuItem>

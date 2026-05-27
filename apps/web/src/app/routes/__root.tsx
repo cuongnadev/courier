@@ -1,6 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { Suspense } from 'react'
 import NotFound from '@/app/pages/not-found'
 
@@ -12,7 +11,6 @@ export const RootRoute = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <Suspense fallback={<div>Loading...</div>}>
       <Outlet />
-      <TanStackRouterDevtools />
     </Suspense>
   ),
 

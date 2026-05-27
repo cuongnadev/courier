@@ -15,5 +15,15 @@ export type AuthStore = {
   isAuthenticated: boolean;
 
   setAuth: (user: User, accessToken: string) => void;
+  setAccessToken: (accessToken: string) => void;
   clearAuth: () => void;
+};
+
+export type AuthResponse = {
+  user: User;
+  accessToken: string;
+};
+
+export type RefreshTokenResponse = {
+  accessToken: string;
 };

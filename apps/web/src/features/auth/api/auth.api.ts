@@ -1,38 +1,54 @@
-import { api } from "@/lib/axios";
+import { api, rawApi } from "@/lib/axios";
 
-import type { LoginFormValues, RegisterFormValues } from "@/features/auth/schemas/auth.schema";
+import type {
+  LoginFormValues,
+  RegisterFormValues,
+} from "@/features/auth/schemas/auth.schema";
+import type {
+  AuthResponse,
+  RefreshTokenResponse,
+  User,
+} from "@/features/auth/types/auth.type";
+import type { ApiResponse } from "@/types/api.type";
 
 export type RegisterPayload = Omit<
   RegisterFormValues,
   "confirmPassword" | "terms"
 >;
 
-export async function loginApi(data: LoginFormValues) {
-    const response = await api.post("/auth/login", data);
+export async function loginApi(data: LoginFormValues): Promise<AuthResponse> {
+  const body = await api.post<unknown, ApiResponse<AuthResponse>>(
+    "/auth/login",
+    data,
+  );
 
-    return response.data;
+  return body.data;
 }
 
-export async function registerApi(data: RegisterPayload) {
-    const response = await api.post("/auth/register", data);
+export async function registerApi(
+  data: RegisterFormValues,
+): Promise<AuthResponse> {
+  const body = await api.post<unknown, ApiResponse<AuthResponse>>(
+    "/auth/register",
+    data,
+  );
 
-    return response.data;
+  return body.data;
 }
 
-export async function getMeApi() {
-  const response = await api.get("/auth/me");
+export async function refreshTokenApi(): Promise<RefreshTokenResponse> {
+  const response =
+    await rawApi.post<ApiResponse<RefreshTokenResponse>>("/auth/refresh");
 
-  return response.data;
+  return response.data.data;
 }
 
-export async function refreshTokenApi() {
-  const response = await api.post("/auth/refresh");
+export async function getMeApi(): Promise<User> {
+  const body = await api.get<unknown, ApiResponse<User>>("/auth/me");
 
-  return response.data;
+  return body.data;
 }
 
-export async function logoutApi() {
-  const response = await api.post("/auth/logout");
-
-  return response.data;
+export async function logoutApi(): Promise<void> {
+  await api.post<unknown, ApiResponse<null>>("/auth/logout");
 }

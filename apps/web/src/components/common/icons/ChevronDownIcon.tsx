@@ -14,9 +14,9 @@ export function ChevronDownIcon({
     >
       <path d="M3.99902 5.99854L7.99805 9.99756L11.9971 5.99854"
         stroke={iconColor}
-        stroke-width="1.33301"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.33301"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

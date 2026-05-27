@@ -14,33 +14,33 @@ export function SparklesIcon({
         >
             <path d="M6.62301 10.3308C6.56351 10.1002 6.44328 9.88966 6.27484 9.72122C6.1064 9.55278 5.8959 9.43255 5.66524 9.37305L1.57624 8.31864C1.50648 8.29884 1.44508 8.25682 1.40136 8.19896C1.35764 8.14111 1.33398 8.07057 1.33398 7.99805C1.33398 7.92553 1.35764 7.85499 1.40136 7.79713C1.44508 7.73928 1.50648 7.69726 1.57624 7.67746L5.66524 6.62238C5.89582 6.56294 6.10627 6.44281 6.2747 6.2745C6.44313 6.10618 6.5634 5.89582 6.62301 5.66529L7.67742 1.57628C7.69702 1.50624 7.739 1.44454 7.79694 1.40059C7.85488 1.35663 7.92561 1.33284 7.99834 1.33284C8.07107 1.33284 8.1418 1.35663 8.19975 1.40059C8.25769 1.44454 8.29966 1.50624 8.31926 1.57628L9.37301 5.66529C9.43251 5.89594 9.55274 6.10644 9.72118 6.27488C9.88962 6.44332 10.1001 6.56355 10.3308 6.62305L14.4198 7.67679C14.4901 7.69619 14.5521 7.73812 14.5963 7.79615C14.6405 7.85418 14.6644 7.92511 14.6644 7.99805C14.6644 8.07099 14.6405 8.14192 14.5963 8.19995C14.5521 8.25798 14.4901 8.29991 14.4198 8.3193L10.3308 9.37305C10.1001 9.43255 9.88962 9.55278 9.72118 9.72122C9.55274 9.88966 9.43251 10.1002 9.37301 10.3308L8.3186 14.4198C8.299 14.4899 8.25702 14.5516 8.19908 14.5955C8.14114 14.6395 8.0704 14.6633 7.99768 14.6633C7.92495 14.6633 7.85422 14.6395 7.79627 14.5955C7.73833 14.5516 7.69635 14.4899 7.67675 14.4198L6.62301 10.3308Z"
                 stroke={iconColor}
-                stroke-width="1.33301"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.33301"
+                strokeLinecap="round"
+                strokeLinejoin="round"
             />
             <path d="M13.3301 1.99951V4.66553"
                 stroke={iconColor}
-                stroke-width="1.33301"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.33301"
+                strokeLinecap="round"
+                strokeLinejoin="round"
             />
             <path d="M14.6631 3.33252H11.9971"
                 stroke={iconColor}
-                stroke-width="1.33301"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.33301"
+                strokeLinecap="round"
+                strokeLinejoin="round"
             />
             <path d="M2.66602 11.3306V12.6636"
                 stroke={iconColor}
-                stroke-width="1.33301"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.33301"
+                strokeLinecap="round"
+                strokeLinejoin="round"
             />
             <path d="M3.33252 11.9971H1.99951"
                 stroke={iconColor}
-                stroke-width="1.33301"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.33301"
+                strokeLinecap="round"
+                strokeLinejoin="round"
             />
         </svg>
     );
