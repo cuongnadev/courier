@@ -1,14 +1,23 @@
 import { createRoute } from '@tanstack/react-router'
-import { lazy } from 'react';
 
 import { RootRoute } from './__root';
 
 /**
- * layouts
+ * Layouts
  */
 
 import AuthLayout from '@/app/layouts/auth-layout';
 import MainLayout from '@/app/layouts/main-layout';
+
+
+/**
+ * Main pages
+ */
+
+import DashboardPage from "@/app/pages/main/dashboard";
+import CollectionsPage from "@/app/pages/main/collections";
+import LoginPage from "@/app/pages/auth/login";
+import RegisterPage from "@/app/pages/auth/register";
 
 export const authLayoutRoute = createRoute({
   getParentRoute: () => RootRoute,
@@ -24,40 +33,32 @@ export const mainLayoutRoute = createRoute({
 
 
 /**
- * Pages
+ * Pages routes
  */
 
 export const dashboardRoute = createRoute({
   getParentRoute: () => mainLayoutRoute,
   path: '/',
 
-  // fetch data before rendering the route component
-  // loader: async ({ context }) => {
-  //   return context.queryClient.ensureQueryData({
-  //     queryKey: ['dashboard'],
-  //     queryFn: fetchDashboard,
-  //   });
-  // },
-
-  component: lazy(() => import('@/app/pages/main/dashboard')),
+  component: DashboardPage,
 });
 
 export const collectionsRoute = createRoute({
   getParentRoute: () => mainLayoutRoute,
   path: '/collections',
 
-  component: lazy(() => import('@/app/pages/main/collections')),
+  component: CollectionsPage,
 });
 
 export const loginRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
   path: '/login',
-  component: lazy(() => import('@/app/pages/auth/login')),
+  component: LoginPage,
 });
 export const registerRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
   path: '/register',
-  component: lazy(() => import('@/app/pages/auth/register')),
+  component: RegisterPage,
 });
 // ... other routes
 
