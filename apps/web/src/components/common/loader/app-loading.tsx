@@ -4,6 +4,7 @@ import { TruckElectric } from "lucide-react";
 type AppLoadingProps = {
     label?: string;
     isComplete: boolean;
+    fullScreen?: boolean;
     onFinish: () => void;
 };
 
@@ -14,6 +15,7 @@ export function AppLoading({
     label = "Loading...",
     isComplete,
     onFinish,
+    fullScreen = true,
 }: AppLoadingProps) {
     const [progress, setProgress] = useState(8);
 
@@ -50,15 +52,10 @@ export function AppLoading({
 
     return (
         <div
-            className="
-            relative flex h-screen w-screen 
-            items-center justify-center 
-            overflow-hidden 
-            bg-[#181818] 
-            pointer-events-none 
-            select-none 
-            cursor-none
-        "
+            className={[
+                "relative flex items-center justify-center overflow-hidden bg-[#FAFAFA] pointer-events-none select-none cursor-none",
+                fullScreen ? "h-screen w-screen" : "h-full w-full min-h-[calc(100vh-64px)]" 
+            ].join(" ")}
         >
             <div className="relative z-10 w-[420px]">
                 <div className="relative h-28">
@@ -78,20 +75,30 @@ export function AppLoading({
                                 relative flex h-14 w-14 items-center justify-center
                                 rounded-[18px]
                                 border border-[#FE9A00]/25
-                                bg-[#181818]/95
+                                bg-[#181818]
                                 shadow-[0_10px_40px_rgba(254,154,0,0.16)]
-                                backdrop-blur-xl
                             "
-                        >
-                            <TruckElectric className="h-6 w-6 text-[#FE9A00]" />
+                            >
+                            <TruckElectric className="relative z-20 h-6 w-6 text-[#FE9A00]" />
 
+                            {/* tail */}
                             <span
                                 className="
-                                    absolute -bottom-2 left-1/2
-                                    h-4 w-4
-                                    -translate-x-1/2 rotate-45
-                                    border-b border-r border-[#FE9A00]/25
-                                    bg-[#181818]
+                                absolute -bottom-2 left-1/2 z-0
+                                h-4 w-4
+                                -translate-x-1/2 rotate-45
+                                border-b border-r border-[#FE9A00]/25
+                                bg-[#181818]
+                                "
+                            />
+
+                            {/* patch che phần nối */}
+                            <span
+                                className="
+                                absolute bottom-0 left-1/2 z-10
+                                h-3 w-7
+                                -translate-x-1/2
+                                bg-[#181818]
                                 "
                             />
                         </div>
@@ -102,7 +109,7 @@ export function AppLoading({
                         className="
                             absolute bottom-6
                             h-3 w-full overflow-hidden rounded-full
-                            bg-white/[0.08]
+                            bg-[#E4E4E7]
                             backdrop-blur-xl
                         "
                     >
@@ -132,11 +139,11 @@ export function AppLoading({
                 </div>
 
                 <div className="mt-2 text-center">
-                    <p className="text-sm font-semibold tracking-wide text-white">
+                    <p className="text-sm font-semibold tracking-wide text-[#18181B]">
                         {label}
                     </p>
 
-                    <p className="mt-1 text-xs font-medium text-[#94A3B8]">
+                    <p className="mt-1 text-xs font-medium text-[#717171]">
                         {Math.round(progress)}%
                     </p>
                 </div>

@@ -1,14 +1,16 @@
 import { Navigate } from "@tanstack/react-router";
 
 import { useAuthStore } from "@/features/auth/store/auth.store";
-import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
+
+import { AsyncLoadingGate } from '@/components/common/loader/async-loading-gate';
+import { useBootstrapSession } from '@/features/auth/hooks/use-bootstrap-session';
 
 type PublicRouteProps = {
   children: React.ReactNode;
 };
 
 export function PublicRoute({ children }: PublicRouteProps) {
-  useAuthSession();
+  const { isBootstrapping } = useBootstrapSession();
 
   const isAuthenticated = useAuthStore(
     (state) => state.isAuthenticated
@@ -18,5 +20,13 @@ export function PublicRoute({ children }: PublicRouteProps) {
     return <Navigate to="/" replace />;
   }
 
-  return children;
+  return (
+    <AsyncLoadingGate
+      isLoading={isBootstrapping}
+      label="Checking login session..."
+      fullScreen
+    >
+      {children}
+    </AsyncLoadingGate>
+  );
 }
