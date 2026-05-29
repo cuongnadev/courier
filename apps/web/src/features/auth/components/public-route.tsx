@@ -16,7 +16,7 @@ export function PublicRoute({ children }: PublicRouteProps) {
     (state) => state.isAuthenticated
   );
 
-  if (isAuthenticated) {
+  if (!isBootstrapping && isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
