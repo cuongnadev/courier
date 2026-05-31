@@ -1,13 +1,13 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { SearchInput } from "@/components/forms/search-input";
+import { SearchInput } from "@/components/forms/SearchInput";
 import { UploadIcon, PlusIcon } from "@/components/common/icons";
-import { TooltipCustom } from "@/components/common/tooltip/tooltip-custom";
-import { CollectionSidebarList } from "./collection-sidebar-list";
+import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
+import { CollectionSidebarList } from "./CollectionSidebarList";
 
 import { useCollections } from "@/features/collections/hooks/use-collections";
-import { CreateCollectionModal } from "@/features/collections/components/collection-create/create-collection-modal";
+import { CreateCollectionModal } from "@/features/collections/components/collection-create/CreateCollectionModal";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 type CollectionSidebarProps = {

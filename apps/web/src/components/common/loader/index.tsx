@@ -1,2 +1,2 @@
-export { AppLoading } from './app-loading';
-export { AsyncLoadingGate } from './async-loading-gate';
+export { AppLoading } from './AppLoading';
+export { AsyncLoadingGate } from './AsyncLoadingGate';

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Link } from "@tanstack/react-router";
 
-import { SearchInput } from "@/components/forms/search-input";
+import { SearchInput } from "@/components/forms/SearchInput";
 import { Button } from "@/components/ui/button";
 import { WORKSPACEITEMS, TOOLITEMS, TEAMITEMS } from "@/constants/sidebar";
 
@@ -21,7 +21,7 @@ import {
 
 import { useToolCounts } from "@/features/tools/hooks/use-tool-counts";
 import { useCollectionSidebar } from "@/features/collections/hooks/use-collections-sidebar";
-import { CreateCollectionModal } from "@/features/collections/components/collection-create/create-collection-modal";
+import { CreateCollectionModal } from "@/features/collections/components/collection-create/CreateCollectionModal";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 // Fake data for now, replace with backend response later

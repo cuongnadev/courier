@@ -5,7 +5,7 @@ import { Logo } from '@/components/common/icons/LogoIcon';
 import { FlashIcon } from '@/components/common/icons/FlashIcon';
 import { CheckCircleIcon } from '@/components/common/icons/CheckCircleIcon';
 
-import { PublicRoute } from '@/features/auth/components/public-route';
+import { PublicRoute } from '@/features/auth/components/PublicRoute';
 
 export default function AuthLayout() {
     return (

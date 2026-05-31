@@ -1,4 +1,4 @@
-import { SearchInput } from "@/components/forms/search-input";
+import { SearchInput } from "@/components/forms/SearchInput";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -9,7 +9,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
-import { TooltipCustom } from "@/components/common/tooltip/tooltip-custom";
+import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
 
 import {
     ImportIcon,

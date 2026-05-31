@@ -1,8 +1,8 @@
 import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import NotFound from '@/app/pages/not-found'
-import { AppLoading } from '@/components/common/loader/app-loading';
+import NotFound from '@/app/pages/NotFound'
+import { AppLoading } from '@/components/common/loader/AppLoading';
 
 interface RouterContext {
   queryClient: QueryClient

@@ -1,5 +1,5 @@
-import { CollectionDetailHeader } from "./collection-detail-header";
-import { CollectionDetailList } from "./collection-detail-list";
+import { CollectionDetailHeader } from "./CollectionDetailHeader";
+import { CollectionDetailList } from "./CollectionDetailList";
 
 import type { CollectionDetailResponse } from "@/features/collections/types/collection.type";
 
