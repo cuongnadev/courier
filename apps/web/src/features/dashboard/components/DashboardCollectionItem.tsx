@@ -2,7 +2,7 @@ import { FolderIcon } from "@/components/common/icons";
 
 import type { DashboardCollection } from "@/features/dashboard/types/dashboard.type";
 
-import { collectionBackgroundStyles } from "@/features/collections/utils/collection-color.util";
+import { collectionBackgroundStyles } from "@/features/collections/utils";
 
 type DashboardCollectionItemProps = {
   collection: DashboardCollection;

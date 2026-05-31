@@ -4,23 +4,47 @@ import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/forms/SearchInput";
 import { UploadIcon, PlusIcon } from "@/components/common/icons";
 import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
-import { CollectionSidebarList } from "./CollectionSidebarList";
+import { CollectionSidebarList } from "@/features/collections/components/collection-sidebar";
+import { CreateCollectionModal, ImportCollectionModal, EditCollectionModal, DeleteCollectionDialog } from "@/features/collections/components/collection-actions";
 
-import { useCollections } from "@/features/collections/hooks/use-collections";
-import { CreateCollectionModal } from "@/features/collections/components/collection-create/CreateCollectionModal";
+import {
+  useCollections,
+  useDeleteCollection,
+  useImportCollection,
+  useUpdateCollection,
+} from "@/features/collections/hooks";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+
+import type { CollectionResponse } from "@/features/collections/types";
+
+import { normalizeImportCollectionJson } from "@/features/collections/utils";
 
 type CollectionSidebarProps = {
   selectedCollectionId?: string | null;
   onSelectCollection?: (collectionId: string) => void;
 };
 
-export default function CollectionSidebar({
+export function CollectionSidebar({
   selectedCollectionId,
   onSelectCollection,
 }: CollectionSidebarProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const [editingCollection, setEditingCollection] =
+    useState<CollectionResponse | null>(null);
+
+  const [deletingCollection, setDeletingCollection] =
+    useState<CollectionResponse | null>(null);
   const { currentWorkspaceId } = useCurrentWorkspace();
+
+  const importCollectionMutation = useImportCollection(currentWorkspaceId);
+  const updateCollectionMutation = useUpdateCollection({
+    workspaceId: currentWorkspaceId,
+  });
+
+  const deleteCollectionMutation = useDeleteCollection({
+    workspaceId: currentWorkspaceId,
+  });
 
   const { data: collections = [], isLoading } = useCollections(currentWorkspaceId);
 
@@ -40,7 +64,10 @@ export default function CollectionSidebar({
                 side="bottom"
                 sideOffset={8}
               >
-                <Button className="p-2 rounded-[12px] bg-transparent hover:bg-neutral-100">
+                <Button
+                  className="p-2 rounded-[12px] bg-transparent hover:bg-neutral-100"
+                  onClick={() => setIsImportOpen(true)}
+                >
                   <UploadIcon iconColor="#525252" />
                 </Button>
               </TooltipCustom>
@@ -74,15 +101,67 @@ export default function CollectionSidebar({
               collections={collections}
               activeCollectionId={activeCollectionId}
               onSelectCollection={onSelectCollection}
+              onEditCollection={setEditingCollection}
+              onDeleteCollection={setDeletingCollection}
             />
           )}
         </div>
       </aside>
 
-      <CreateCollectionModal
+      {isCreateOpen && <CreateCollectionModal
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
         workspaceId={currentWorkspaceId}
+      />}
+
+      {isImportOpen && <ImportCollectionModal
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+        onImport={async (file) => {
+          const text = await file.text();
+          const json = JSON.parse(text);
+
+          const payload = normalizeImportCollectionJson(json);
+
+          await importCollectionMutation.mutateAsync(payload);
+        }}
+      />}
+
+      <EditCollectionModal
+        open={Boolean(editingCollection)}
+        onOpenChange={(open) => {
+          if (!open) setEditingCollection(null);
+        }}
+        collection={editingCollection}
+        isPending={updateCollectionMutation.isPending}
+        onSubmit={async (data) => {
+          if (!editingCollection) return;
+
+          await updateCollectionMutation.mutateAsync({
+            collectionId: editingCollection.id,
+            data,
+          });
+
+          setEditingCollection(null);
+        }}
+      />
+
+      <DeleteCollectionDialog
+        open={Boolean(deletingCollection)}
+        onOpenChange={(open) => {
+          if (!open) setDeletingCollection(null);
+        }}
+        collection={deletingCollection}
+        isPending={deleteCollectionMutation.isPending}
+        onConfirm={async () => {
+          if (!deletingCollection) return;
+
+          await deleteCollectionMutation.mutateAsync({
+            collectionId: deletingCollection.id,
+          });
+
+          setDeletingCollection(null);
+        }}
       />
     </>
   );

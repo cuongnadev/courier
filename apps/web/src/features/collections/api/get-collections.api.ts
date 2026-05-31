@@ -1,6 +1,7 @@
 import { api } from "@/lib/axios";
-import type { CollectionDetailResponse } from "@/features/collections/types/collection.type";
 import type { ApiResponse } from "@/types/api.type";
+
+import type { CollectionDetailResponse } from "@/features/collections/types";
 
 export async function getCollections(
   workspaceId: string,

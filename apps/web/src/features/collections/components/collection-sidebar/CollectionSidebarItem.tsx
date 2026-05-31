@@ -1,25 +1,30 @@
-import { Button } from "@/components/ui/button";
-import { FolderIcon, MoreIcon } from "@/components/common/icons";
+import { FolderIcon } from "@/components/common/icons";
 
-import type { CollectionRequest } from "@/features/collections/types/collection.type";
-import { collectionBackgroundStyles } from "@/features/collections/utils/collection-color.util";
+import type { CollectionResponse } from "@/features/collections/types";
+
+import { collectionBackgroundStyles } from "@/features/collections/utils";
+import { CollectionItemActions } from "../collection-actions/CollectionItemActions";
 
 type CollectionSidebarItemProps = {
-  collection: CollectionRequest;
+  collection: CollectionResponse;
 
   isActive?: boolean;
 
   onClick?: () => void;
+  onEditCollection?: (collection: CollectionResponse) => void;
+  onDeleteCollection?: (collection: CollectionResponse) => void;
 };
 
 export function CollectionSidebarItem({
   collection,
   isActive = false,
   onClick,
+  onEditCollection,
+  onDeleteCollection
 }: CollectionSidebarItemProps) {
   const backgroundColor =
     collectionBackgroundStyles[collection.color];
-    
+
   return (
     <div
       onClick={onClick}
@@ -59,14 +64,11 @@ export function CollectionSidebarItem({
               {collection.name}
             </p>
 
-            <Button
-              className="
-                p-1 w-5.5 h-5.5 rounded-[4px] bg-transparent
-                hover:bg-neutral-100
-              "
-            >
-              <MoreIcon />
-            </Button>
+            <CollectionItemActions
+              collection={collection}
+              onEdit={(collection) => onEditCollection?.(collection)}
+              onDelete={(collection) => onDeleteCollection?.(collection)}
+            />
           </div>
 
           {collection.description && (

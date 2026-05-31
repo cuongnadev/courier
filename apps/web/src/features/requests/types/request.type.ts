@@ -14,6 +14,15 @@ export type RawBodyLanguage =
   | "HTML"
   | "JAVASCRIPT";
 
+export type ApiRequestHeaderResponse = {
+  id: string;
+  requestId: string;
+  key: string;
+  value: string;
+  enabled: boolean;
+  sortOrder: number;
+};
+
 export type ApiRequestResponse = {
   id: string;
   collectionId: string;
@@ -42,6 +51,8 @@ export type ApiRequestResponse = {
   pathParamsCount?: number;
   bodyParamsCount?: number;
   cookiesCount?: number;
+
+  headers?: ApiRequestHeaderResponse[];
 };
 
 export type ApiRequestListItem = {

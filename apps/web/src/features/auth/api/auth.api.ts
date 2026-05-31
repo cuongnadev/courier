@@ -44,9 +44,9 @@ export async function refreshTokenApi(): Promise<RefreshTokenResponse> {
 }
 
 export async function getMeApi(): Promise<User> {
-  const body = await api.get<unknown, ApiResponse<User>>("/auth/me");
+  const body = await api.get<unknown, ApiResponse<{ user: User }>>("/auth/me");
 
-  return body.data;
+  return body.data.user;
 }
 
 export async function logoutApi(): Promise<void> {

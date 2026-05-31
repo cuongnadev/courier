@@ -65,6 +65,7 @@ api.interceptors.response.use(
 
       useAuthStore.getState().setAccessToken(accessToken);
 
+      originalRequest.headers = originalRequest.headers ?? {};
       originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
       return api(originalRequest);
