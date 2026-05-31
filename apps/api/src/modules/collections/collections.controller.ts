@@ -16,6 +16,7 @@ import type { AuthenticatedRequest } from '../../common/types/authenticated-requ
 import { CollectionsService } from './collections.service';
 import { CreateCollectionDto } from './dto/create-collection.dto';
 import { UpdateCollectionDto } from './dto/update-collection.dto';
+import { ImportCollectionDto } from './dto/import-collection.dto';
 
 @Controller('workspaces/:workspaceId/collections')
 @UseGuards(AuthGuard)
@@ -33,6 +34,20 @@ export class CollectionsController {
       workspaceId,
       request.user.sub,
       createCollectionDto,
+    );
+  }
+
+  @Version('1')
+  @Post('import')
+  importCollection(
+    @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
+    @Req() request: AuthenticatedRequest,
+    @Body() dto: ImportCollectionDto,
+  ) {
+    return this.collectionsService.importCollection(
+      workspaceId,
+      request.user.sub,
+      dto,
     );
   }
 

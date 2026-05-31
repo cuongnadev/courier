@@ -10,5 +10,8 @@ export async function getCollections(
     `/workspaces/${workspaceId}/collections`,
   );
 
+  console.log(body);
+  
+
   return body.data;
 }

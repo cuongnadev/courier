@@ -4,6 +4,19 @@ import { CreateCollectionDto } from './dto/create-collection.dto';
 import { UpdateCollectionDto } from './dto/update-collection.dto';
 import { WorkspacesService } from '../workspaces';
 import { AppException } from '@/common/exceptions/app.exceptions';
+import { ImportCollectionDto } from './dto/import-collection.dto';
+
+import {
+  HttpMethod,
+  RawBodyLanguage,
+  RequestBodyType,
+} from '@/generated/prisma/enums';
+
+import type {
+  HttpMethod as HttpMethodType,
+  RawBodyLanguage as RawBodyLanguageType,
+  RequestBodyType as RequestBodyTypeType,
+} from '@/generated/prisma/enums';
 
 @Injectable()
 export class CollectionsService {
@@ -35,6 +48,86 @@ export class CollectionsService {
     });
 
     return this.findOne(collection.id, workspaceId, userId);
+  }
+
+  async importCollection(
+    workspaceId: string,
+    userId: string | undefined,
+    dto: ImportCollectionDto,
+  ) {
+    await this.workspaceService.assertAccess(workspaceId, userId);
+
+    await this.assertNameAvailable(workspaceId, dto.name);
+
+    const importedCollection = await this.prisma.$transaction(async (tx) => {
+      const sortOrder =
+        dto.sortOrder ?? (await this.getNextSortOrder(workspaceId));
+
+      const collection = await tx.collection.create({
+        data: {
+          workspaceId,
+          name: dto.name,
+          description: dto.description ?? null,
+          color: dto.color ?? '#F59E0B',
+          sortOrder,
+        },
+      });
+
+      const requests = dto.requests ?? [];
+
+      for (const [index, request] of requests.entries()) {
+        const method: HttpMethodType = request.method ?? HttpMethod.GET;
+
+        const bodyType: RequestBodyTypeType =
+          request.bodyType ?? RequestBodyType.NONE;
+
+        const rawBodyLanguage: RawBodyLanguageType =
+          request.rawBodyLanguage ?? RawBodyLanguage.JSON;
+
+        const createdRequest = await tx.apiRequest.create({
+          data: {
+            collectionId: collection.id,
+
+            name: request.name,
+            method,
+            uri: request.uri,
+
+            bodyType,
+            rawBodyLanguage,
+
+            rawBody: request.rawBody ?? null,
+            graphqlQuery: request.graphqlQuery ?? null,
+            graphqlVariables: request.graphqlVariables ?? null,
+
+            description: request.description ?? null,
+            sortOrder: request.sortOrder ?? index,
+          },
+        });
+
+        const headers = request.headers ?? [];
+
+        if (headers.length > 0) {
+          await tx.requestHeader.createMany({
+            data: headers.map((header, headerIndex) => ({
+              requestId: createdRequest.id,
+              key: header.key,
+              value: header.value ?? null,
+              enabled: header.enabled ?? true,
+              sortOrder: header.sortOrder ?? headerIndex,
+            })),
+          });
+        }
+      }
+
+      return tx.collection.findUniqueOrThrow({
+        where: {
+          id: collection.id,
+        },
+        include: this.collectionWithRequestsInclude(),
+      });
+    });
+
+    return this.toCollectionResponse(importedCollection);
   }
 
   async findAll(workspaceId: string, userId?: string, limit?: number) {
@@ -224,6 +317,11 @@ export class CollectionsService {
         sortOrder: 'asc' as const,
       },
       include: {
+        headers: {
+          orderBy: {
+            sortOrder: 'asc' as const,
+          },
+        },
         _count: {
           select: {
             headers: true,
@@ -252,6 +350,14 @@ export class CollectionsService {
         updatedAt: Date;
         deletedAt: Date | null;
         bodyType: string;
+        headers: Array<{
+          id: string;
+          requestId: string;
+          key: string;
+          value: string | null;
+          enabled: boolean;
+          sortOrder: number;
+        }>;
         _count: {
           headers: number;
         };
@@ -270,7 +376,7 @@ export class CollectionsService {
       deletedAt: data.deletedAt?.toISOString() ?? null,
       requestsCount: _count.requests,
       requests: requests.map((request) => {
-        const { _count: requestCount, ...requestData } = request;
+        const { _count: requestCount, headers, ...requestData } = request;
 
         return {
           ...requestData,
@@ -279,6 +385,10 @@ export class CollectionsService {
           deletedAt: requestData.deletedAt?.toISOString() ?? null,
           headersCount: requestCount.headers,
           hasBody: requestData.bodyType !== 'NONE',
+          headers: headers.map((header) => ({
+            ...header,
+            value: header.value ?? '',
+          })),
         };
       }),
     };
