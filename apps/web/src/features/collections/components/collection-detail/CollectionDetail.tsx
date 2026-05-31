@@ -1,6 +1,6 @@
-import { CollectionDetailHeader, CollectionDetailList } from "@/features/collections/components/collection-detail";
+import type { CollectionDetailResponse } from "@/features/collections/types";
 
-import type { CollectionDetailResponse } from "@/features/collections/types/collection.type";
+import { CollectionDetailHeader, CollectionDetailList } from "@/features/collections/components/collection-detail";
 
 type CollectionDetailProps = {
   collection?: CollectionDetailResponse;

@@ -1,7 +1,7 @@
 import type {
   ExportableCollection,
   ExportableRequest,
-} from "@/features/collections/types/collection-export.type";
+} from "@/features/collections/types";
 
 function hasRawBody(request: ExportableRequest): request is ExportableRequest & {
   rawBody: string | null;

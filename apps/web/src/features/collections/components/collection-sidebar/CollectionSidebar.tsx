@@ -7,8 +7,10 @@ import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
 import { CollectionSidebarList } from "@/features/collections/components/collection-sidebar";
 import { CreateCollectionModal, ImportCollectionModal } from "@/features/collections/components/collection-actions";
 
-import { useCollections } from "@/features/collections/hooks";
+import { useCollections, useImportCollection } from "@/features/collections/hooks";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+
+import { normalizeImportCollectionJson } from "@/features/collections/utils";
 
 type CollectionSidebarProps = {
   selectedCollectionId?: string | null;
@@ -22,6 +24,7 @@ export function CollectionSidebar({
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const { currentWorkspaceId } = useCurrentWorkspace();
+  const importCollectionMutation = useImportCollection(currentWorkspaceId);
 
   const { data: collections = [], isLoading } = useCollections(currentWorkspaceId);
 
@@ -83,22 +86,24 @@ export function CollectionSidebar({
         </div>
       </aside>
 
-      <CreateCollectionModal
+      {isCreateOpen && <CreateCollectionModal
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
         workspaceId={currentWorkspaceId}
-      />
+      />}
 
-      <ImportCollectionModal
+      {isImportOpen && <ImportCollectionModal
         open={isImportOpen}
         onOpenChange={setIsImportOpen}
-      // onImport={async (file) => {
-      //   const text = await file.text();
-      //   const data = JSON.parse(text);
+        onImport={async (file) => {
+          const text = await file.text();
+          const json  = JSON.parse(text);
 
-      //   // await importCollectionMutation.mutateAsync(data);
-      // }}
-      />
+          const payload = normalizeImportCollectionJson(json);
+
+          await importCollectionMutation.mutateAsync(payload);
+        }}
+      />}
     </>
   );
 }

@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { FolderIcon, MoreIcon } from "@/components/common/icons";
 
-import type { CollectionResponse } from "@/features/collections/types/collection.type";
-import { collectionBackgroundStyles } from "@/features/collections/utils/collection-color.util";
+import type { CollectionResponse } from "@/features/collections/types";
+
+import { collectionBackgroundStyles } from "@/features/collections/utils";
 
 type CollectionSidebarItemProps = {
   collection: CollectionResponse;

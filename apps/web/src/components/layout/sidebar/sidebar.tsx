@@ -175,11 +175,11 @@ export function Sidebar() {
                 </div>
             </aside>
 
-            <CreateCollectionModal
+            {isCreateOpen && <CreateCollectionModal
                 open={isCreateOpen}
                 onOpenChange={setIsCreateOpen}
                 workspaceId={currentWorkspaceId}
-            />
+            />}
         </>
     );
 }

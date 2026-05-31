@@ -137,12 +137,8 @@ export function ImportCollectionModal({
 
       await onImport?.(selectedFile);
 
-      toast.success("Collection imported.");
-
       resetState();
       onOpenChange(false);
-    } catch {
-      toast.error("Failed to import collection.");
     } finally {
       setIsImporting(false);
     }

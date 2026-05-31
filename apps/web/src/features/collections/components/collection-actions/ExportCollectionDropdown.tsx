@@ -9,14 +9,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import type { ExportableCollection } from "@/features/collections/types/collection-export.type";
+import type { ExportableCollection } from "@/features/collections/types";
 
 import {
   downloadFile,
   exportCollectionAsCurl,
   exportCollectionAsOpenApi,
   slugify,
-} from "@/features/collections/utils/collection-export";
+} from "@/features/collections/utils";
 
 type ExportCollectionDropdownProps = {
   children: ReactNode;

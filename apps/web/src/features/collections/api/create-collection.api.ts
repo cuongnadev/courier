@@ -1,7 +1,8 @@
 import { api } from "@/lib/axios";
-import type { CreateCollectionFormValues } from "@/features/collections/schemas/create-collection.schema";
-import type { CollectionResponse } from "@/features/collections/types/collection.type";
 import type { ApiResponse } from "@/types/api.type";
+
+import type { CollectionResponse } from "@/features/collections/types";
+import type { CreateCollectionFormValues } from "@/features/collections/schemas/create-collection.schema";
 
 export async function createCollectionApi(
   workspaceId: string,
