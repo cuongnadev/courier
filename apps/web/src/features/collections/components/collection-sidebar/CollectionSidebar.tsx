@@ -5,10 +5,17 @@ import { SearchInput } from "@/components/forms/SearchInput";
 import { UploadIcon, PlusIcon } from "@/components/common/icons";
 import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
 import { CollectionSidebarList } from "@/features/collections/components/collection-sidebar";
-import { CreateCollectionModal, ImportCollectionModal } from "@/features/collections/components/collection-actions";
+import { CreateCollectionModal, ImportCollectionModal, EditCollectionModal, DeleteCollectionDialog } from "@/features/collections/components/collection-actions";
 
-import { useCollections, useImportCollection } from "@/features/collections/hooks";
+import {
+  useCollections,
+  useDeleteCollection,
+  useImportCollection,
+  useUpdateCollection,
+} from "@/features/collections/hooks";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+
+import type { CollectionResponse } from "@/features/collections/types";
 
 import { normalizeImportCollectionJson } from "@/features/collections/utils";
 
@@ -23,8 +30,21 @@ export function CollectionSidebar({
 }: CollectionSidebarProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
+  const [editingCollection, setEditingCollection] =
+    useState<CollectionResponse | null>(null);
+
+  const [deletingCollection, setDeletingCollection] =
+    useState<CollectionResponse | null>(null);
   const { currentWorkspaceId } = useCurrentWorkspace();
+
   const importCollectionMutation = useImportCollection(currentWorkspaceId);
+  const updateCollectionMutation = useUpdateCollection({
+    workspaceId: currentWorkspaceId,
+  });
+
+  const deleteCollectionMutation = useDeleteCollection({
+    workspaceId: currentWorkspaceId,
+  });
 
   const { data: collections = [], isLoading } = useCollections(currentWorkspaceId);
 
@@ -81,6 +101,8 @@ export function CollectionSidebar({
               collections={collections}
               activeCollectionId={activeCollectionId}
               onSelectCollection={onSelectCollection}
+              onEditCollection={setEditingCollection}
+              onDeleteCollection={setDeletingCollection}
             />
           )}
         </div>
@@ -97,13 +119,50 @@ export function CollectionSidebar({
         onOpenChange={setIsImportOpen}
         onImport={async (file) => {
           const text = await file.text();
-          const json  = JSON.parse(text);
+          const json = JSON.parse(text);
 
           const payload = normalizeImportCollectionJson(json);
 
           await importCollectionMutation.mutateAsync(payload);
         }}
       />}
+
+      <EditCollectionModal
+        open={Boolean(editingCollection)}
+        onOpenChange={(open) => {
+          if (!open) setEditingCollection(null);
+        }}
+        collection={editingCollection}
+        isPending={updateCollectionMutation.isPending}
+        onSubmit={async (data) => {
+          if (!editingCollection) return;
+
+          await updateCollectionMutation.mutateAsync({
+            collectionId: editingCollection.id,
+            data,
+          });
+
+          setEditingCollection(null);
+        }}
+      />
+
+      <DeleteCollectionDialog
+        open={Boolean(deletingCollection)}
+        onOpenChange={(open) => {
+          if (!open) setDeletingCollection(null);
+        }}
+        collection={deletingCollection}
+        isPending={deleteCollectionMutation.isPending}
+        onConfirm={async () => {
+          if (!deletingCollection) return;
+
+          await deleteCollectionMutation.mutateAsync({
+            collectionId: deletingCollection.id,
+          });
+
+          setDeletingCollection(null);
+        }}
+      />
     </>
   );
 }

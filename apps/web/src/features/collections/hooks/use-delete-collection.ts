@@ -1,21 +1,30 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { importCollectionApi } from "@/features/collections/api";
-import type { ImportCollectionPayload } from "@/features/collections/types";
+import { deleteCollectionApi } from "@/features/collections/api";
 
-export function useImportCollection(workspaceId?: string | null) {
+type UseDeleteCollectionParams = {
+  workspaceId?: string | null;
+};
+
+type DeleteCollectionMutationPayload = {
+  collectionId: string;
+};
+
+export function useDeleteCollection({
+  workspaceId,
+}: UseDeleteCollectionParams) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: ImportCollectionPayload) => {
+    mutationFn: async ({ collectionId }: DeleteCollectionMutationPayload) => {
       if (!workspaceId) {
         throw new Error("Workspace is required.");
       }
 
-      return importCollectionApi({
+      await deleteCollectionApi({
         workspaceId,
-        data: payload,
+        collectionId,
       });
     },
 
@@ -24,14 +33,14 @@ export function useImportCollection(workspaceId?: string | null) {
         queryKey: ["collections", workspaceId],
       });
 
-      toast.success("Collection imported.");
+      toast.success("Collection deleted.");
     },
 
     onError: (error) => {
       const message =
         error instanceof Error
           ? error.message
-          : "Failed to import collection.";
+          : "Failed to delete collection.";
 
       toast.error(message);
     },

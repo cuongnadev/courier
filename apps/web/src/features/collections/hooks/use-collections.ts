@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCollections } from "@/features/collections/api/get-collections.api";
+import { getCollections } from "@/features/collections/api";
 
 export function useCollections(
   workspaceId: string | null,

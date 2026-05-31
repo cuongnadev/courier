@@ -89,9 +89,9 @@ export function CollectionDetailHeader({
 
               <Button
                 variant="outline"
-                className="h-10 px-4 rounded-[12px] border-[1.25px] border-[#E5E5E5] bg-white hover:bg-neutral-50 text-sm font-medium text-[#1C1917] hover:text-[#1C1917]"
+                className="h-10 px-4 rounded-[12px] border-[1.25px] border-[#E5E5E5] bg-white hover:bg-neutral-50 text-sm font-medium text-[#1C1917] hover:text-[#1C1917]  data-[state=open]:bg-[#171717] data-[state=open]:text-white"
               >
-                <DownloadIcon width={16} height={16} />
+                <DownloadIcon width={16} height={16} iconColor="currentColor" />
                 Export
               </Button>
             </ExportCollectionDropdown>

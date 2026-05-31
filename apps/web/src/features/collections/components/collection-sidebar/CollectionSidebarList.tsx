@@ -9,12 +9,16 @@ type CollectionSidebarListProps = {
   onSelectCollection?: (
     collectionId: string,
   ) => void;
+  onEditCollection?: (collection: CollectionResponse) => void;
+  onDeleteCollection?: (collection: CollectionResponse) => void;
 };
 
 export function CollectionSidebarList({
   collections,
   activeCollectionId,
   onSelectCollection,
+  onEditCollection,
+  onDeleteCollection
 }: CollectionSidebarListProps) {
   return (
     <div className="space-y-1">
@@ -31,6 +35,8 @@ export function CollectionSidebarList({
               String(collection.id),
             )
           }
+          onEditCollection={onEditCollection}
+          onDeleteCollection={onDeleteCollection}
         />
       ))}
     </div>
