@@ -24,6 +24,8 @@ import { useCollectionSidebar } from "@/features/collections/hooks";
 import { CreateCollectionModal } from "@/features/collections/components/collection-actions";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
+import { buildWorkspacePath } from "@/features/workspaces/utils/workspace-route.util";
+
 // Fake data for now, replace with backend response later
 const currentPlan = {
     name: "Free Plan",
@@ -74,9 +76,10 @@ export function Sidebar() {
                             return (
                                 <SidebarItem
                                     key={item.to}
-                                    to={item.to}
+                                    to={buildWorkspacePath(currentWorkspaceId, item.to)}
                                     icon={<Icon iconColor="currentColor" />}
                                     label={item.label}
+                                    exact={item.to === "/"}
                                 />
                             );
                         })}
@@ -106,7 +109,7 @@ export function Sidebar() {
                                 {collection.requests.map((request) => (
                                     <SidebarSubItem
                                         key={request.id}
-                                        to={request.uri}
+                                        to={buildWorkspacePath(currentWorkspaceId, `/collections/${collection.id}/requests/${request.id}`)}
                                         method={request.method}
                                         label={request.name}
                                     />
@@ -123,10 +126,11 @@ export function Sidebar() {
                             return (
                                 <SidebarItem
                                     key={item.to}
-                                    to={item.to}
+                                    to={buildWorkspacePath(currentWorkspaceId, item.to)}
                                     icon={<Icon iconColor="currentColor" />}
                                     label={item.label}
                                     count={item.countKey ? toolCounts[item.countKey] : undefined}
+                                    exact={item.to === "/"}
                                 />
                             );
                         })}
@@ -140,9 +144,10 @@ export function Sidebar() {
                             return (
                                 <SidebarItem
                                     key={item.to}
-                                    to={item.to}
+                                    to={buildWorkspacePath(currentWorkspaceId, item.to)}
                                     icon={<Icon iconColor="currentColor" />}
                                     label={item.label}
+                                    exact={item.to === "/"}
                                 />
                             );
                         })}

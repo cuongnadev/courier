@@ -14,10 +14,17 @@ import MainLayout from '@/app/layouts/MainLayout';
  * Main pages
  */
 
+import IndexRedirectPage from "@/app/pages/main/index-redirect";
 import DashboardPage from "@/app/pages/main/dashboard";
 import CollectionsPage from "@/app/pages/main/collections";
 import LoginPage from "@/app/pages/auth/login";
 import RegisterPage from "@/app/pages/auth/register";
+
+export const indexRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/",
+  component: IndexRedirectPage,
+});
 
 export const authLayoutRoute = createRoute({
   getParentRoute: () => RootRoute,
@@ -27,7 +34,7 @@ export const authLayoutRoute = createRoute({
 
 export const mainLayoutRoute = createRoute({
   getParentRoute: () => RootRoute,
-  id: 'main',
+  path: "/workspaces/$workspaceId",
   component: MainLayout,
 });
 
@@ -50,6 +57,12 @@ export const collectionsRoute = createRoute({
   component: CollectionsPage,
 });
 
+export const collectionDetailRoute = createRoute({
+  getParentRoute: () => mainLayoutRoute,
+  path: "/collections/$collectionId",
+  component: CollectionsPage,
+});
+
 export const loginRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
   path: '/login',
@@ -63,6 +76,7 @@ export const registerRoute = createRoute({
 // ... other routes
 
 export const routeTree = RootRoute.addChildren([
+  indexRoute,
   authLayoutRoute.addChildren([loginRoute, registerRoute]),
-  mainLayoutRoute.addChildren([dashboardRoute, collectionsRoute]),
+  mainLayoutRoute.addChildren([dashboardRoute, collectionsRoute, collectionDetailRoute]),
 ]);
