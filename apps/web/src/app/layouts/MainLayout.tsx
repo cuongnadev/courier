@@ -4,7 +4,7 @@ import { Header } from '@/components/layout/header/header';
 import { Sidebar } from '@/components/layout/sidebar/sidebar';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 
-import { AsyncLoadingGate } from '@/components/common/loader/async-loading-gate';
+import { AsyncLoadingGate } from '@/components/common/loader/AsyncLoadingGate';
 import { useBootstrapSession } from '@/features/auth/hooks/use-bootstrap-session';
 
 export default function MainLayout() {

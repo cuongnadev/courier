@@ -1,5 +1,5 @@
 import type { CollectionRequest } from "@/features/collections/types/collection.type";
-import { CollectionSidebarItem } from "./collection-sidebar-item";
+import { CollectionSidebarItem } from "./CollectionSidebarItem";
 
 type CollectionSidebarListProps = {
   collections: CollectionRequest[];

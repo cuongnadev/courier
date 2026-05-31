@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import { useCollections } from "@/features/collections/hooks/use-collections";
 
-import CollectionSidebar from "@/features/collections/components/collection-sidebar/collection-sidebar";
-import { CollectionDetail } from "@/features/collections/components/collection-detail/collection-detail";
+import CollectionSidebar from "@/features/collections/components/collection-sidebar/CollectionSidebar";
+import { CollectionDetail } from "@/features/collections/components/collection-detail/CollectionDetail";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 export default function CollectionsPage() {

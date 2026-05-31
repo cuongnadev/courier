@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { AppLoading } from "@/components/common/loader/app-loading";
+import { AppLoading } from "@/components/common/loader/AppLoading";
 
 type AsyncLoadingGateProps = {
   isLoading: boolean;

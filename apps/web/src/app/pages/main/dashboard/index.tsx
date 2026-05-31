@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ActivityIcon, Logo } from "@/components/common/icons";
 
-import { DashboardStatCard } from "@/features/dashboard/components/dashboard-stat-card";
-import { RecentActivityItem } from "@/features/dashboard/components/recent-activity-item";
-import { DashboardCollectionItem } from "@/features/dashboard/components/dashboard-collection-item";
-import { DashboardFlowItem } from "@/features/dashboard/components/dashboard-active-flows-item";
+import { DashboardStatCard } from "@/features/dashboard/components/DashboardStatCard";
+import { RecentActivityItem } from "@/features/dashboard/components/RecentActivityItem";
+import { DashboardCollectionItem } from "@/features/dashboard/components/DashboardCollectionItem";
+import { DashboardFlowItem } from "@/features/dashboard/components/DashboardActiveFlowsItem";
 
 import { useDashboardMetrics } from "@/features/dashboard/hooks/use-dashboard-metrics";
 

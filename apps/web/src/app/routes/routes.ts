@@ -6,8 +6,8 @@ import { RootRoute } from './__root';
  * Layouts
  */
 
-import AuthLayout from '@/app/layouts/auth-layout';
-import MainLayout from '@/app/layouts/main-layout';
+import AuthLayout from '@/app/layouts/AuthLayout';
+import MainLayout from '@/app/layouts/MainLayout';
 
 
 /**
