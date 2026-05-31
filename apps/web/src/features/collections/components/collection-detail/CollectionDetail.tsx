@@ -1,5 +1,4 @@
-import { CollectionDetailHeader } from "./CollectionDetailHeader";
-import { CollectionDetailList } from "./CollectionDetailList";
+import { CollectionDetailHeader, CollectionDetailList } from "@/features/collections/components/collection-detail";
 
 import type { CollectionDetailResponse } from "@/features/collections/types/collection.type";
 

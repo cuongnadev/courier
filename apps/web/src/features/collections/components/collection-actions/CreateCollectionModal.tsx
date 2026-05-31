@@ -37,7 +37,7 @@ import {
   type CreateCollectionFormValues,
 } from "@/features/collections/schemas/create-collection.schema";
 
-import { useCreateCollection } from "@/features/collections/hooks/use-create-collection";
+import { useCreateCollection } from "@/features/collections/hooks";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 type CreateCollectionModalProps = {

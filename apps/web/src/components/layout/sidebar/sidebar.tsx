@@ -20,8 +20,8 @@ import {
 } from "@/components/layout/sidebar";
 
 import { useToolCounts } from "@/features/tools/hooks/use-tool-counts";
-import { useCollectionSidebar } from "@/features/collections/hooks/use-collections-sidebar";
-import { CreateCollectionModal } from "@/features/collections/components/collection-create/CreateCollectionModal";
+import { useCollectionSidebar } from "@/features/collections/hooks";
+import { CreateCollectionModal } from "@/features/collections/components/collection-actions";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 // Fake data for now, replace with backend response later

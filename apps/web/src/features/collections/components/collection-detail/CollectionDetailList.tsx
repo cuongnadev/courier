@@ -1,4 +1,4 @@
-import { CollectionDetailItem } from "./CollectionDetailItem";
+import { CollectionDetailItem } from "@/features/collections/components/collection-detail";
 
 import type { ApiRequestListItem } from "@/features/requests/types/request.type";
 

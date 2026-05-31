@@ -9,6 +9,8 @@ import {
 import type { CollectionDetailResponse } from "@/features/collections/types/collection.type";
 
 import { collectionBackgroundStyles } from "@/features/collections/utils/collection-color.util";
+import { ExportCollectionDropdown } from "@/features/collections/components/collection-actions";
+
 import { formatDate } from "@/lib/utils";
 
 type CollectionDetailHeaderProps = {
@@ -79,13 +81,16 @@ export function CollectionDetailHeader({
             Share
           </Button>
 
-          <Button
-            variant="outline"
-            className="h-10 px-4 rounded-[12px] border-[1.25px] border-[#E5E5E5] bg-white hover:bg-neutral-50 text-sm font-medium text-[#1C1917] hover:text-[#1C1917]"
-          >
-            <DownloadIcon width={16} height={16} />
-            Export
-          </Button>
+          <ExportCollectionDropdown collection={collection}>
+
+            <Button
+              variant="outline"
+              className="h-10 px-4 rounded-[12px] border-[1.25px] border-[#E5E5E5] bg-white hover:bg-neutral-50 text-sm font-medium text-[#1C1917] hover:text-[#1C1917]"
+            >
+              <DownloadIcon width={16} height={16} />
+              Export
+            </Button>
+          </ExportCollectionDropdown>
 
           <Button className="h-10 px-4 rounded-[12px] bg-[#155DFC] text-sm font-medium text-white hover:bg-blue-700">
             <PlusIcon width={16} height={16} iconColor="white" />

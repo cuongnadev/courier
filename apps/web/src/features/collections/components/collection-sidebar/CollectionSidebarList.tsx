@@ -1,8 +1,8 @@
-import type { CollectionRequest } from "@/features/collections/types/collection.type";
+import type { CollectionResponse } from "@/features/collections/types/collection.type";
 import { CollectionSidebarItem } from "./CollectionSidebarItem";
 
 type CollectionSidebarListProps = {
-  collections: CollectionRequest[];
+  collections: CollectionResponse[];
 
   activeCollectionId?: string;
 

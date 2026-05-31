@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { FolderIcon, MoreIcon } from "@/components/common/icons";
 
-import type { CollectionRequest } from "@/features/collections/types/collection.type";
+import type { CollectionResponse } from "@/features/collections/types/collection.type";
 import { collectionBackgroundStyles } from "@/features/collections/utils/collection-color.util";
 
 type CollectionSidebarItemProps = {
-  collection: CollectionRequest;
+  collection: CollectionResponse;
 
   isActive?: boolean;
 

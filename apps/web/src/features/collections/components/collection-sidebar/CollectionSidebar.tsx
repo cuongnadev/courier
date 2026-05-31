@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/forms/SearchInput";
 import { UploadIcon, PlusIcon } from "@/components/common/icons";
 import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
-import { CollectionSidebarList } from "./CollectionSidebarList";
+import { CollectionSidebarList } from "@/features/collections/components/collection-sidebar";
+import { CreateCollectionModal, ImportCollectionModal } from "@/features/collections/components/collection-actions";
 
-import { useCollections } from "@/features/collections/hooks/use-collections";
-import { CreateCollectionModal } from "@/features/collections/components/collection-create/CreateCollectionModal";
+import { useCollections } from "@/features/collections/hooks";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 type CollectionSidebarProps = {
@@ -15,11 +15,12 @@ type CollectionSidebarProps = {
   onSelectCollection?: (collectionId: string) => void;
 };
 
-export default function CollectionSidebar({
+export function CollectionSidebar({
   selectedCollectionId,
   onSelectCollection,
 }: CollectionSidebarProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const { currentWorkspaceId } = useCurrentWorkspace();
 
   const { data: collections = [], isLoading } = useCollections(currentWorkspaceId);
@@ -40,7 +41,10 @@ export default function CollectionSidebar({
                 side="bottom"
                 sideOffset={8}
               >
-                <Button className="p-2 rounded-[12px] bg-transparent hover:bg-neutral-100">
+                <Button
+                  className="p-2 rounded-[12px] bg-transparent hover:bg-neutral-100"
+                  onClick={() => setIsImportOpen(true)}
+                >
                   <UploadIcon iconColor="#525252" />
                 </Button>
               </TooltipCustom>
@@ -83,6 +87,17 @@ export default function CollectionSidebar({
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
         workspaceId={currentWorkspaceId}
+      />
+
+      <ImportCollectionModal
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+      // onImport={async (file) => {
+      //   const text = await file.text();
+      //   const data = JSON.parse(text);
+
+      //   // await importCollectionMutation.mutateAsync(data);
+      // }}
       />
     </>
   );
