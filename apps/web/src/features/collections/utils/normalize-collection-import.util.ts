@@ -1,16 +1,26 @@
 import type {
+  CollectionColor,
+  ExportedCollectionJson,
+  ExportedRequestHeaderJson,
+  ExportedRequestJson,
+  ImportCollectionPayload,
+} from "@/features/collections/types";
+
+import type {
   RawBodyLanguage,
   RequestBodyType,
 } from "@/features/requests/types/request.type";
 
 import type { RequestMethod } from "@/types/api.type";
 
-import type {
-  CollectionColor,
-  ExportedCollectionJson,
-  ExportedRequestJson,
-  ImportCollectionPayload,
-} from "@/features/collections/types";
+const COLLECTION_COLOR_VALUES = [
+  "#F59E0B",
+  "#3B82F6",
+  "#10B981",
+  "#8B5CF6",
+  "#EF4444",
+  "#EC4899",
+] as const satisfies readonly CollectionColor[];
 
 const REQUEST_METHOD_VALUES = [
   "GET",
@@ -36,14 +46,29 @@ const RAW_BODY_LANGUAGE_VALUES = [
   "JAVASCRIPT",
 ] as const satisfies readonly RawBodyLanguage[];
 
-const DEFAULT_COLLECTION_COLOR: CollectionColor = "#10B981" as CollectionColor;
-
 function isString(value: unknown): value is string {
   return typeof value === "string";
 }
 
-function toNullableString(value: unknown): string | null {
-  return typeof value === "string" ? value : null;
+function toOptionalString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function toOptionalNumber(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value)
+    ? value
+    : undefined;
+}
+
+function toOptionalBoolean(value: unknown): boolean | undefined {
+  return typeof value === "boolean" ? value : undefined;
+}
+
+function isCollectionColor(value: unknown): value is CollectionColor {
+  return (
+    typeof value === "string" &&
+    COLLECTION_COLOR_VALUES.includes(value as CollectionColor)
+  );
 }
 
 function isRequestMethod(value: unknown): value is RequestMethod {
@@ -67,29 +92,47 @@ function isRawBodyLanguage(value: unknown): value is RawBodyLanguage {
   );
 }
 
-function isCollectionColor(value: unknown): value is CollectionColor {
-  return typeof value === "string" && /^#[0-9A-Fa-f]{6}$/.test(value);
+function normalizeHeader(
+  header: ExportedRequestHeaderJson,
+  index: number,
+): NonNullable<
+  NonNullable<ImportCollectionPayload["requests"]>[number]["headers"]
+>[number] {
+  if (!isString(header.key) || !header.key.trim()) {
+    throw new Error(`Header #${index + 1} is missing key.`);
+  }
+
+  return {
+    key: header.key.trim(),
+    value: toOptionalString(header.value),
+    enabled: toOptionalBoolean(header.enabled),
+    sortOrder: toOptionalNumber(header.sortOrder) ?? index,
+  };
 }
 
 function normalizeRequest(
   request: ExportedRequestJson,
   index: number,
-): ImportCollectionPayload["requests"][number] {
+): NonNullable<ImportCollectionPayload["requests"]>[number] {
   if (!isString(request.name) || !request.name.trim()) {
     throw new Error(`Request #${index + 1} is missing name.`);
-  }
-
-  if (!isRequestMethod(request.method)) {
-    throw new Error(`Request "${request.name}" has invalid method.`);
   }
 
   if (!isString(request.uri) || !request.uri.trim()) {
     throw new Error(`Request "${request.name}" is missing URI.`);
   }
 
+  const headers = Array.isArray(request.headers)
+    ? request.headers.map((header, headerIndex) =>
+        normalizeHeader(header as ExportedRequestHeaderJson, headerIndex),
+      )
+    : [];
+
   return {
     name: request.name.trim(),
-    method: request.method,
+
+    method: isRequestMethod(request.method) ? request.method : "GET",
+
     uri: request.uri.trim(),
 
     bodyType: isRequestBodyType(request.bodyType)
@@ -100,15 +143,15 @@ function normalizeRequest(
       ? request.rawBodyLanguage
       : "JSON",
 
-    rawBody: toNullableString(request.rawBody),
+    rawBody: toOptionalString(request.rawBody),
 
-    graphqlQuery: toNullableString(request.graphqlQuery),
-    graphqlVariables: toNullableString(request.graphqlVariables),
+    graphqlQuery: toOptionalString(request.graphqlQuery),
+    graphqlVariables: toOptionalString(request.graphqlVariables),
 
-    description: toNullableString(request.description),
+    description: toOptionalString(request.description),
+    sortOrder: toOptionalNumber(request.sortOrder) ?? index,
 
-    sortOrder:
-      typeof request.sortOrder === "number" ? request.sortOrder : index,
+    headers,
   };
 }
 
@@ -127,17 +170,20 @@ export function normalizeImportCollectionJson(
 
   const requests = Array.isArray(collection.requests)
     ? collection.requests.map((request, index) =>
-      normalizeRequest(request as ExportedRequestJson, index),
-    )
+        normalizeRequest(request as ExportedRequestJson, index),
+      )
     : [];
 
   return {
     name: collection.name.trim(),
-    description: toNullableString(collection.description),
+
+    description: toOptionalString(collection.description),
 
     color: isCollectionColor(collection.color)
       ? collection.color
-      : DEFAULT_COLLECTION_COLOR,
+      : undefined,
+
+    sortOrder: toOptionalNumber(collection.sortOrder),
 
     requests,
   };

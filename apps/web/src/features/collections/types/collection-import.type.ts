@@ -24,6 +24,15 @@ export type ExportedCollectionJson = {
   requests?: unknown;
 };
 
+export type ExportedRequestHeaderJson = {
+  id?: unknown;
+  requestId?: unknown;
+  key?: unknown;
+  value?: unknown;
+  enabled?: unknown;
+  sortOrder?: unknown;
+};
+
 export type ExportedRequestJson = {
   id?: unknown;
   collectionId?: unknown;
@@ -52,34 +61,46 @@ export type ExportedRequestJson = {
   pathParamsCount?: unknown;
   bodyParamsCount?: unknown;
   cookiesCount?: unknown;
+
+  headers?: unknown;
 };
 
 export type ImportCollectionPayload = {
   name: string;
-  description: string | null;
-  color: CollectionColor;
-  requests: ImportRequestPayload[];
+  description?: string;
+  color?: CollectionColor;
+  sortOrder?: number;
+  requests?: ImportRequestPayload[];
+};
+
+export type ImportRequestHeaderPayload = {
+  key: string;
+  value?: string;
+  enabled?: boolean;
+  sortOrder?: number;
 };
 
 export type ImportRequestPayload = {
   name: string;
-  method: RequestMethod;
+  method?: RequestMethod;
   uri: string;
 
-  bodyType: RequestBodyType;
-  rawBodyLanguage: RawBodyLanguage;
-  rawBody: string | null;
+  bodyType?: RequestBodyType;
+  rawBodyLanguage?: RawBodyLanguage;
+  rawBody?: string;
 
-  graphqlQuery: string | null;
-  graphqlVariables: string | null;
+  graphqlQuery?: string;
+  graphqlVariables?: string;
 
-  description: string | null;
+  description?: string;
 
-  sortOrder: number;
+  sortOrder?: number;
+
+  headers?: ImportRequestHeaderPayload[];
 };
 
 /**
- * Optional: type này dùng khi bạn muốn export đúng full format:
+ * Optional: This type is used when you want to export in full format:
  * CollectionResponse + requests array.
  */
 export type ExportedCollectionFile = {
