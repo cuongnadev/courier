@@ -1,18 +1,28 @@
-import { Navigate, Outlet } from '@tanstack/react-router';
+import { useEffect } from 'react';
+import { Navigate, Outlet, useParams } from '@tanstack/react-router';
 
 import { Header } from '@/components/layout/header/header';
 import { Sidebar } from '@/components/layout/sidebar/sidebar';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 
-import { AsyncLoadingGate } from '@/components/common/loader/AsyncLoadingGate';
-import { useBootstrapSession } from '@/features/auth/hooks/use-bootstrap-session';
+import { useWorkspaceStore } from '@/features/workspaces/store/workspace.store';
 
 export default function MainLayout() {
-  const { isBootstrapping } = useBootstrapSession();
-
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  if (!isBootstrapping && !isAuthenticated) {
+  const { workspaceId } = useParams({
+    from: "/workspaces/$workspaceId",
+  });
+
+  const setCurrentWorkspaceId = useWorkspaceStore(
+    (state) => state.setCurrentWorkspaceId,
+  );
+
+  useEffect(() => {
+    setCurrentWorkspaceId(workspaceId);
+  }, [workspaceId, setCurrentWorkspaceId]);
+
+  if (!isAuthenticated) {
     return (
       <Navigate
         to="/login"
@@ -29,13 +39,7 @@ export default function MainLayout() {
         <Header />
 
         <main className="flex-1 overflow-auto">
-          <AsyncLoadingGate
-            isLoading={isBootstrapping}
-            fullScreen={false}
-            label="Checking login session..."
-          >
-            <Outlet />
-          </AsyncLoadingGate>
+          <Outlet />
         </main>
       </div>
     </div>

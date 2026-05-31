@@ -29,7 +29,8 @@ export function SidebarSubItem({
             sideOffset={8}
         >
             <Link
-                to={to}
+                to={to as never}
+                activeOptions={{ exact: true }}
                 activeProps={{
                     className:
                         "bg-[#F5F5F5]",

@@ -48,8 +48,7 @@ export function CollectionSidebar({
 
   const { data: collections = [], isLoading } = useCollections(currentWorkspaceId);
 
-  const activeCollectionId =
-    selectedCollectionId ?? collections[0]?.id ?? "";
+  const activeCollectionId = selectedCollectionId ?? "";
 
   return (
     <>
