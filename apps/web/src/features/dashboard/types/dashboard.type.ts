@@ -1,4 +1,4 @@
-import type { CollectionResponse } from "@/features/collections/types/collection.type";
+import type { CollectionResponse } from "@/features/collections/types";
 import type { RecentActivityResponse } from "@/features/requests/types/request-run.type";
 
 export type DashboardFlow = {

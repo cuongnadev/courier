@@ -5,6 +5,7 @@ type SidebarItemProps = {
     icon: React.ReactNode;
     label: string;
     count?: number;
+    exact?: boolean;
 };
 
 export function SidebarItem({
@@ -12,10 +13,12 @@ export function SidebarItem({
     icon,
     label,
     count,
+    exact = false
 }: SidebarItemProps) {
     return (
         <Link
-            to={to}
+            to={to as never}
+            activeOptions={{ exact }}
             activeProps={{
                 className:
                     "bg-[#FFFBEB] text-[#7B3306] font-medium hover:bg-[#FFFBEB]",

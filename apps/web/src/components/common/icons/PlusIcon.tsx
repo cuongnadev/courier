@@ -14,15 +14,15 @@ export function PlusIcon({
     >
       <path d="M3.33252 7.99805H12.6636"
         stroke={iconColor}
-        stroke-width="1.33301"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.33301"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path d="M7.99805 3.33252V12.6636"
         stroke={iconColor}
-        stroke-width="1.33301"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.33301"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

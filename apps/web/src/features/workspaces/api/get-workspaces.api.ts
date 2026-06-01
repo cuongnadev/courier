@@ -1,11 +1,12 @@
-import { api } from '@/lib/axios';
+import { api } from "@/lib/axios";
 
-import type { WorkspaceResponse } from '@/features/workspaces/types/workspace.type';
+import type { WorkspaceResponse } from "@/features/workspaces/types/workspace.type";
+import type { ApiResponse } from "@/types/api.type";
 
-export async function getWorkspacesApi() {
-  const response = await api.get<WorkspaceResponse[]>(
-    '/workspaces',
+export async function getWorkspacesApi(): Promise<WorkspaceResponse[]> {
+  const body = await api.get<unknown, ApiResponse<WorkspaceResponse[]>>(
+    "/workspaces",
   );
-  
-  return response.data;
+
+  return body.data;
 }

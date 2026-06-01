@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { TooltipCustom } from "@/components/common/tooltip/tooltip-custom";
+import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
 
 type SidebarCollectionItemProps = {
     icon: React.ReactNode;

@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { GitHubIcon } from "@/components/common/icons/GitHubIcon";
-import { PasswordField } from "@/components/forms/password-field";
+import { PasswordField } from "@/components/forms/PasswordField";
 
 import {
     registerSchema,

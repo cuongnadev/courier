@@ -27,3 +27,6 @@ export { PlusIcon } from "./PlusIcon";
 export { MoreIcon } from "./MoreIcon";
 export { DownloadIcon } from "./DownloadIcon";
 export { ChevronRightIcon } from "./ChevronRightIcon";
+export { ChevronDownIcon } from "./ChevronDownIcon";
+export { LogOutIcon } from "./LogOutIcon";
+export { XIcon } from "./XIcon";

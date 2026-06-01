@@ -12,16 +12,16 @@ export function CheckCircleIcon({
             viewBox="0 0 12 12"
             fill="none"
         >
-            <g clip-path="url(#clip0_2_31)">
+            <g clipPath="url(#clip0_2_31)">
                 <path d="M6 11C8.76142 11 11 8.76142 11 6C11 3.23858 8.76142 1 6 1C3.23858 1 1 3.23858 1 6C1 8.76142 3.23858 11 6 11Z"
                     stroke={iconColor}
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                 />
                 <path d="M4.5 6L5.5 7L7.5 5"
                     stroke={iconColor}
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                 />
             </g>
             <defs>

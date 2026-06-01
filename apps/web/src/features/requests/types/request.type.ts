@@ -1,4 +1,4 @@
-import type { RequestMethod } from "@/types/api";
+import type { RequestMethod } from "@/types/api.type";
 
 export type RequestBodyType =
   | "NONE"
@@ -13,6 +13,15 @@ export type RawBodyLanguage =
   | "XML"
   | "HTML"
   | "JAVASCRIPT";
+
+export type ApiRequestHeaderResponse = {
+  id: string;
+  requestId: string;
+  key: string;
+  value: string;
+  enabled: boolean;
+  sortOrder: number;
+};
 
 export type ApiRequestResponse = {
   id: string;
@@ -42,6 +51,8 @@ export type ApiRequestResponse = {
   pathParamsCount?: number;
   bodyParamsCount?: number;
   cookiesCount?: number;
+
+  headers?: ApiRequestHeaderResponse[];
 };
 
 export type ApiRequestListItem = {

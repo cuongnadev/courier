@@ -20,7 +20,7 @@ import {
 } from "@/features/auth/schemas/auth.schema";
 
 import { useLogin } from "@/features/auth/hooks/use-login";
-import { PasswordField } from "@/components/forms/password-field";
+import { PasswordField } from "@/components/forms/PasswordField";
 
 export default function Login() {
     const loginMutation = useLogin();

@@ -1,40 +1,74 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "@tanstack/react-router";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { useCollections } from "@/features/collections/hooks/use-collections";
-import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
+import { useCollections } from "@/features/collections/hooks";
 
-import CollectionSidebar from "@/features/collections/components/collection-sidebar/collection-sidebar";
-import { CollectionDetail } from "@/features/collections/components/collection-detail/collection-detail";
+import { CollectionSidebar } from "@/features/collections/components/collection-sidebar";
+import { CollectionDetail } from "@/features/collections/components/collection-detail";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 export default function CollectionsPage() {
-  const user = useAuthStore((state) => state.user);
-  const { data: workspaces = [] } = useWorkspaces();
+  const navigate = useNavigate();
 
-  const currentWorkspace = workspaces.find(
-    (workspace) => workspace.ownerId === user?.id,
-  );
+  const params = useParams({
+    strict: false,
+  });
 
-  const { data: collections = [] } = useCollections(currentWorkspace?.id);
+  const workspaceId = params.workspaceId;
+  const collectionId = params.collectionId;
 
-  const [selectedCollectionId, setSelectedCollectionId] =
-    useState<string | null>(null);
+  const { currentWorkspaceId } = useCurrentWorkspace();
 
-  const activeCollectionId =
-    selectedCollectionId ?? collections[0]?.id ?? "";
+  const { data: collections = [], isLoading } = useCollections(currentWorkspaceId);
 
-  const activeCollection = collections.find(
-    (collection) => collection.id === activeCollectionId,
-  );
-  
+  const activeCollection =
+    collections.find((collection) => collection.id === collectionId) ?? null;
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    if (collectionId) return;
+    if (collections.length === 0) return;
+
+    void navigate({
+      to: "/workspaces/$workspaceId/collections/$collectionId",
+      params: {
+        workspaceId,
+        collectionId: collections[0].id,
+      },
+      replace: true,
+    });
+  }, [workspaceId, collectionId, collections, navigate]);
+
+  const handleSelectCollection = (nextCollectionId: string) => {
+    if (!workspaceId) return;
+
+    void navigate({
+      to: "/workspaces/$workspaceId/collections/$collectionId",
+      params: {
+        workspaceId,
+        collectionId: nextCollectionId,
+      },
+    });
+  };
+
   return (
-    <div className="flex h-full w-full overflow-y-auto dashboard-scrollbar">
+    <div className="flex h-full min-h-0 w-full overflow-hidden">
       <CollectionSidebar
-        selectedCollectionId={selectedCollectionId}
-        onSelectCollection={setSelectedCollectionId}
+        selectedCollectionId={collectionId ?? null}
+        onSelectCollection={handleSelectCollection}
       />
-      
-      <CollectionDetail collection={activeCollection} />
+
+      {isLoading ? (
+        <div className="flex flex-1 items-center justify-center text-sm text-[#737373]">
+          Loading collection...
+        </div>
+      ) : activeCollection ? (
+        <CollectionDetail collection={activeCollection} />
+      ) : (
+        <div className="flex flex-1 items-center justify-center text-sm text-[#737373]">
+          No collection selected.
+        </div>
+      )}
     </div>
   );
 }

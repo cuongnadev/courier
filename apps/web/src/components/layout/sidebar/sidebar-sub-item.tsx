@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
-import { TooltipCustom } from "@/components/common/tooltip/tooltip-custom";
-import type { RequestMethod } from "@/types/api";
+import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
+import type { RequestMethod } from "@/types/api.type";
 
 type SidebarSubItemProps = {
     to: string;
@@ -29,7 +29,8 @@ export function SidebarSubItem({
             sideOffset={8}
         >
             <Link
-                to={to}
+                to={to as never}
+                activeOptions={{ exact: true }}
                 activeProps={{
                     className:
                         "bg-[#F5F5F5]",

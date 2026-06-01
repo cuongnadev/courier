@@ -3,9 +3,9 @@ import { useState } from "react";
 // Fake data for now, replace with backend query later
 // import { collections } from "@/features/collections/data/mock-collections";
 
-import { useCollections } from "@/features/collections/hooks/use-collections";
+import { useCollections } from "@/features/collections/hooks";
 
-export function useCollectionSidebar(workspaceId?: string) {
+export function useCollectionSidebar(workspaceId: string | null) {
     const { data: collections = [], isLoading } = useCollections(workspaceId);
 
     const [openCollections, setOpenCollections] = useState<
