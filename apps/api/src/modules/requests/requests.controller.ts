@@ -15,6 +15,8 @@ import { AuthGuard } from '../../common/guards/auth.guard';
 import type { AuthenticatedRequest } from '../../common/types/authenticated-request.type';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
+import { RunRequestDto } from './dto/run-request.dto';
+import { CreateAndRunRequestDto } from './dto/create-and-run-request.dto';
 import { RequestsService } from './requests.service';
 
 @Controller('workspaces/:workspaceId')
@@ -49,6 +51,56 @@ export class RequestsController {
       workspaceId,
       collectionId,
       request.user.sub,
+    );
+  }
+
+  @Version('1')
+  @Get('collections/:collectionId/requests/:requestId')
+  findOneByCollection(
+    @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
+    @Param('collectionId', new ParseUUIDPipe()) collectionId: string,
+    @Param('requestId', new ParseUUIDPipe()) requestId: string,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.requestsService.findOneByCollection(
+      workspaceId,
+      collectionId,
+      requestId,
+      request.user.sub,
+    );
+  }
+
+  @Version('1')
+  @Post('collections/:collectionId/requests/:requestId/run')
+  run(
+    @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
+    @Param('collectionId', new ParseUUIDPipe()) collectionId: string,
+    @Param('requestId', new ParseUUIDPipe()) requestId: string,
+    @Body() dto: RunRequestDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.requestsService.run(
+      workspaceId,
+      collectionId,
+      requestId,
+      request.user.sub,
+      dto,
+    );
+  }
+
+  @Version('1')
+  @Post('collections/:collectionId/requests/run')
+  createAndRun(
+    @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
+    @Param('collectionId', new ParseUUIDPipe()) collectionId: string,
+    @Body() dto: CreateAndRunRequestDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.requestsService.createAndRun(
+      workspaceId,
+      collectionId,
+      request.user.sub,
+      dto,
     );
   }
 
