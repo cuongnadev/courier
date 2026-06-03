@@ -1,11 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { CollectionsService } from '../collections';
-import { CreateRequestDto } from './dto/create-request.dto';
-import { UpdateRequestDto } from './dto/update-request.dto';
-import { RunRequestDto } from './dto/run-request.dto';
-import { WorkspacesService } from '../workspaces';
-import { getTodayRange } from '../../common/utils/date-range.util';
+
 import { AppException } from '@/common/exceptions/app.exceptions';
 import {
   HttpMethod,
@@ -13,7 +7,59 @@ import {
   RequestBodyType,
   RequestRunStatus,
 } from '@/generated/prisma/enums';
+
+import { getTodayRange } from '../../common/utils/date-range.util';
+import { PrismaService } from '../../database/prisma.service';
+import { CollectionsService } from '../collections';
+import { WorkspacesService } from '../workspaces';
+
 import { CreateAndRunRequestDto } from './dto/create-and-run-request.dto';
+import { CreateRequestDto } from './dto/create-request.dto';
+import { RunRequestDto } from './dto/run-request.dto';
+import { UpdateRequestDto } from './dto/update-request.dto';
+
+type RunHeaderInput = {
+  key: string;
+  value?: string | null;
+  enabled?: boolean;
+};
+
+type RunHeaderRow = {
+  key: string;
+  value: string;
+};
+
+type RequestRunWithHeaders = {
+  id: string;
+  workspaceId: string;
+  requestId: string | null;
+  userId: string | null;
+  environmentId: string | null;
+
+  method: HttpMethod;
+  uri: string;
+
+  status: RequestRunStatus;
+  statusCode: number | null;
+  durationMs: number | null;
+
+  requestBody: string | null;
+  responseBody: string | null;
+  responseSize: number | null;
+  errorMessage: string | null;
+
+  createdAt: Date;
+
+  requestHeaders?: Array<{
+    key: string;
+    value: string | null;
+  }>;
+
+  responseHeaders?: Array<{
+    key: string;
+    value: string | null;
+  }>;
+};
 
 @Injectable()
 export class RequestsService {
@@ -135,7 +181,7 @@ export class RequestsService {
               key: header.key,
               value: header.value ?? '',
               enabled: header.enabled ?? true,
-              sortOrder: header.sortOrder ?? index,
+              sortOrder: index,
             })) ?? [],
         },
       },
@@ -301,6 +347,7 @@ export class RequestsService {
         },
 
         auth: true,
+
         headers: {
           orderBy: {
             sortOrder: 'asc',
@@ -339,6 +386,7 @@ export class RequestsService {
             headers: true,
           },
         },
+
         _count: {
           select: {
             headers: true,
@@ -469,7 +517,7 @@ export class RequestsService {
     return this.prisma.requestRun.count({
       where: {
         workspaceId,
-        status: 'SUCCESS',
+        status: RequestRunStatus.SUCCESS,
         createdAt: {
           gte: today.start,
           lt: today.end,
@@ -546,57 +594,133 @@ export class RequestsService {
     };
   }
 
-  private buildFetchHeaders(
-    headersInput?: Array<{
-      key: string;
-      value?: string | null;
-      enabled?: boolean;
-    }>,
-  ) {
+  private normalizeRunRequestHeaders(
+    headersInput?: RunHeaderInput[],
+  ): RunHeaderRow[] {
+    return (
+      headersInput
+        ?.filter((header) => header.enabled !== false)
+        .filter((header) => header.key.trim().length > 0)
+        .map((header) => ({
+          key: header.key.trim(),
+          value: header.value ?? '',
+        })) ?? []
+    );
+  }
+
+  private buildFetchHeaders(headersInput?: RunHeaderInput[]) {
     const headers = new Headers();
 
-    for (const header of headersInput ?? []) {
-      if (header.enabled === false) continue;
-
-      const key = header.key.trim();
-
-      if (!key) continue;
-
-      headers.set(key, header.value ?? '');
-    }
+    this.normalizeRunRequestHeaders(headersInput).forEach((header) => {
+      headers.set(header.key, header.value);
+    });
 
     return headers;
   }
 
   private shouldSendBody(method: HttpMethod, bodyType: RequestBodyType) {
-    if (method === HttpMethod.GET || method === HttpMethod.DELETE) {
+    if (
+      method === HttpMethod.GET ||
+      method === HttpMethod.HEAD ||
+      method === HttpMethod.DELETE
+    ) {
       return false;
     }
 
     return bodyType !== RequestBodyType.NONE;
   }
 
-  private toRequestRunResponse<
-    T extends {
-      id: string;
-      workspaceId: string;
-      requestId: string | null;
-      userId: string | null;
-      environmentId: string | null;
-      method: string;
-      uri: string;
-      status: string;
-      statusCode: number | null;
-      durationMs: number | null;
-      requestBody: string | null;
-      responseBody: string | null;
-      responseSize: number | null;
-      errorMessage: string | null;
-      createdAt: Date;
-    },
-  >(run: T) {
+  private getResponseHeaderRows(responseHeaders: Headers): RunHeaderRow[] {
+    const headersWithGetSetCookie = responseHeaders as Headers & {
+      getSetCookie?: () => string[];
+    };
+
+    const headerEntries = Array.from(responseHeaders.entries());
+
+    const fallbackSetCookieValues = headerEntries
+      .filter(([key]) => key.toLowerCase() === 'set-cookie')
+      .map(([, value]) => value);
+
+    const setCookieValues =
+      headersWithGetSetCookie.getSetCookie?.() ?? fallbackSetCookieValues;
+
+    const normalHeaderRows = headerEntries
+      .filter(([key]) => key.toLowerCase() !== 'set-cookie')
+      .map(([key, value]) => ({
+        key,
+        value,
+      }));
+
+    return [
+      ...normalHeaderRows,
+      ...setCookieValues.map((value) => ({
+        key: 'set-cookie',
+        value,
+      })),
+    ];
+  }
+
+  private headersToRecord(
+    headers: Array<{
+      key: string;
+      value: string | null;
+    }>,
+  ) {
+    return headers.reduce<Record<string, string | string[]>>(
+      (result, header) => {
+        const key = header.key;
+        const value = header.value ?? '';
+
+        const existingValue = result[key];
+
+        if (existingValue === undefined) {
+          result[key] = value;
+          return result;
+        }
+
+        if (Array.isArray(existingValue)) {
+          existingValue.push(value);
+          return result;
+        }
+
+        result[key] = [existingValue, value];
+        return result;
+      },
+      {},
+    );
+  }
+
+  private getErrorMessage(error: unknown) {
+    if (error instanceof Error) {
+      return error.message;
+    }
+
+    return 'Request failed.';
+  }
+
+  private serializeRequestRun(run: RequestRunWithHeaders) {
     return {
-      ...run,
+      id: run.id,
+      workspaceId: run.workspaceId,
+      requestId: run.requestId,
+      userId: run.userId,
+      environmentId: run.environmentId,
+
+      method: run.method,
+      uri: run.uri,
+
+      status: run.status,
+      statusCode: run.statusCode,
+      durationMs: run.durationMs,
+
+      requestBody: run.requestBody,
+      responseBody: run.responseBody,
+      responseSize: run.responseSize,
+      errorMessage: run.errorMessage,
+
+      requestHeaders: this.headersToRecord(run.requestHeaders ?? []),
+      responseHeaders: this.headersToRecord(run.responseHeaders ?? []),
+
       createdAt: run.createdAt.toISOString(),
     };
   }
@@ -605,15 +729,15 @@ export class RequestsService {
     workspaceId: string;
     requestId: string | null;
     userId: string | undefined;
+    environmentId?: string | null;
+
     method: HttpMethod;
     uri: string;
+
     bodyType: RequestBodyType;
     rawBody: string | null;
-    headers?: Array<{
-      key: string;
-      value?: string | null;
-      enabled?: boolean;
-    }>;
+
+    headers?: RunHeaderInput[];
   }) {
     const {
       workspaceId,
@@ -628,26 +752,29 @@ export class RequestsService {
 
     const startedAt = Date.now();
 
-    try {
-      const headers = this.buildFetchHeaders(headersInput);
-      const shouldSendBody = this.shouldSendBody(method, bodyType);
+    const requestHeaderRows = this.normalizeRunRequestHeaders(headersInput);
+    const fetchHeaders = this.buildFetchHeaders(headersInput);
+    const shouldSendBody = this.shouldSendBody(method, bodyType);
+    const requestBody = shouldSendBody ? (rawBody ?? '') : null;
 
+    try {
       const response = await fetch(uri, {
         method,
-        headers,
-        body: shouldSendBody ? (rawBody ?? '') : undefined,
+        headers: fetchHeaders,
+        body: requestBody ?? undefined,
       });
 
       const responseBody = await response.text();
       const durationMs = Date.now() - startedAt;
       const responseSize = Buffer.byteLength(responseBody, 'utf8');
+      const responseHeaderRows = this.getResponseHeaderRows(response.headers);
 
       const run = await this.prisma.requestRun.create({
         data: {
           workspaceId,
           requestId,
           userId: userId ?? null,
-          environmentId: null,
+          environmentId: params.environmentId ?? null,
 
           method,
           uri,
@@ -659,27 +786,37 @@ export class RequestsService {
           statusCode: response.status,
           durationMs,
 
-          requestBody: shouldSendBody ? (rawBody ?? null) : null,
+          requestBody,
           responseBody,
           responseSize,
 
           errorMessage: response.ok ? null : response.statusText,
+
+          requestHeaders: {
+            create: requestHeaderRows,
+          },
+
+          responseHeaders: {
+            create: responseHeaderRows,
+          },
+        },
+        include: {
+          requestHeaders: true,
+          responseHeaders: true,
         },
       });
 
-      return this.toRequestRunResponse(run);
-    } catch (error) {
+      return this.serializeRequestRun(run);
+    } catch (caughtError: unknown) {
       const durationMs = Date.now() - startedAt;
-
-      const errorMessage =
-        error instanceof Error ? error.message : 'Request failed.';
+      const errorMessage = this.getErrorMessage(caughtError);
 
       const run = await this.prisma.requestRun.create({
         data: {
           workspaceId,
           requestId,
           userId: userId ?? null,
-          environmentId: null,
+          environmentId: params.environmentId ?? null,
 
           method,
           uri,
@@ -689,15 +826,23 @@ export class RequestsService {
           statusCode: null,
           durationMs,
 
-          requestBody: rawBody ?? null,
+          requestBody,
           responseBody: null,
           responseSize: null,
 
           errorMessage,
+
+          requestHeaders: {
+            create: requestHeaderRows,
+          },
+        },
+        include: {
+          requestHeaders: true,
+          responseHeaders: true,
         },
       });
 
-      return this.toRequestRunResponse(run);
+      return this.serializeRequestRun(run);
     }
   }
 }
