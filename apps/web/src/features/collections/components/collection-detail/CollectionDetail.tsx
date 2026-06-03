@@ -3,10 +3,14 @@ import type { CollectionDetailResponse } from "@/features/collections/types";
 import { CollectionDetailHeader, CollectionDetailList } from "@/features/collections/components/collection-detail";
 
 type CollectionDetailProps = {
+  workspaceId: string;
   collection?: CollectionDetailResponse;
 };
 
-export function CollectionDetail({ collection }: CollectionDetailProps) {
+export function CollectionDetail({
+  workspaceId,
+  collection,
+}: CollectionDetailProps) {
   if (!collection) {
     return (
       <main className="flex min-h-0 flex-1 items-center justify-center bg-white">
@@ -22,7 +26,7 @@ export function CollectionDetail({ collection }: CollectionDetailProps) {
       <CollectionDetailHeader collection={collection} />
 
       <div className="min-h-0 flex-1 overflow-y-auto dashboard-scrollbar">
-        <CollectionDetailList requests={collection.requests} />
+        <CollectionDetailList workspaceId={workspaceId} collectionId={collection.id} requests={collection.requests} />
       </div>
     </main>
   );

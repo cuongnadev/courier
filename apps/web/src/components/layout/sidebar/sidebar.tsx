@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Link } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 
 import { SearchInput } from "@/components/forms/SearchInput";
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,12 @@ export function Sidebar() {
         openCollections,
         toggleCollection,
     } = useCollectionSidebar(currentWorkspaceId);
+
+    const params = useParams({
+        strict: false,
+    });
+
+    const activeCollectionId = params.collectionId;
 
     const { toolCounts } = useToolCounts(currentWorkspaceId);
 
@@ -103,7 +109,10 @@ export function Sidebar() {
                                 icon={<FolderIcon iconColor={collection.color} />}
                                 label={collection.name}
                                 count={collection.requests.length}
-                                open={Boolean(openCollections[collection.id])}
+                                open={
+                                    Boolean(openCollections[collection.id]) ||
+                                    collection.id === activeCollectionId
+                                }
                                 onToggle={() => toggleCollection(collection.id)}
                             >
                                 {collection.requests.map((request) => (

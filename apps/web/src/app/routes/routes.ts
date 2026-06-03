@@ -19,6 +19,7 @@ import DashboardPage from "@/app/pages/main/dashboard";
 import CollectionsPage from "@/app/pages/main/collections";
 import LoginPage from "@/app/pages/auth/login";
 import RegisterPage from "@/app/pages/auth/register";
+import RequestPage from '@/app/pages/main/requests';
 
 export const indexRoute = createRoute({
   getParentRoute: () => RootRoute,
@@ -63,6 +64,12 @@ export const collectionDetailRoute = createRoute({
   component: CollectionsPage,
 });
 
+export const requestDetailRoute = createRoute({
+  getParentRoute: () => mainLayoutRoute,
+  path: "/collections/$collectionId/requests/$requestId",
+  component: RequestPage,
+});
+
 export const loginRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
   path: '/login',
@@ -78,5 +85,10 @@ export const registerRoute = createRoute({
 export const routeTree = RootRoute.addChildren([
   indexRoute,
   authLayoutRoute.addChildren([loginRoute, registerRoute]),
-  mainLayoutRoute.addChildren([dashboardRoute, collectionsRoute, collectionDetailRoute]),
+  mainLayoutRoute.addChildren([
+    dashboardRoute,
+    collectionsRoute,
+    collectionDetailRoute,
+    requestDetailRoute
+  ]),
 ]);

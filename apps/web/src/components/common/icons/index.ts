@@ -30,3 +30,4 @@ export { ChevronRightIcon } from "./ChevronRightIcon";
 export { ChevronDownIcon } from "./ChevronDownIcon";
 export { LogOutIcon } from "./LogOutIcon";
 export { XIcon } from "./XIcon";
+export { CopyIcon } from "./CopyIcon";

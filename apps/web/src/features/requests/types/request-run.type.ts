@@ -26,6 +26,8 @@ export type RequestRunResponse = {
   responseSize: number | null;
   errorMessage: string | null;
 
+  responseHeaders?: Record<string, string | string[]> | null;
+
   createdAt: string;
 };
 
