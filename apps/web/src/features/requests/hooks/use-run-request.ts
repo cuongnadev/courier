@@ -1,31 +1,27 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { runRequestApi } from "@/features/requests/api";
-import type { RunRequestPayload } from "@/features/requests/types/request-run-payload.type";
+import {
+  createAndRunRequestApi,
+  runSavedRequestApi,
+} from "@/features/requests/api";
 
-type UseRunRequestParams = {
-  workspaceId: string;
-  collectionId: string;
-  requestId: string;
-};
-
-export function useRunRequest({
-  workspaceId,
-  collectionId,
-  requestId,
-}: UseRunRequestParams) {
+export function useRunSavedRequest() {
   return useMutation({
-    mutationFn: (data: RunRequestPayload) =>
-      runRequestApi({
-        workspaceId,
-        collectionId,
-        requestId,
-        data,
-      }),
+    mutationFn: runSavedRequestApi,
 
     onError: () => {
       toast.error("Failed to send request.");
+    },
+  });
+}
+
+export function useCreateAndRunRequest() {
+  return useMutation({
+    mutationFn: createAndRunRequestApi,
+
+    onError: () => {
+      toast.error("Failed to create and send request.");
     },
   });
 }

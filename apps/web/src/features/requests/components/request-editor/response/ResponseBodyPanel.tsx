@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { JsonCodeBlock } from "./JsonCodeBlock";
-import { CheckCircleIcon, CopyIcon } from "@/components/common/icons";
+import { ResponsePreviewPanel } from "./ResponsePreviewPanel";
+import { CopyIcon } from "@/components/common/icons";
 
 const BODY_VIEW_TABS = ["Pretty", "Raw", "Preview"] as const;
 
@@ -11,6 +12,7 @@ type BodyViewTab = (typeof BODY_VIEW_TABS)[number];
 
 type ResponseBodyPanelProps = {
   responseBody: string;
+  responseUrl?: string;
 };
 
 function formatJsonIfPossible(value: string) {
@@ -21,7 +23,10 @@ function formatJsonIfPossible(value: string) {
   }
 }
 
-export function ResponseBodyPanel({ responseBody }: ResponseBodyPanelProps) {
+export function ResponseBodyPanel({
+  responseBody,
+  responseUrl,
+}: ResponseBodyPanelProps) {
   const [activeView, setActiveView] = useState<BodyViewTab>("Pretty");
 
   const prettyBody = useMemo(
@@ -31,7 +36,7 @@ export function ResponseBodyPanel({ responseBody }: ResponseBodyPanelProps) {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-2">
-      <div className="flex items-center justify-between">
+      <div className="flex shrink-0 items-center justify-between">
         <div className="flex gap-2">
           {BODY_VIEW_TABS.map((tab) => {
             const isActive = activeView === tab;
@@ -48,10 +53,9 @@ export function ResponseBodyPanel({ responseBody }: ResponseBodyPanelProps) {
                   focus-visible:ring-0
                   focus-visible:ring-offset-0
 
-                  ${
-                    isActive
-                      ? "border-[1.25px] border-[#E5E5E5] bg-white text-[#1C1917] hover:bg-white hover:text-[#1C1917]"
-                      : "border border-transparent bg-transparent text-[#525252] hover:bg-white hover:text-[#525252]"
+                  ${isActive
+                    ? "border-[1.25px] border-[#E5E5E5] bg-white text-[#1C1917] hover:bg-white hover:text-[#1C1917]"
+                    : "border border-transparent bg-transparent text-[#525252] hover:bg-white hover:text-[#525252]"
                   }
                 `}
               >
@@ -76,26 +80,22 @@ export function ResponseBodyPanel({ responseBody }: ResponseBodyPanelProps) {
         </Button>
       </div>
 
-      {activeView === "Pretty" && (
-        <JsonCodeBlock value={prettyBody} mode="pretty" />
-      )}
+      <div className="min-h-0 flex-1 overflow-hidden">
+        {activeView === "Pretty" && (
+          <JsonCodeBlock value={prettyBody} mode="pretty" />
+        )}
 
-      {activeView === "Raw" && (
-        <JsonCodeBlock value={responseBody} mode="raw" />
-      )}
+        {activeView === "Raw" && (
+          <JsonCodeBlock value={responseBody} mode="raw" />
+        )}
 
-      {activeView === "Preview" && (
-        <div className="rounded-[12px] border border-[#E5E5E5] bg-white p-4">
-          <div className="mb-3 flex items-center gap-2 text-sm font-medium text-green-700">
-            <CheckCircleIcon width={16} height={16} />
-            Response received
-          </div>
-
-          <pre className="whitespace-pre-wrap break-words text-sm text-[#404040]">
-            {prettyBody}
-          </pre>
-        </div>
-      )}
+        {activeView === "Preview" && (
+          <ResponsePreviewPanel
+            responseBody={responseBody}
+            responseUrl={responseUrl}
+          />
+        )}
+      </div>
     </div>
   );
 }

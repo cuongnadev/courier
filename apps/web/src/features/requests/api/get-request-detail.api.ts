@@ -18,5 +18,9 @@ export async function getRequestDetailApi({
     `/workspaces/${workspaceId}/collections/${collectionId}/requests/${requestId}`,
   );
 
+  if (!body.data) {
+    throw new Error("Request detail API returned empty data.");
+  }
+
   return body.data;
 }

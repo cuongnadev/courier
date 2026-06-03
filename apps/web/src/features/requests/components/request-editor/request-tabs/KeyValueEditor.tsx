@@ -1,5 +1,9 @@
 import { Plus, X } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+
 export type KeyValueItem = {
   id: string;
   key: string;
@@ -56,66 +60,104 @@ export function KeyValueEditor({
   };
 
   return (
-    <div className="space-y-3">
-      <h3 className="text-sm font-medium text-[#171717]">{title}</h3>
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="mb-3 shrink-0">
+        <h3 className="text-sm font-semibold text-[#171717]">{title}</h3>
+      </div>
 
-      {items.length === 0 ? (
-        <div className="rounded-[12px] border border-dashed border-[#E5E5E5] bg-[#FAFAFA] p-6 text-sm text-[#737373]">
-          {emptyText}
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="grid grid-cols-[32px_1fr_1fr_32px] items-center gap-2"
-            >
-              <input
-                type="checkbox"
-                checked={item.enabled}
-                onChange={(event) =>
-                  updateItem(item.id, "enabled", event.target.checked)
-                }
-              />
-
-              <input
-                value={item.key}
-                onChange={(event) =>
-                  updateItem(item.id, "key", event.target.value)
-                }
-                placeholder="Key"
-                className="h-10 rounded-[10px] border border-[#E5E5E5] px-3 text-sm outline-none focus:border-amber-500"
-              />
-
-              <input
-                value={item.value}
-                onChange={(event) =>
-                  updateItem(item.id, "value", event.target.value)
-                }
-                placeholder="Value"
-                className="h-10 rounded-[10px] border border-[#E5E5E5] px-3 text-sm outline-none focus:border-amber-500"
-              />
-
-              <button
-                type="button"
-                onClick={() => removeItem(item.id)}
-                className="flex h-9 w-9 items-center justify-center rounded-[10px] text-[#A3A3A3] hover:bg-red-50 hover:text-red-600"
+      <div className="min-h-0 flex-1 overflow-auto pr-1 dashboard-scrollbar">
+        {items.length === 0 ? (
+          <div className="rounded-[12px] border border-dashed border-[#E5E5E5] bg-[#FAFAFA] p-6 text-sm text-[#737373]">
+            {emptyText}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="
+                  grid grid-cols-[24px_minmax(0,1fr)_minmax(0,1fr)_36px]
+                  items-center gap-2
+                "
               >
-                <X size={16} />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+                <Checkbox
+                  checked={item.enabled}
+                  onCheckedChange={(checked) =>
+                    updateItem(item.id, "enabled", checked === true)
+                  }
+                  className="border-[#D4D4D4]"
+                />
 
-      <button
-        type="button"
-        onClick={addItem}
-        className="flex items-center gap-2 text-sm font-medium text-orange-600 hover:text-orange-500"
-      >
-        <Plus size={15} />
-        {addLabel}
-      </button>
+                <Input
+                  value={item.key}
+                  onChange={(event) =>
+                    updateItem(item.id, "key", event.target.value)
+                  }
+                  placeholder="Key"
+                  className="
+                    h-10 rounded-[10px] border-[#E5E5E5]
+                    bg-white px-3 text-sm text-[#171717]
+                    placeholder:text-[#A3A3A3]
+                    shadow-none
+                    focus-visible:border-amber-500
+                    focus-visible:ring-0
+                  "
+                />
+
+                <Input
+                  value={item.value}
+                  onChange={(event) =>
+                    updateItem(item.id, "value", event.target.value)
+                  }
+                  placeholder="Value"
+                  className="
+                    h-10 rounded-[10px] border-[#E5E5E5]
+                    bg-white px-3 text-sm text-[#171717]
+                    placeholder:text-[#A3A3A3]
+                    shadow-none
+                    focus-visible:border-amber-500
+                    focus-visible:ring-0
+                  "
+                />
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeItem(item.id)}
+                  className="
+                    h-9 w-9 rounded-[10px]
+                    text-[#A3A3A3]
+                    hover:bg-red-50 hover:text-red-600
+                    focus-visible:ring-0
+                    focus-visible:ring-offset-0
+                  "
+                >
+                  <X size={16} />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3 shrink-0">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={addItem}
+          className="
+            h-8 rounded-[8px] px-0
+            text-sm font-medium text-orange-600
+            hover:bg-transparent hover:text-orange-500
+            focus-visible:ring-0
+            focus-visible:ring-offset-0
+          "
+        >
+          <Plus size={15} />
+          {addLabel}
+        </Button>
+      </div>
     </div>
   );
 }

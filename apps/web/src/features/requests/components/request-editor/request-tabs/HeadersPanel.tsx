@@ -12,27 +12,29 @@ export function HeadersPanel({
   onHeadersChange,
 }: HeadersPanelProps) {
   const items: KeyValueItem[] = headers.map((header, index) => ({
-    id: `${header.key}-${index}`,
+    id: `${header.key || "header"}-${index}`,
     key: header.key,
     value: header.value,
     enabled: header.enabled,
   }));
 
   return (
-    <KeyValueEditor
-      title="Request Headers"
-      items={items}
-      onChange={(nextItems) =>
-        onHeadersChange(
-          nextItems.map((item) => ({
-            key: item.key,
-            value: item.value,
-            enabled: item.enabled,
-          })),
-        )
-      }
-      addLabel="Add Header"
-      emptyText="No headers added."
-    />
+    <div className="h-full min-h-0">
+      <KeyValueEditor
+        title="Request Headers"
+        items={items}
+        onChange={(nextItems) =>
+          onHeadersChange(
+            nextItems.map((item) => ({
+              key: item.key,
+              value: item.value,
+              enabled: item.enabled,
+            })),
+          )
+        }
+        addLabel="Add Header"
+        emptyText="No headers added."
+      />
+    </div>
   );
 }

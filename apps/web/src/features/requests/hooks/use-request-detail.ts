@@ -10,18 +10,26 @@ export function useRequestDetail(
   return useQuery({
     queryKey: ["request-detail", workspaceId, collectionId, requestId],
 
-    queryFn: () => {
+    queryFn: async () => {
       if (!workspaceId || !collectionId || !requestId) {
         throw new Error("Request detail params are required.");
       }
 
-      return getRequestDetailApi({
+      const request = await getRequestDetailApi({
         workspaceId,
         collectionId,
         requestId,
       });
+
+      if (!request) {
+        throw new Error("Request detail API returned empty data.");
+      }
+
+      return request;
     },
 
     enabled: Boolean(workspaceId && collectionId && requestId),
+
+    staleTime: 1000 * 60 * 5,
   });
 }

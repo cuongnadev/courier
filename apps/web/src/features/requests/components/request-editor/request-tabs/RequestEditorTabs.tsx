@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import type { ApiRequestDetailResponse } from "@/features/requests/types/request.type";
 import type { RunRequestPayload } from "@/features/requests/types/request-run-payload.type";
+import { Button } from "@/components/ui/button";
 
 import { ParamsPanel } from "./ParamsPanel";
 import { AuthorizationPanel } from "./AuthorizationPanel";
@@ -22,13 +22,11 @@ const REQUEST_TABS = [
 type RequestTab = (typeof REQUEST_TABS)[number];
 
 type RequestEditorTabsProps = {
-  request: ApiRequestDetailResponse;
   payload: RunRequestPayload;
   onPayloadChange: React.Dispatch<React.SetStateAction<RunRequestPayload>>;
 };
 
 export function RequestEditorTabs({
-  request,
   payload,
   onPayloadChange,
 }: RequestEditorTabsProps) {
@@ -43,12 +41,12 @@ export function RequestEditorTabs({
           const isActive = activeTab === tab;
 
           return (
-            <button
+            <Button
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
               className={`
-                relative h-full text-sm font-medium transition-colors
+                relative h-full text-sm font-medium transition-colors bg-transparent hover:bg-transparent
                 ${isActive
                   ? "text-orange-700"
                   : "text-[#404040] hover:text-[#171717]"
@@ -70,13 +68,14 @@ export function RequestEditorTabs({
               {isActive && (
                 <span className="absolute bottom-0 left-0 h-[2px] w-full rounded-full bg-orange-500" />
               )}
-            </button>
+            </Button>
           );
         })}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto p-5">
+      <div className="min-h-0 flex-1 overflow-auto p-5 dashboard-scrollbar">
         {activeTab === "Params" && <ParamsPanel />}
+
         {activeTab === "Authorization" && <AuthorizationPanel />}
 
         {activeTab === "Headers" && (
@@ -93,7 +92,6 @@ export function RequestEditorTabs({
 
         {activeTab === "Body" && (
           <BodyPanel
-            request={request}
             bodyType={payload.bodyType}
             rawBodyLanguage={payload.rawBodyLanguage}
             rawBody={payload.rawBody}
@@ -107,6 +105,7 @@ export function RequestEditorTabs({
         )}
 
         {activeTab === "Pre-request Script" && <PreRequestScriptPanel />}
+
         {activeTab === "Tests" && <TestsPanel />}
       </div>
     </div>
