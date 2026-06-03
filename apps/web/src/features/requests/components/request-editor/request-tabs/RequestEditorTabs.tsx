@@ -22,11 +22,19 @@ const REQUEST_TABS = [
 type RequestTab = (typeof REQUEST_TABS)[number];
 
 type RequestEditorTabsProps = {
+  workspaceId: string;
+  collectionId: string;
+  requestId: string | null;
+
   payload: RunRequestPayload;
   onPayloadChange: React.Dispatch<React.SetStateAction<RunRequestPayload>>;
 };
 
 export function RequestEditorTabs({
+  workspaceId,
+  collectionId,
+  requestId,
+
   payload,
   onPayloadChange,
 }: RequestEditorTabsProps) {
@@ -106,7 +114,12 @@ export function RequestEditorTabs({
 
         {activeTab === "Pre-request Script" && <PreRequestScriptPanel />}
 
-        {activeTab === "Tests" && <TestsPanel />}
+        {activeTab === "Tests" && 
+        <TestsPanel
+          workspaceId={workspaceId}
+          collectionId={collectionId}
+          requestId={requestId}
+        />}
       </div>
     </div>
   );

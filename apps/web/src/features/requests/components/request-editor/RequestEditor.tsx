@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
 import { RequestEditorTabs } from "@/features/requests/components/request-editor/request-tabs";
@@ -34,6 +34,9 @@ export function RequestEditor({
   request,
 }: RequestEditorProps) {
   const navigate = useNavigate();
+
+  const [isSavingRequest, setIsSavingRequest] = useState(false);
+  const [isSendingRequest, setIsSendingRequest] = useState(false);
 
   const tabs = useRequestEditorTabsStore((state) => state.tabs);
   const activeTabId = useRequestEditorTabsStore((state) => state.activeTabId);
@@ -72,13 +75,8 @@ export function RequestEditor({
   const runSavedRequestMutation = useRunSavedRequest();
   const createAndRunRequestMutation = useCreateAndRunRequest();
 
-  const isSaving =
-    createRequestMutation.isPending || updateRequestMutation.isPending;
-
-  const isSending =
-    runSavedRequestMutation.isPending ||
-    createAndRunRequestMutation.isPending ||
-    updateRequestMutation.isPending;
+  const isSaving = isSavingRequest;
+  const isSending = isSendingRequest;
 
   useEffect(() => {
     openSavedRequest({
@@ -164,56 +162,15 @@ export function RequestEditor({
   };
 
   const handleSave = async () => {
-    if (!activeTab) return;
+    if (!activeTab || isSavingRequest || isSendingRequest) return;
 
-    if (activeTab.requestId) {
-      const payload = buildUpdatePayload();
-      if (!payload) return;
+    try {
+      setIsSavingRequest(true);
 
-      await updateRequestMutation.mutateAsync({
-        workspaceId: activeTab.workspaceId,
-        requestId: activeTab.requestId,
-        data: payload,
-      });
+      if (activeTab.requestId) {
+        const payload = buildUpdatePayload();
+        if (!payload) return;
 
-      markActiveTabClean();
-      return;
-    }
-
-    const payload = buildCreatePayload();
-    if (!payload) return;
-
-    const createdRequest = await createRequestMutation.mutateAsync({
-      workspaceId: activeTab.workspaceId,
-      collectionId: activeTab.collectionId,
-      data: payload,
-    });
-
-    markTabAsSaved({
-      oldTabId: activeTab.tabId,
-      workspaceId: activeTab.workspaceId,
-      collectionId: activeTab.collectionId,
-      request: createdRequest,
-      response: null,
-    });
-
-    navigateToRequest({
-      workspaceId: activeTab.workspaceId,
-      collectionId: activeTab.collectionId,
-      requestId: createdRequest.id,
-      replace: true,
-    });
-  };
-
-  const handleSend = async () => {
-    if (!activeTab) return;
-
-    setActiveResponse(null);
-
-    if (activeTab.requestId) {
-      const payload = buildUpdatePayload();
-
-      if (payload) {
         await updateRequestMutation.mutateAsync({
           workspaceId: activeTab.workspaceId,
           requestId: activeTab.requestId,
@@ -221,42 +178,95 @@ export function RequestEditor({
         });
 
         markActiveTabClean();
+        return;
       }
 
-      const run = await runSavedRequestMutation.mutateAsync({
+      const payload = buildCreatePayload();
+      if (!payload) return;
+
+      const createdRequest = await createRequestMutation.mutateAsync({
         workspaceId: activeTab.workspaceId,
         collectionId: activeTab.collectionId,
-        requestId: activeTab.requestId,
-        data: activeTab.payload,
+        data: payload,
       });
 
-      setActiveResponse(run);
-      return;
+      markTabAsSaved({
+        oldTabId: activeTab.tabId,
+        workspaceId: activeTab.workspaceId,
+        collectionId: activeTab.collectionId,
+        request: createdRequest,
+        response: null,
+      });
+
+      navigateToRequest({
+        workspaceId: activeTab.workspaceId,
+        collectionId: activeTab.collectionId,
+        requestId: createdRequest.id,
+        replace: true,
+      });
+    } finally {
+      setIsSavingRequest(false);
     }
+  };
 
-    const result = await createAndRunRequestMutation.mutateAsync({
-      workspaceId: activeTab.workspaceId,
-      collectionId: activeTab.collectionId,
-      data: {
-        name: activeTab.name.trim() || "Untitled Request",
-        ...activeTab.payload,
-      },
-    });
+  const handleSend = async () => {
+    if (!activeTab || isSendingRequest || isSavingRequest) return;
 
-    markTabAsSaved({
-      oldTabId: activeTab.tabId,
-      workspaceId: activeTab.workspaceId,
-      collectionId: activeTab.collectionId,
-      request: result.request,
-      response: result.run,
-    });
+    try {
+      setIsSendingRequest(true);
 
-    navigateToRequest({
-      workspaceId: activeTab.workspaceId,
-      collectionId: activeTab.collectionId,
-      requestId: result.request.id,
-      replace: true,
-    });
+      setActiveResponse(null);
+
+      if (activeTab.requestId) {
+        const payload = buildUpdatePayload();
+
+        if (payload) {
+          await updateRequestMutation.mutateAsync({
+            workspaceId: activeTab.workspaceId,
+            requestId: activeTab.requestId,
+            data: payload,
+          });
+
+          markActiveTabClean();
+        }
+
+        const run = await runSavedRequestMutation.mutateAsync({
+          workspaceId: activeTab.workspaceId,
+          collectionId: activeTab.collectionId,
+          requestId: activeTab.requestId,
+          data: activeTab.payload,
+        });
+
+        setActiveResponse(run);
+        return;
+      }
+
+      const result = await createAndRunRequestMutation.mutateAsync({
+        workspaceId: activeTab.workspaceId,
+        collectionId: activeTab.collectionId,
+        data: {
+          name: activeTab.name.trim() || "Untitled Request",
+          ...activeTab.payload,
+        },
+      });
+
+      markTabAsSaved({
+        oldTabId: activeTab.tabId,
+        workspaceId: activeTab.workspaceId,
+        collectionId: activeTab.collectionId,
+        request: result.request,
+        response: result.run,
+      });
+
+      navigateToRequest({
+        workspaceId: activeTab.workspaceId,
+        collectionId: activeTab.collectionId,
+        requestId: result.request.id,
+        replace: true,
+      });
+    } finally {
+      setIsSendingRequest(false);
+    }
   };
 
   if (!activeTab) {
@@ -306,6 +316,10 @@ export function RequestEditor({
           />
 
           <RequestEditorTabs
+            workspaceId={activeTab.workspaceId}
+            collectionId={activeTab.collectionId}
+            requestId={activeTab.requestId}
+
             payload={activeTab.payload}
             onPayloadChange={(updater) => {
               updateActivePayload((payload) =>

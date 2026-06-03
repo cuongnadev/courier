@@ -1,4 +1,4 @@
-import { Play, Save } from "lucide-react";
+import { Loader2, Play, Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,7 +51,7 @@ export function RequestTopBar({
 
       <Button
         type="button"
-        disabled={isSending || !uri.trim()}
+        disabled={isSending || isSaving || !uri.trim()}
         onClick={() => void onSend()}
         className="
           h-11 min-h-11 rounded-[12px]
@@ -62,14 +62,19 @@ export function RequestTopBar({
           disabled:opacity-60
         "
       >
-        <Play size={16} />
+        {isSending ? (
+          <Loader2 size={16} className="animate-spin" />
+        ) : (
+          <Play size={16} />
+        )}
+
         {isSending ? "Sending..." : "Send"}
       </Button>
 
       <Button
         type="button"
         variant="outline"
-        disabled={isSaving}
+        disabled={isSaving || isSending}
         onClick={() => void onSave()}
         className="
           h-11 min-h-11 w-12 rounded-[12px]
@@ -81,9 +86,13 @@ export function RequestTopBar({
           disabled:cursor-not-allowed
           disabled:opacity-60
         "
-        title="Save request"
+        title={isSaving ? "Saving request" : "Save request"}
       >
-        <Save size={17} />
+        {isSaving ? (
+          <Loader2 size={17} className="animate-spin" />
+        ) : (
+          <Save size={17} />
+        )}
       </Button>
     </div>
   );

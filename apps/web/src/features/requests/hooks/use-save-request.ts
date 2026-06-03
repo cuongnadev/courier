@@ -48,7 +48,7 @@ export function useUpdateRequest() {
         }),
       ]);
 
-      toast.success("Request saved.");
+      toast.success("Changes saved.");
     },
 
     onError: () => {
