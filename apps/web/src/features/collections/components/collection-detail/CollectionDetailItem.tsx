@@ -9,15 +9,24 @@ import { requestMethodStyles } from "@/features/requests/utils/request-method-st
 import { formatDate } from "@/lib/utils";
 
 type CollectionDetailItemProps = {
+  workspaceId: string;
+  collectionId: string;
   request: ApiRequestListItem;
 };
 
 export function CollectionDetailItem({
+  workspaceId,
+  collectionId,
   request,
 }: CollectionDetailItemProps) {
   return (
     <Link
-      to={`/requests/${request.id}`}
+      to="/workspaces/$workspaceId/collections/$collectionId/requests/$requestId"
+      params={{
+        workspaceId,
+        collectionId,
+        requestId: request.id,
+      }}
       className="
         group block w-full rounded-[12px]
         border-[1.25px] border-[#E5E5E5]

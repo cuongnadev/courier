@@ -14,3 +14,15 @@ export const requestMethodStyles: Record<
 
   DELETE: "bg-[#FEE2E2] text-[#B91C1C]",
 };
+
+export const requestMethodTextStyles: Record<RequestMethod, string> = {
+  GET: "text-[#7B3306]",
+
+  POST: "text-[#008236]",
+
+  PUT: "text-[#1D4ED8]",
+
+  PATCH: "text-[#BE185D]",
+  
+  DELETE: "text-[#B91C1C]",
+};
