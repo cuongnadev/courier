@@ -52,3 +52,7 @@ export async function getMeApi(): Promise<User> {
 export async function logoutApi(): Promise<void> {
   await api.post<unknown, ApiResponse<null>>("/auth/logout");
 }
+
+export async function deleteUserApi(): Promise<void> {
+  await api.delete<unknown, ApiResponse<{ deleted: boolean }>>("/users/me");
+}

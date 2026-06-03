@@ -686,6 +686,115 @@ export class RequestsService {
     });
   }
 
+  async getUserRunActivity(workspaceId: string, userId: string, days = 365) {
+    await this.assertWorkspaceAccess(workspaceId, userId);
+
+    const normalizedDays = Math.min(Math.max(days, 1), 365);
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - (normalizedDays - 1));
+
+    const runs = await this.prisma.requestRun.findMany({
+      where: {
+        workspaceId,
+        userId,
+        createdAt: {
+          gte: start,
+        },
+      },
+      select: {
+        status: true,
+        durationMs: true,
+        responseSize: true,
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    const daysByKey = new Map<
+      string,
+      {
+        date: string;
+        runs: number;
+        successfulRuns: number;
+        failedRuns: number;
+        durationTotalMs: number;
+        responseSizeTotal: number;
+      }
+    >();
+
+    for (let offset = 0; offset < normalizedDays; offset += 1) {
+      const day = new Date(start);
+      day.setDate(start.getDate() + offset);
+
+      const date = this.toDateKey(day);
+      daysByKey.set(date, {
+        date,
+        runs: 0,
+        successfulRuns: 0,
+        failedRuns: 0,
+        durationTotalMs: 0,
+        responseSizeTotal: 0,
+      });
+    }
+
+    for (const run of runs) {
+      const date = this.toDateKey(run.createdAt);
+      const day = daysByKey.get(date);
+
+      if (!day) continue;
+
+      day.runs += 1;
+      day.durationTotalMs += run.durationMs ?? 0;
+      day.responseSizeTotal += run.responseSize ?? 0;
+
+      if (run.status === RequestRunStatus.SUCCESS) {
+        day.successfulRuns += 1;
+      } else if (run.status === RequestRunStatus.FAILED) {
+        day.failedRuns += 1;
+      }
+    }
+
+    const activity = Array.from(daysByKey.values()).map((day) => ({
+      ...day,
+      averageDurationMs:
+        day.runs > 0 ? Math.round(day.durationTotalMs / day.runs) : 0,
+    }));
+
+    const totalRuns = runs.length;
+    const successfulRuns = runs.filter(
+      (run) => run.status === RequestRunStatus.SUCCESS,
+    ).length;
+    const failedRuns = runs.filter(
+      (run) => run.status === RequestRunStatus.FAILED,
+    ).length;
+    const averageDurationMs =
+      totalRuns > 0
+        ? Math.round(
+            runs.reduce((total, run) => total + (run.durationMs ?? 0), 0) /
+              totalRuns,
+          )
+        : 0;
+    const totalResponseSize = runs.reduce(
+      (total, run) => total + (run.responseSize ?? 0),
+      0,
+    );
+
+    return {
+      totalRuns,
+      successfulRuns,
+      failedRuns,
+      successRate:
+        totalRuns > 0 ? Math.round((successfulRuns / totalRuns) * 100) : 0,
+      averageDurationMs,
+      totalResponseSize,
+      activeDays: activity.filter((day) => day.runs > 0).length,
+      days: activity,
+    };
+  }
+
   async assertWorkspaceAccess(
     workspaceId: string,
     userId?: string,
@@ -985,6 +1094,10 @@ export class RequestsService {
 
       createdAt: run.createdAt.toISOString(),
     };
+  }
+
+  private toDateKey(date: Date): string {
+    return date.toISOString().slice(0, 10);
   }
 
   private async executeRequestRun(params: {

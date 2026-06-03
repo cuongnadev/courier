@@ -1,8 +1,12 @@
 export interface User {
-    id: string;
-    email: string;
-    fullName: string;
-    photoUrl: string;
+  id: string;
+  email: string;
+  fullName: string;
+  photoUrl: string;
+  age?: number | null;
+  gender?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type ErrorResponse = {

@@ -9,15 +9,15 @@ export type DashboardFlow = {
 
 export type DashboardCollection = Omit<
   CollectionResponse,
-  "method" |
-  "uri" |
-  "requests" |
-  "workspaceId" |
-  "description" |
-  "createdAt" |
-  "updatedAt" |
-  "deletedAt" |
-  "sortOrder"
+  | "method"
+  | "uri"
+  | "requests"
+  | "workspaceId"
+  | "description"
+  | "createdAt"
+  | "updatedAt"
+  | "deletedAt"
+  | "sortOrder"
 >;
 
 export interface DashboardMetrics {
@@ -33,3 +33,24 @@ export interface DashboardMetrics {
 
   active_flows: DashboardFlow[];
 }
+
+export type ProfileActivityDay = {
+  date: string;
+  runs: number;
+  successfulRuns: number;
+  failedRuns: number;
+  durationTotalMs: number;
+  responseSizeTotal: number;
+  averageDurationMs: number;
+};
+
+export type ProfileActivityMetrics = {
+  totalRuns: number;
+  successfulRuns: number;
+  failedRuns: number;
+  successRate: number;
+  averageDurationMs: number;
+  totalResponseSize: number;
+  activeDays: number;
+  days: ProfileActivityDay[];
+};
