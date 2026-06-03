@@ -3,10 +3,14 @@ import { CollectionDetailItem } from "@/features/collections/components/collecti
 import type { ApiRequestListItem } from "@/features/requests/types/request.type";
 
 type CollectionDetailListProps = {
+  workspaceId: string;
+  collectionId: string;
   requests: readonly ApiRequestListItem[];
 };
 
 export function CollectionDetailList({
+  workspaceId,
+  collectionId,
   requests,
 }: CollectionDetailListProps) {
   return (
@@ -15,6 +19,8 @@ export function CollectionDetailList({
         {requests.map((request) => (
           <CollectionDetailItem
             key={request.id}
+            workspaceId={workspaceId}
+            collectionId={collectionId}
             request={request}
           />
         ))}

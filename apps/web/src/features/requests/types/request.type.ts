@@ -72,3 +72,7 @@ export type ApiRequestListItem = {
 
   updatedAt: string;
 };
+
+export type ApiRequestDetailResponse = ApiRequestResponse & {
+  headers: ApiRequestHeaderResponse[];
+};

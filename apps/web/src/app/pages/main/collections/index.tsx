@@ -63,7 +63,7 @@ export default function CollectionsPage() {
           Loading collection...
         </div>
       ) : activeCollection ? (
-        <CollectionDetail collection={activeCollection} />
+        <CollectionDetail workspaceId={workspaceId!} collection={activeCollection} />
       ) : (
         <div className="flex flex-1 items-center justify-center text-sm text-[#737373]">
           No collection selected.
