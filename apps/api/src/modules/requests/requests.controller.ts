@@ -18,6 +18,7 @@ import { UpdateRequestDto } from './dto/update-request.dto';
 import { RunRequestDto } from './dto/run-request.dto';
 import { CreateAndRunRequestDto } from './dto/create-and-run-request.dto';
 import { RequestsService } from './requests.service';
+import { GenerateTestCasesDto } from './dto/generate-test-cases.dto';
 
 @Controller('workspaces/:workspaceId')
 @UseGuards(AuthGuard)
@@ -202,6 +203,58 @@ export class RequestsController {
     return this.requestsService.remove(
       requestId,
       workspaceId,
+      request.user.sub,
+    );
+  }
+
+  @Version('1')
+  @Post('collections/:collectionId/requests/:requestId/generate-tests')
+  generateTestCases(
+    @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
+    @Param('collectionId', new ParseUUIDPipe()) collectionId: string,
+    @Param('requestId', new ParseUUIDPipe()) requestId: string,
+    @Body() dto: GenerateTestCasesDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.requestsService.generateTestCases(
+      workspaceId,
+      collectionId,
+      requestId,
+      request.user.sub,
+      dto,
+    );
+  }
+
+  @Version('1')
+  @Get('collections/:collectionId/requests/:requestId/testcases')
+  findTestCases(
+    @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
+    @Param('collectionId', new ParseUUIDPipe()) collectionId: string,
+    @Param('requestId', new ParseUUIDPipe()) requestId: string,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.requestsService.findTestCases(
+      workspaceId,
+      collectionId,
+      requestId,
+      request.user.sub,
+    );
+  }
+
+  @Version('1')
+  @Delete('collections/:collectionId/requests/:requestId/testcases/:testCaseId')
+  deleteTestCase(
+    @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
+    @Param('collectionId', new ParseUUIDPipe()) collectionId: string,
+    @Param('requestId', new ParseUUIDPipe()) requestId: string,
+    @Param('testCaseId', new ParseUUIDPipe()) testCaseId: string,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.requestsService.deleteTestCase(
+      workspaceId,
+      collectionId,
+      requestId,
+      testCaseId,
       request.user.sub,
     );
   }

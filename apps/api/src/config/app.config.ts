@@ -15,4 +15,8 @@ export const appConfig = {
   },
 
   webUrl: env.WEB_URL,
+
+  testCaseGenerator: {
+    url: env.TEST_CASE_GENERATOR_URL,
+  },
 };

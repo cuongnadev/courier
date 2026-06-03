@@ -14,6 +14,8 @@ export const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default('1d'),
 
   WEB_URL: z.string().min(1),
+
+  TEST_CASE_GENERATOR_URL: z.string().url(),
 });
 
 export type Env = z.infer<typeof envSchema>;

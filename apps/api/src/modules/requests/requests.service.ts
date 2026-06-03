@@ -17,6 +17,9 @@ import { CreateAndRunRequestDto } from './dto/create-and-run-request.dto';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { RunRequestDto } from './dto/run-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
+import { GenerateTestCasesDto } from './dto/generate-test-cases.dto';
+
+import { appConfig } from '@/config/app.config';
 
 type RunHeaderInput = {
   key: string;
@@ -59,6 +62,64 @@ type RequestRunWithHeaders = {
     key: string;
     value: string | null;
   }>;
+};
+
+type GeneratedTestCase = {
+  name: string;
+  expectedStatus: number;
+  body: unknown;
+  isPositiveCase: boolean;
+};
+
+type SavedRequestTestCase = {
+  id: string;
+  requestId: string;
+  name: string;
+  description: string | null;
+  expectedStatus: number;
+  body: unknown;
+  isPositiveCase: boolean;
+  enabled: boolean;
+};
+
+type GenerateTestCasesResponse = {
+  testCases: SavedRequestTestCase[];
+  testCasesCount: number;
+};
+
+type FindTestCasesResponse = {
+  testCases: SavedRequestTestCase[];
+  testCasesCount: number;
+};
+
+type DeleteTestCaseResponse = {
+  deleted: boolean;
+  id: string;
+};
+
+type GenerateTestCasesModelPayload = {
+  request: {
+    id: string;
+    collection_id: string;
+    name: string;
+    description: string;
+    method: string;
+    uri: string;
+    raw_body: string;
+    created_at: string;
+    updated_at: string;
+  };
+  prompt: string;
+};
+
+type GenerateTestCasesModelResponse = {
+  generatedTestCases?: Array<{
+    name?: unknown;
+    expectedStatus?: unknown;
+    body?: unknown;
+    isPositiveCase?: unknown;
+  }>;
+  testCasesCount?: unknown;
 };
 
 @Injectable()
@@ -511,6 +572,105 @@ export class RequestsService {
     });
   }
 
+  async generateTestCases(
+    workspaceId: string,
+    collectionId: string,
+    requestId: string,
+    userId: string | undefined,
+    dto: GenerateTestCasesDto,
+  ): Promise<GenerateTestCasesResponse> {
+    await this.assertWorkspaceAccess(workspaceId, userId);
+
+    const request = await this.prisma.apiRequest.findFirst({
+      where: {
+        id: requestId,
+        collectionId,
+        deletedAt: null,
+        collection: {
+          id: collectionId,
+          workspaceId,
+          deletedAt: null,
+        },
+      },
+      select: {
+        id: true,
+        collectionId: true,
+        name: true,
+        description: true,
+        method: true,
+        uri: true,
+        rawBody: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!request) {
+      throw new AppException({
+        code: 'NOT_FOUND',
+        message: 'Request not found.',
+        status: 404,
+        hint: 'The request does not exist in this collection.',
+        docs: '',
+      });
+    }
+
+    const payload: GenerateTestCasesModelPayload = {
+      request: {
+        id: request.id,
+        collection_id: request.collectionId,
+        name: request.name,
+        description: request.description ?? '',
+        method: request.method,
+        uri: request.uri,
+        raw_body: request.rawBody ?? '',
+        created_at: request.createdAt.toISOString(),
+        updated_at: request.updatedAt.toISOString(),
+      },
+      prompt:
+        dto.prompt?.trim() ||
+        'Generate test cases including missing body fields',
+    };
+
+    const modelResponse = await this.callGenerateTestCasesModel(payload);
+    const generatedTestCases = this.normalizeGeneratedTestCases(modelResponse);
+
+    await this.prisma.requestTestcase.deleteMany({
+      where: {
+        requestId,
+      },
+    });
+
+    if (generatedTestCases.length > 0) {
+      await this.prisma.requestTestcase.createMany({
+        data: generatedTestCases.map((testCase) => ({
+          requestId,
+          name: testCase.name,
+          description: null,
+          expectedStatus: testCase.expectedStatus,
+          isPositiveCase: testCase.isPositiveCase,
+          moddedBody: this.stringifyTestCaseBody(testCase.body),
+        })),
+      });
+    }
+
+    const savedTestCases = await this.prisma.requestTestcase.findMany({
+      where: {
+        requestId,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    return {
+      testCases: savedTestCases.map((testCase) =>
+        this.serializeRequestTestCase(testCase),
+      ),
+      testCasesCount: savedTestCases.length,
+    };
+  }
+
   async countSuccessfulRunsToday(workspaceId: string): Promise<number> {
     const today = getTodayRange();
 
@@ -531,6 +691,108 @@ export class RequestsService {
     userId?: string,
   ): Promise<void> {
     await this.workspaceService.assertAccess(workspaceId, userId);
+  }
+
+  async findTestCases(
+    workspaceId: string,
+    collectionId: string,
+    requestId: string,
+    userId: string | undefined,
+  ): Promise<FindTestCasesResponse> {
+    await this.assertWorkspaceAccess(workspaceId, userId);
+
+    const request = await this.prisma.apiRequest.findFirst({
+      where: {
+        id: requestId,
+        collectionId,
+        deletedAt: null,
+        collection: {
+          id: collectionId,
+          workspaceId,
+          deletedAt: null,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!request) {
+      throw new AppException({
+        code: 'NOT_FOUND',
+        message: 'Request not found.',
+        status: 404,
+        hint: 'The request does not exist in this collection.',
+        docs: '',
+      });
+    }
+
+    const testCases = await this.prisma.requestTestcase.findMany({
+      where: {
+        requestId,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    return {
+      testCases: testCases.map((testCase) =>
+        this.serializeRequestTestCase(testCase),
+      ),
+      testCasesCount: testCases.length,
+    };
+  }
+
+  async deleteTestCase(
+    workspaceId: string,
+    collectionId: string,
+    requestId: string,
+    testCaseId: string,
+    userId: string | undefined,
+  ): Promise<DeleteTestCaseResponse> {
+    await this.assertWorkspaceAccess(workspaceId, userId);
+
+    const testCase = await this.prisma.requestTestcase.findFirst({
+      where: {
+        id: testCaseId,
+        requestId,
+        request: {
+          id: requestId,
+          collectionId,
+          deletedAt: null,
+          collection: {
+            id: collectionId,
+            workspaceId,
+            deletedAt: null,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!testCase) {
+      throw new AppException({
+        code: 'NOT_FOUND',
+        message: 'Test case not found.',
+        status: 404,
+        hint: 'The requested test case does not exist.',
+        docs: '',
+      });
+    }
+
+    await this.prisma.requestTestcase.delete({
+      where: {
+        id: testCaseId,
+      },
+    });
+
+    return {
+      deleted: true,
+      id: testCaseId,
+    };
   }
 
   private toRequestListItem(request: {
@@ -844,5 +1106,151 @@ export class RequestsService {
 
       return this.serializeRequestRun(run);
     }
+  }
+
+  private async callGenerateTestCasesModel(
+    payload: GenerateTestCasesModelPayload,
+  ): Promise<GenerateTestCasesModelResponse> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60_000);
+
+    try {
+      const response = await fetch(appConfig.testCaseGenerator.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+
+      const responseText = await response.text();
+
+      if (!response.ok) {
+        throw new AppException({
+          code: 'GENERATE_TEST_CASES_FAILED',
+          message: 'Failed to generate test cases.',
+          status: 502,
+          hint: `Model server returned ${response.status}: ${responseText.slice(
+            0,
+            500,
+          )}`,
+          docs: '',
+        });
+      }
+
+      try {
+        return JSON.parse(responseText) as GenerateTestCasesModelResponse;
+      } catch {
+        throw new AppException({
+          code: 'INVALID_GENERATE_TEST_CASES_RESPONSE',
+          message: 'Invalid generate test cases response.',
+          status: 502,
+          hint: `Model server did not return valid JSON: ${responseText.slice(
+            0,
+            500,
+          )}`,
+          docs: '',
+        });
+      }
+    } catch (error: unknown) {
+      if (error instanceof AppException) {
+        throw error;
+      }
+
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new AppException({
+          code: 'GENERATE_TEST_CASES_TIMEOUT',
+          message: 'Generate test cases request timed out.',
+          status: 504,
+          hint: 'The AI model took too long to respond.',
+          docs: '',
+        });
+      }
+
+      throw new AppException({
+        code: 'GENERATE_TEST_CASES_MODEL_UNREACHABLE',
+        message: 'Could not connect to test case generation model.',
+        status: 502,
+        hint:
+          error instanceof Error
+            ? error.message
+            : 'Model server is unreachable.',
+        docs: '',
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  private normalizeGeneratedTestCases(
+    modelResponse: GenerateTestCasesModelResponse,
+  ): GeneratedTestCase[] {
+    const generatedTestCases = modelResponse.generatedTestCases;
+
+    if (!Array.isArray(generatedTestCases)) {
+      return [];
+    }
+
+    return generatedTestCases.map((testCase, index) => {
+      const name =
+        typeof testCase.name === 'string' && testCase.name.trim()
+          ? testCase.name.trim()
+          : `Test case ${index + 1}`;
+
+      const expectedStatus =
+        typeof testCase.expectedStatus === 'number'
+          ? testCase.expectedStatus
+          : 200;
+
+      const isPositiveCase =
+        typeof testCase.isPositiveCase === 'boolean'
+          ? testCase.isPositiveCase
+          : expectedStatus >= 200 && expectedStatus < 300;
+
+      return {
+        name,
+        expectedStatus,
+        body: testCase.body ?? null,
+        isPositiveCase,
+      };
+    });
+  }
+
+  private parseTestCaseBody(moddedBody: string) {
+    try {
+      return JSON.parse(moddedBody) as unknown;
+    } catch {
+      return moddedBody;
+    }
+  }
+
+  private serializeRequestTestCase(testCase: {
+    id: string;
+    requestId: string;
+    name: string;
+    description: string | null;
+    expectedStatus: number;
+    isPositiveCase: boolean;
+    moddedBody: string;
+  }): SavedRequestTestCase {
+    return {
+      id: testCase.id,
+      requestId: testCase.requestId,
+      name: testCase.name,
+      description: testCase.description,
+      expectedStatus: testCase.expectedStatus,
+      body: this.parseTestCaseBody(testCase.moddedBody),
+      isPositiveCase: testCase.isPositiveCase,
+      enabled: true,
+    };
+  }
+
+  private stringifyTestCaseBody(body: unknown) {
+    if (typeof body === 'string') {
+      return body;
+    }
+
+    return JSON.stringify(body ?? null, null, 2);
   }
 }
