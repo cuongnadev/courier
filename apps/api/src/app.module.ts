@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CollectionsModule } from './modules/collections';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { FlowsModule } from './modules/flows';
+import { RequestTestcasesModule } from './modules/request-testcases';
 import { RequestsModule } from './modules/requests';
 import { UserModule } from './modules/user/user.module';
 
@@ -23,6 +24,7 @@ import { UserModule } from './modules/user/user.module';
     CollectionsModule,
     DashboardModule,
     FlowsModule,
+    RequestTestcasesModule,
     RequestsModule,
     UserModule,
   ],

@@ -54,9 +54,7 @@ export class AuthController {
   async me(@Req() req: AuthenticatedRequest) {
     const user = await this.authService.getMe(req.user.sub);
 
-    return {
-      user,
-    };
+    return { user };
   }
 
   @Version('1')

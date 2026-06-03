@@ -219,6 +219,7 @@ model ApiRequest {
   bodyParams       RequestBodyParam[]
   cookies          RequestCookie[]
   examples         RequestExample[]
+  testcases        RequestTestcase[]
   runs             RequestRun[]
   flowRequestNodes FlowNodeApiRequest[]
 
@@ -615,6 +616,20 @@ model RequestExampleHeader {
 
   @@index([exampleId])
   @@map("request_example_headers")
+}
+
+model RequestTestcase {
+  id             String     @id @default(uuid()) @db.Uuid
+  requestId      String     @map("request_id") @db.Uuid
+  name           String
+  description    String?
+  expectedStatus Int        @map("expected_status")
+  isPositiveCase Boolean    @map("is_positive_case")
+  moddedBody     String     @map("modded_body")
+  request        ApiRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@map("request_testcases")
 }
 
 model RequestRun {
