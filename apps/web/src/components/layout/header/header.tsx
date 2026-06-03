@@ -25,21 +25,24 @@ import {
 } from "@/components/common/icons";
 import { mapWorkspaceHeader } from "@/features/workspaces/utils/map-workspace";
 import { useLogout } from '@/features/auth/hooks/use-logout';
-import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useSwitchWorkspace } from "@/features/workspaces/hooks/use-switch-workspace";
 
 export function Header() {
     const user = useAuthStore((state) => state.user);
     const {
         workspaces,
         currentWorkspace,
-    } = useCurrentWorkspace()
+        currentWorkspaceId,
+        isLoading,
+        switchWorkspace,
+    } = useSwitchWorkspace();
 
     const workspaceItems = workspaces.map(mapWorkspaceHeader);
 
     const currentWorkspaceItem = currentWorkspace
-    ? mapWorkspaceHeader(currentWorkspace)
-    : null;
+        ? mapWorkspaceHeader(currentWorkspace)
+        : null;
 
     const { mutate: logout, isPending } = useLogout();
 
@@ -51,6 +54,7 @@ export function Header() {
                     <DropdownMenuTrigger asChild>
                         <Button
                             variant="outline"
+                            disabled={isLoading || workspaces.length === 0}
                             className="
                                 px-3 py-2 h-10 gap-4 rounded-[12px]
                                 border-[1.25px] border-[#E5E5E5]
@@ -101,6 +105,7 @@ export function Header() {
                         {workspaceItems.map((workspace) => (
                             <DropdownMenuItem
                                 key={workspace.id}
+                                onSelect={() => switchWorkspace(workspace.id)}
                                 className="
                                     flex cursor-pointer items-center justify-between rounded-lg px-3 py-2
                                     text-neutral-800 outline-none
@@ -128,7 +133,7 @@ export function Header() {
                                     </span>
                                 </div>
 
-                                {workspace.id === currentWorkspaceItem?.id && (
+                                {workspace.id === currentWorkspaceId && (
                                     <DropdownMenuShortcut>
                                         <CheckCircleIcon />
                                     </DropdownMenuShortcut>

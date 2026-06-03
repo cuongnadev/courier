@@ -13,10 +13,19 @@ import { mapRecentActivityResponseToRecentActivity } from "@/features/dashboard/
 import { DASHBOARD_STATS } from "@/constants/dashboard-stats";
 
 import type { DashboardCollection, DashboardFlow } from "@/features/dashboard/types/dashboard.type";
+
+import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
 export default function DashboardPage() {
   const { currentWorkspaceId } = useCurrentWorkspace();
+
+  const user = useAuthStore((state) => state.user);
+
+  const displayName =
+    user?.fullName ??
+    user?.email?.split("@")[0] ??
+    "there";
 
   const { data: dashboardOverview } = useDashboardMetrics(currentWorkspaceId);
 
@@ -53,7 +62,7 @@ export default function DashboardPage() {
         <section className="p-8 relative overflow-hidden rounded-[16px] bg-[linear-gradient(135deg,#1C1917_0%,#101828_50%,#262626_100%)] text-white shadow-sm">
           <div>
             <h1 className="w-[80%] text-[30px] font-bold">
-              Welcome back, CuongDev!
+              Welcome back, {displayName}!
             </h1>
 
             <p className="mt-2 w-[80%] text-[18px] text-[#D6D3D1]">
