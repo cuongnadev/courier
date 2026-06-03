@@ -6,6 +6,7 @@
     "dev": "turbo run dev",
     "seed": "npm run seed -w api",
     "seed:flows": "npm run seed:flows -w api --",
+    "seed:testcases": "npm run seed:testcases -w api --",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
