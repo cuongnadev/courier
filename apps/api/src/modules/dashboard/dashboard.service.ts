@@ -3,7 +3,10 @@ import { CollectionsService } from '../collections';
 import { FlowsService } from '../flows';
 import { RequestsService } from '../requests';
 import { WorkspacesService } from '../workspaces';
-import type { DashboardMetrics } from './types/dashboard-metrics.type';
+import type {
+  DashboardMetrics,
+  ProfileActivityMetrics,
+} from './types/dashboard-metrics.type';
 
 @Injectable()
 export class DashboardService {
@@ -50,5 +53,12 @@ export class DashboardService {
       latest_collections: collections,
       active_flows: activeFlows,
     };
+  }
+
+  async getProfileActivity(
+    workspaceId: string,
+    userId: string,
+  ): Promise<ProfileActivityMetrics> {
+    return this.requestsService.getUserRunActivity(workspaceId, userId);
   }
 }

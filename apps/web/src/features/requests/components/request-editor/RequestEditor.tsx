@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useLottie } from "lottie-react";
 
 import { RequestEditorTabs } from "@/features/requests/components/request-editor/request-tabs";
 import { RequestTabs } from "@/features/requests/components/request-editor";
 import { ResponsePanel } from "@/features/requests/components/request-editor/response";
 import { RequestTopBar } from "@/features/requests/components/request-editor/RequestTopBar";
+import emptyRequestAnimation from "@/assets/techny-bussiness.json";
 
 import type { ApiRequestDetailResponse } from "@/features/requests/types/request.type";
 import type {
@@ -20,6 +22,32 @@ import {
 } from "@/features/requests/hooks";
 
 import { useRequestEditorTabsStore } from "@/features/requests/store/request-editor-tabs.store";
+
+const EmptyRequestEditorState = () => {
+  const { View } = useLottie(
+    {
+      animationData: emptyRequestAnimation,
+      loop: true,
+      autoplay: true,
+    },
+    {
+      height: 512,
+      width: 512,
+    },
+  );
+
+  return (
+    <main className="flex h-full w-full items-center justify-center bg-white px-6">
+      <div className="flex max-w-[512px] flex-col items-center text-center">
+        {View}
+
+        <h2 className="mt-4 text-2xl font-semibold text-[#171717]">
+          No request tab opened
+        </h2>
+      </div>
+    </main>
+  );
+}
 
 type RequestEditorProps = {
   workspaceId: string;
@@ -270,11 +298,7 @@ export function RequestEditor({
   };
 
   if (!activeTab) {
-    return (
-      <main className="flex h-full w-full items-center justify-center bg-white text-sm text-[#737373]">
-        No request tab opened.
-      </main>
-    );
+    return <EmptyRequestEditorState />;
   }
 
   return (
@@ -319,7 +343,6 @@ export function RequestEditor({
             workspaceId={activeTab.workspaceId}
             collectionId={activeTab.collectionId}
             requestId={activeTab.requestId}
-
             payload={activeTab.payload}
             onPayloadChange={(updater) => {
               updateActivePayload((payload) =>

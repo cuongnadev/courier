@@ -24,4 +24,16 @@ export class DashboardController {
   ) {
     return this.dashboardService.getMetrics(workspaceId, request.user.sub);
   }
+
+  @Version('1')
+  @Get('profile-activity')
+  getProfileActivity(
+    @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.dashboardService.getProfileActivity(
+      workspaceId,
+      request.user.sub,
+    );
+  }
 }
