@@ -432,7 +432,7 @@ export function Header() {
 							>
 								Profile
 								<DropdownMenuShortcut>
-									<CircleUser size={17} />
+									<CircleUser size={17} className="text-black" />
 								</DropdownMenuShortcut>
 							</DropdownMenuItem>
 

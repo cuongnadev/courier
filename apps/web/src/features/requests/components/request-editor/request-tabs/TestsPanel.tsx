@@ -4,6 +4,10 @@ import {
   BadgeX,
   Bug,
   Check,
+  CircleAlert,
+  CircleCheck,
+  CircleDashed,
+  CircleX,
   FlaskConical,
   Loader2,
   Play,
@@ -19,12 +23,26 @@ import {
   generateTestCasesApi,
   listRequestTestCasesApi,
 } from "@/features/requests/api/generate-test-cases.api";
+import { runSavedRequestApi } from "@/features/requests/api";
 import type { GeneratedTestCase } from "@/features/requests/types/generate-test-cases.type";
+import type { RequestRunResponse } from "@/features/requests/types/request-run.type";
+import type { RunRequestPayload } from "@/features/requests/types/request-run-payload.type";
 
 type TestsPanelProps = {
   workspaceId: string;
   collectionId: string;
   requestId: string | null;
+  payload: RunRequestPayload;
+};
+
+type TestRunStatus = "idle" | "running" | "passed" | "failed" | "error";
+
+type TestRunResult = {
+  status: TestRunStatus;
+  response?: RequestRunResponse;
+  errorMessage?: string;
+  startedAt?: number;
+  completedAt?: number;
 };
 
 function stringifyBody(body: unknown) {
@@ -60,10 +78,75 @@ function withEnabled(testCases: GeneratedTestCase[]) {
   }));
 }
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "Test run failed.";
+}
+
+function buildTestRunPayload(
+  payload: RunRequestPayload,
+  testCase: GeneratedTestCase,
+): RunRequestPayload {
+  return {
+    ...payload,
+    bodyType: "RAW",
+    rawBodyLanguage: "JSON",
+    rawBody: stringifyBody(testCase.body),
+  };
+}
+
+function getRunDuration(result?: TestRunResult) {
+  if (!result) return null;
+
+  if (result.response?.durationMs !== undefined) {
+    return result.response.durationMs;
+  }
+
+  if (result.startedAt && result.completedAt) {
+    return result.completedAt - result.startedAt;
+  }
+
+  return null;
+}
+
+function getStatusStyles(status?: TestRunStatus) {
+  switch (status) {
+    case "running":
+      return "border-blue-200 bg-blue-50 text-blue-700";
+    case "passed":
+      return "border-green-200 bg-green-50 text-green-700";
+    case "failed":
+      return "border-red-200 bg-red-50 text-red-700";
+    case "error":
+      return "border-amber-200 bg-amber-50 text-amber-700";
+    default:
+      return "border-[#E5E5E5] bg-white text-[#737373]";
+  }
+}
+
+function TestRunStatusIcon({ status }: { status?: TestRunStatus }) {
+  switch (status) {
+    case "running":
+      return <Loader2 size={14} className="animate-spin" />;
+    case "passed":
+      return <CircleCheck size={14} />;
+    case "failed":
+      return <CircleX size={14} />;
+    case "error":
+      return <CircleAlert size={14} />;
+    default:
+      return <CircleDashed size={14} />;
+  }
+}
+
 export function TestsPanel({
   workspaceId,
   collectionId,
   requestId,
+  payload,
 }: TestsPanelProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -72,6 +155,9 @@ export function TestsPanel({
   >(null);
 
   const [testCases, setTestCases] = useState<GeneratedTestCase[]>([]);
+  const [runResultsByTestCaseId, setRunResultsByTestCaseId] = useState<
+    Record<string, TestRunResult>
+  >({});
   const [selectedTestCaseId, setSelectedTestCaseId] = useState<string | null>(
     null,
   );
@@ -84,6 +170,27 @@ export function TestsPanel({
   const enabledTestCases = useMemo(() => {
     return testCases.filter((testCase) => testCase.enabled);
   }, [testCases]);
+
+  const isRunningTests = useMemo(() => {
+    return Object.values(runResultsByTestCaseId).some(
+      (result) => result.status === "running",
+    );
+  }, [runResultsByTestCaseId]);
+
+  const runSummary = useMemo(() => {
+    return testCases.reduce(
+      (summary, testCase) => {
+        const status = runResultsByTestCaseId[testCase.id]?.status ?? "idle";
+
+        if (status === "passed") summary.passed += 1;
+        if (status === "failed" || status === "error") summary.failed += 1;
+        if (status === "running") summary.running += 1;
+
+        return summary;
+      },
+      { passed: 0, failed: 0, running: 0 },
+    );
+  }, [runResultsByTestCaseId, testCases]);
 
   const selectFirstTestCase = useCallback(
     (nextTestCases: GeneratedTestCase[]) => {
@@ -111,6 +218,7 @@ export function TestsPanel({
 
     try {
       setIsLoading(true);
+      setRunResultsByTestCaseId({});
 
       const result = await listRequestTestCasesApi({
         workspaceId,
@@ -175,9 +283,9 @@ export function TestsPanel({
       currentTestCases.map((testCase) =>
         testCase.id === testCaseId
           ? {
-            ...testCase,
-            enabled: !testCase.enabled,
-          }
+              ...testCase,
+              enabled: !testCase.enabled,
+            }
           : testCase,
       ),
     );
@@ -192,9 +300,9 @@ export function TestsPanel({
       currentTestCases.map((testCase) =>
         testCase.id === selectedTestCaseId
           ? {
-            ...testCase,
-            body: parseBody(value),
-          }
+              ...testCase,
+              body: parseBody(value),
+            }
           : testCase,
       ),
     );
@@ -231,6 +339,12 @@ export function TestsPanel({
 
         return nextTestCases;
       });
+
+      setRunResultsByTestCaseId((currentResults) => {
+        const nextResults = { ...currentResults };
+        delete nextResults[testCaseId];
+        return nextResults;
+      });
     } catch (error) {
       console.error("[TestsPanel] delete test case failed:", error);
     } finally {
@@ -238,17 +352,74 @@ export function TestsPanel({
     }
   };
 
+  const runTestCases = async (casesToRun: GeneratedTestCase[]) => {
+    if (!requestId || casesToRun.length === 0) return;
+
+    const startedAt = Date.now();
+
+    setRunResultsByTestCaseId((currentResults) => {
+      const nextResults = { ...currentResults };
+
+      for (const testCase of casesToRun) {
+        nextResults[testCase.id] = {
+          status: "running",
+          startedAt,
+        };
+      }
+
+      return nextResults;
+    });
+
+    await Promise.all(
+      casesToRun.map(async (testCase) => {
+        try {
+          const response = await runSavedRequestApi({
+            workspaceId,
+            collectionId,
+            requestId,
+            data: buildTestRunPayload(payload, testCase),
+          });
+
+          const passed = response.statusCode === testCase.expectedStatus;
+
+          setRunResultsByTestCaseId((currentResults) => ({
+            ...currentResults,
+            [testCase.id]: {
+              status: passed ? "passed" : "failed",
+              response,
+              startedAt: currentResults[testCase.id]?.startedAt ?? startedAt,
+              completedAt: Date.now(),
+            },
+          }));
+        } catch (error) {
+          setRunResultsByTestCaseId((currentResults) => ({
+            ...currentResults,
+            [testCase.id]: {
+              status: "error",
+              errorMessage: getErrorMessage(error),
+              startedAt: currentResults[testCase.id]?.startedAt ?? startedAt,
+              completedAt: Date.now(),
+            },
+          }));
+        }
+      }),
+    );
+  };
+
   const handleRunSelected = () => {
-    if (!selectedTestCase) {
-      console.warn("[TestsPanel] No selected test case.");
+    if (!selectedTestCase || isRunningTests) {
       return;
     }
 
-    console.log("[TestsPanel] run selected test case:", selectedTestCase);
+    void runTestCases([selectedTestCase]);
   };
 
   const handleRunAll = () => {
-    console.log("[TestsPanel] run all enabled test cases:", enabledTestCases);
+    if (isRunningTests) {
+      return;
+    }
+
+    void runTestCases(enabledTestCases);
   };
 
   return (
@@ -265,7 +436,7 @@ export function TestsPanel({
           <Button
             type="button"
             variant="outline"
-            disabled={!selectedTestCase}
+            disabled={!requestId || !selectedTestCase || isRunningTests}
             onClick={handleRunSelected}
             className="
               h-9 rounded-[10px]
@@ -283,14 +454,20 @@ export function TestsPanel({
               disabled:opacity-50
             "
           >
-            <Play size={15} className="fill-current" />
+            {isRunningTests ? (
+              <Loader2 size={15} className="animate-spin" />
+            ) : (
+              <Play size={15} className="fill-current" />
+            )}
             Run
           </Button>
 
           <Button
             type="button"
             variant="outline"
-            disabled={enabledTestCases.length === 0}
+            disabled={
+              !requestId || enabledTestCases.length === 0 || isRunningTests
+            }
             onClick={handleRunAll}
             className="
               h-9 rounded-[10px]
@@ -308,7 +485,11 @@ export function TestsPanel({
               disabled:opacity-50
             "
           >
-            <Play size={15} className="fill-current" />
+            {isRunningTests ? (
+              <Loader2 size={15} className="animate-spin" />
+            ) : (
+              <Play size={15} className="fill-current" />
+            )}
             Run All
           </Button>
 
@@ -369,6 +550,7 @@ export function TestsPanel({
                 {testCases.map((testCase) => {
                   const isSelected = selectedTestCaseId === testCase.id;
                   const isDeleting = isDeletingTestCaseId === testCase.id;
+                  const runResult = runResultsByTestCaseId[testCase.id];
 
                   return (
                     <div
@@ -376,9 +558,10 @@ export function TestsPanel({
                       className={`
                         flex w-full items-start gap-3 rounded-[12px]
                         border-[1.25px] p-3 transition-colors
-                        ${isSelected
-                          ? "border-pink-200 bg-pink-50"
-                          : "border-[#E5E5E5] bg-white hover:bg-[#FAFAFA]"
+                        ${
+                          isSelected
+                            ? "border-pink-200 bg-pink-50"
+                            : "border-[#E5E5E5] bg-white hover:bg-[#FAFAFA]"
                         }
                       `}
                     >
@@ -399,9 +582,10 @@ export function TestsPanel({
                           focus-visible:ring-2
                           focus-visible:ring-[#FED7AA]
                           focus-visible:ring-offset-0
-                          ${testCase.enabled
-                            ? "border-[#FE9A00] bg-[#FE9A00] text-white hover:bg-[#FE9A00]"
-                            : "border-[#D4D4D4] bg-white text-transparent hover:border-[#FE9A00]"
+                          ${
+                            testCase.enabled
+                              ? "border-[#FE9A00] bg-[#FE9A00] text-white hover:bg-[#FE9A00]"
+                              : "border-[#D4D4D4] bg-white text-transparent hover:border-[#FE9A00]"
                           }
                         `}
                       >
@@ -437,6 +621,17 @@ export function TestsPanel({
 
                             <span className="block min-w-0 flex-1 truncate text-sm font-semibold text-[#171717]">
                               {testCase.name}
+                            </span>
+
+                            <span
+                              className={`
+                                inline-flex shrink-0 items-center gap-1 rounded-full
+                                border px-1.5 py-0.5 text-[11px] font-semibold
+                                ${getStatusStyles(runResult?.status)}
+                              `}
+                            >
+                              <TestRunStatusIcon status={runResult?.status} />
+                              {runResult?.status ?? "idle"}
                             </span>
                           </span>
 
@@ -492,46 +687,111 @@ export function TestsPanel({
 
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-[#171717]">
-                  Request Body Preview
+                  Test Run Status
                 </p>
                 <p className="truncate text-xs text-[#737373]">
-                  {selectedTestCase
-                    ? `${selectedTestCase.name} · Expected ${selectedTestCase.expectedStatus
-                    } · ${selectedTestCase.isPositiveCase
-                      ? "Positive case"
-                      : "Negative case"
-                    }`
-                    : "Select a generated test case to inspect its request body."}
+                  {isRunningTests
+                    ? `${runSummary.running} running · ${runSummary.passed} passed · ${runSummary.failed} failed`
+                    : `${runSummary.passed} passed · ${runSummary.failed} failed`}
                 </p>
               </div>
             </div>
 
             <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-[#E5E5E5] bg-white px-2.5 py-1 text-xs font-medium text-[#737373]">
               <Bug size={13} />
-              JSON Body
+              Results
             </div>
           </div>
 
-          <Textarea
-            spellCheck={false}
-            value={bodyValue}
-            onChange={(event) => handleBodyChange(event.target.value)}
-            placeholder={`{
+          <div className="min-h-0 flex-1 overflow-auto p-4 dashboard-scrollbar">
+            {testCases.length === 0 ? (
+              <div className="rounded-[12px] border-[1.25px] border-dashed border-[#E5E5E5] bg-[#FAFAFA] p-5 text-sm text-[#737373]">
+                Generate test cases to run them.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {testCases.map((testCase) => {
+                  const runResult = runResultsByTestCaseId[testCase.id];
+                  const duration = getRunDuration(runResult);
+                  const statusCode = runResult?.response?.statusCode ?? null;
+                  const status = runResult?.status ?? "idle";
+
+                  return (
+                    <div
+                      key={testCase.id}
+                      className={`
+                        rounded-[12px] border-[1.25px] p-3
+                        ${getStatusStyles(status)}
+                      `}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex min-w-0 items-center gap-2">
+                            <TestRunStatusIcon status={status} />
+                            <p className="truncate text-sm font-semibold">
+                              {testCase.name}
+                            </p>
+                          </div>
+
+                          <p className="mt-1 text-xs">
+                            Expected {testCase.expectedStatus}
+                            {statusCode !== null
+                              ? ` · Received ${statusCode}`
+                              : ""}
+                            {duration !== null ? ` · ${duration}ms` : ""}
+                          </p>
+                        </div>
+
+                        <span className="shrink-0 rounded-full bg-white/70 px-2 py-1 text-xs font-semibold capitalize">
+                          {status}
+                        </span>
+                      </div>
+
+                      {runResult?.errorMessage && (
+                        <p className="mt-2 rounded-[8px] bg-white/70 p-2 text-xs">
+                          {runResult.errorMessage}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="shrink-0 border-t-[1.25px] border-[#E5E5E5] bg-white">
+            <div className="border-b-[1.25px] border-[#E5E5E5] bg-[#FAFAFA] px-4 py-2">
+              <p className="text-xs font-semibold text-[#171717]">
+                Selected Body Preview
+              </p>
+              <p className="mt-0.5 truncate text-xs text-[#737373]">
+                {selectedTestCase
+                  ? `${selectedTestCase.name} · Expected ${selectedTestCase.expectedStatus}`
+                  : "Select a generated test case to inspect its request body."}
+              </p>
+            </div>
+
+            <Textarea
+              spellCheck={false}
+              value={bodyValue}
+              onChange={(event) => handleBodyChange(event.target.value)}
+              placeholder={`{
   "username": "David",
   "password": "123"
 }`}
-            className="
-              h-full min-h-0 flex-1 resize-none rounded-none border-0 bg-white p-4
-              font-mono text-sm leading-6 text-[#171717]
-              shadow-none outline-none
-              placeholder:text-[#A3A3A3]
-              focus-visible:ring-1
-              focus-visible:ring-inset
-              focus-visible:ring-pink-400
-              focus-visible:ring-offset-0
-              overflow-auto dashboard-scrollbar
-            "
-          />
+              className="
+                h-[220px] resize-none rounded-none border-0 bg-white p-4
+                font-mono text-sm leading-6 text-[#171717]
+                shadow-none outline-none
+                placeholder:text-[#A3A3A3]
+                focus-visible:ring-1
+                focus-visible:ring-inset
+                focus-visible:ring-pink-400
+                focus-visible:ring-offset-0
+                overflow-auto dashboard-scrollbar
+              "
+            />
+          </div>
         </div>
       </div>
     </div>
