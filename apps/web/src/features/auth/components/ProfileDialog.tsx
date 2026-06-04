@@ -166,30 +166,35 @@ export function ProfileDialog({
           <section className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
             <MetricTile
               icon={<Activity size={17} />}
+              iconClassName="bg-orange-50 text-orange-600"
               label="Runs"
               value={formatNumber(activity?.totalRuns)}
               loading={isLoading}
             />
             <MetricTile
               icon={<CheckCircle2 size={17} />}
+              iconClassName="bg-green-50 text-green-600"
               label="Success"
               value={`${activity?.successRate ?? 0}%`}
               loading={isLoading}
             />
             <MetricTile
               icon={<Timer size={17} />}
+              iconClassName="bg-blue-50 text-blue-600"
               label="Avg time"
               value={formatDuration(activity?.averageDurationMs)}
               loading={isLoading}
             />
             <MetricTile
               icon={<CalendarDays size={17} />}
+              iconClassName="bg-fuchsia-50 text-fuchsia-600"
               label="Active days"
               value={formatNumber(activity?.activeDays)}
               loading={isLoading}
             />
             <MetricTile
               icon={<Gauge size={17} />}
+              iconClassName="bg-amber-50 text-amber-600"
               label="Data"
               value={formatBytes(activity?.totalResponseSize)}
               loading={isLoading}
@@ -293,27 +298,31 @@ export function ProfileDialog({
           <section className="mt-6 grid gap-3 md:grid-cols-2">
             <ProfileFact
               icon={<UserIcon size={17} />}
+              iconClassName="bg-sky-50 text-sky-600"
               label="Full name"
               value={user?.fullName}
             />
             <ProfileFact
               icon={<Mail size={17} />}
+              iconClassName="bg-indigo-50 text-indigo-600"
               label="Email"
               value={user?.email}
             />
             <ProfileFact
               icon={<VenusAndMars size={17} />}
+              iconClassName="bg-pink-50 text-pink-600"
               label="Gender"
               value={formatGender(user?.gender)}
             />
             <ProfileFact
               icon={<Clock size={17} />}
+              iconClassName="bg-teal-50 text-teal-600"
               label="Last profile update"
               value={formatDate(user?.updatedAt)}
             />
           </section>
 
-          <hr className="mt-10 pb-10 text-gray-700/50"/>
+          <hr className="mt-10 pb-10 text-gray-700/50" />
 
           <section className="mt-6 rounded-[12px] border border-red-200 bg-red-50/50 p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -420,19 +429,33 @@ export function ProfileDialog({
 
 type MetricTileProps = {
   icon: ReactNode;
+  iconClassName: string;
   label: string;
   value: string;
   loading: boolean;
 };
 
-function MetricTile({ icon, label, value, loading }: MetricTileProps) {
+function MetricTile({
+  icon,
+  iconClassName,
+  label,
+  value,
+  loading,
+}: MetricTileProps) {
   return (
     <div className="rounded-[12px] border border-[#E5E5E5] bg-[#FAFAFA] p-4">
       <div className="flex items-center justify-between text-[#737373]">
         <span className="text-xs font-medium uppercase tracking-[0.04em]">
           {label}
         </span>
-        {icon}
+        <span
+          className={`
+            flex h-8 w-8 items-center justify-center rounded-[8px]
+            ${iconClassName}
+          `}
+        >
+          {icon}
+        </span>
       </div>
       <div className="mt-3 text-xl font-semibold text-[#171717]">
         {loading ? "..." : value}
@@ -461,14 +484,20 @@ function Insight({ label, value, detail }: InsightProps) {
 
 type ProfileFactProps = {
   icon: ReactNode;
+  iconClassName: string;
   label: string;
   value?: string | null;
 };
 
-function ProfileFact({ icon, label, value }: ProfileFactProps) {
+function ProfileFact({ icon, iconClassName, label, value }: ProfileFactProps) {
   return (
     <div className="flex items-start gap-3 rounded-[12px] border border-[#E5E5E5] bg-white px-4 py-3">
-      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-[#525252]">
+      <div
+        className={`
+          mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg
+          ${iconClassName}
+        `}
+      >
         {icon}
       </div>
 

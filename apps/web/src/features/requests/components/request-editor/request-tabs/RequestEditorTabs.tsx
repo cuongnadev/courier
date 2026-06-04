@@ -40,7 +40,9 @@ export function RequestEditorTabs({
 }: RequestEditorTabsProps) {
   const [activeTab, setActiveTab] = useState<RequestTab>("Body");
 
-  const headersCount = payload.headers.filter((header) => header.enabled).length;
+  const headersCount = payload.headers.filter(
+    (header) => header.enabled,
+  ).length;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-white">
@@ -55,9 +57,10 @@ export function RequestEditorTabs({
               onClick={() => setActiveTab(tab)}
               className={`
                 relative h-full text-sm font-medium transition-colors bg-transparent hover:bg-transparent
-                ${isActive
-                  ? "text-orange-700"
-                  : "text-[#404040] hover:text-[#171717]"
+                ${
+                  isActive
+                    ? "text-orange-700"
+                    : "text-[#404040] hover:text-[#171717]"
                 }
               `}
             >
@@ -114,12 +117,14 @@ export function RequestEditorTabs({
 
         {activeTab === "Pre-request Script" && <PreRequestScriptPanel />}
 
-        {activeTab === "Tests" && 
-        <TestsPanel
-          workspaceId={workspaceId}
-          collectionId={collectionId}
-          requestId={requestId}
-        />}
+        {activeTab === "Tests" && (
+          <TestsPanel
+            workspaceId={workspaceId}
+            collectionId={collectionId}
+            requestId={requestId}
+            payload={payload}
+          />
+        )}
       </div>
     </div>
   );
