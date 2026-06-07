@@ -36,6 +36,7 @@ function buildPayloadFromRequest(
 
     headers:
       request.headers?.map((header) => ({
+        id: header.id,
         key: header.key,
         value: header.value ?? "",
         enabled: header.enabled,

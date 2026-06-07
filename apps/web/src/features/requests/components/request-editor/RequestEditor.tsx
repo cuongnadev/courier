@@ -129,6 +129,12 @@ export function RequestEditor({
 
       graphqlQuery: activeTab.payload.graphqlQuery,
       graphqlVariables: activeTab.payload.graphqlVariables,
+
+      headers: activeTab.payload.headers.map((header) => ({
+      key: header.key,
+      value: header.value,
+      enabled: header.enabled,
+    })),
     };
   };
 
@@ -147,6 +153,12 @@ export function RequestEditor({
 
       graphqlQuery: activeTab.payload.graphqlQuery,
       graphqlVariables: activeTab.payload.graphqlVariables,
+
+      headers: activeTab.payload.headers.map((header) => ({
+      key: header.key,
+      value: header.value,
+      enabled: header.enabled,
+    })),
     };
   };
 

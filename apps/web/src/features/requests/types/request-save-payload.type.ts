@@ -1,9 +1,12 @@
 import type { RequestMethod } from "@/types/api.type";
 
 import type {
+    ApiRequestHeaderResponse,
   RawBodyLanguage,
   RequestBodyType,
 } from "@/features/requests/types/request.type";
+
+export type SaveRequestHeaderPayload = Omit<ApiRequestHeaderResponse, "id" | "requestId" | "sortOrder">;
 
 export type CreateRequestPayload = {
   name: string;
@@ -20,6 +23,8 @@ export type CreateRequestPayload = {
 
   description?: string | null;
   sortOrder?: number;
+
+  headers: SaveRequestHeaderPayload[];
 };
 
 export type UpdateRequestPayload = {
@@ -37,4 +42,6 @@ export type UpdateRequestPayload = {
 
   description?: string | null;
   sortOrder?: number;
+
+  headers: SaveRequestHeaderPayload[];
 };

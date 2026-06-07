@@ -128,7 +128,7 @@ export class RequestsService {
     private readonly prisma: PrismaService,
     private readonly workspaceService: WorkspacesService,
     private readonly collectionsService: CollectionsService,
-  ) {}
+  ) { }
 
   async create(
     workspaceId: string,
@@ -529,12 +529,34 @@ export class RequestsService {
   ) {
     await this.findOne(requestId, workspaceId, userId);
 
+    const { headers, ...requestData } = dto;
+
     await this.prisma.apiRequest.update({
       where: {
         id: requestId,
       },
-      data: dto,
+      data: requestData,
     });
+
+    if (headers) {
+      await this.prisma.requestHeader.deleteMany({
+        where: {
+          requestId,
+        },
+      });
+
+      if (headers.length > 0) {
+        await this.prisma.requestHeader.createMany({
+          data: headers.map((header, index) => ({
+            requestId,
+            key: header.key,
+            value: header.value ?? '',
+            enabled: header.enabled ?? true,
+            sortOrder: index,
+          })),
+        });
+      }
+    }
 
     return this.findOne(requestId, workspaceId, userId);
   }
@@ -773,9 +795,9 @@ export class RequestsService {
     const averageDurationMs =
       totalRuns > 0
         ? Math.round(
-            runs.reduce((total, run) => total + (run.durationMs ?? 0), 0) /
-              totalRuns,
-          )
+          runs.reduce((total, run) => total + (run.durationMs ?? 0), 0) /
+          totalRuns,
+        )
         : 0;
     const totalResponseSize = runs.reduce(
       (total, run) => total + (run.responseSize ?? 0),
