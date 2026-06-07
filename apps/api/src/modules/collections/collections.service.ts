@@ -17,6 +17,7 @@ import type {
   RawBodyLanguage as RawBodyLanguageType,
   RequestBodyType as RequestBodyTypeType,
 } from '@/generated/prisma/enums';
+import { ERROR_CODES } from '@/common/constants';
 
 @Injectable()
 export class CollectionsService {
@@ -164,7 +165,7 @@ export class CollectionsService {
 
     if (!collection) {
       throw new AppException({
-        code: 'NOT_FOUND',
+        code: ERROR_CODES.COLLECTION_NOT_FOUND,
         message: 'Collection not found.',
         status: 404,
         hint: 'The requested collection does not exist or has been deleted.',
@@ -250,7 +251,7 @@ export class CollectionsService {
 
     if (!collection) {
       throw new AppException({
-        code: 'NOT_FOUND',
+        code: ERROR_CODES.COLLECTION_NOT_FOUND,
         message: 'Collection not found.',
         status: 404,
         hint: 'The collection does not exist in this workspace.',
@@ -282,7 +283,7 @@ export class CollectionsService {
 
     if (collection) {
       throw new AppException({
-        code: 'CONFLICT',
+        code: ERROR_CODES.COLLECTION_NAME_EXISTS,
         message: 'Collection name already exists.',
         status: 409,
         hint: 'Use a different collection name in this workspace.',

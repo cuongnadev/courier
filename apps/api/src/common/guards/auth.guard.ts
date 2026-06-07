@@ -3,6 +3,7 @@ import { Request } from 'express';
 import type { AuthenticatedRequest } from '../types/authenticated-request.type';
 import { verifyJwtToken } from '../utils/jwt.util';
 import { AppException } from '../exceptions/app.exceptions';
+import { ERROR_CODES } from '@/common/constants';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,7 +21,7 @@ export class AuthGuard implements CanActivate {
 
     if (!authorization) {
       throw new AppException({
-        code: 'UNAUTHORIZED',
+        code: ERROR_CODES.UNAUTHORIZED,
         message: 'Authorization header is required.',
         status: 401,
         hint: 'Provide a valid Bearer access token.',
@@ -31,7 +32,7 @@ export class AuthGuard implements CanActivate {
 
     if (scheme !== 'Bearer' || !token) {
       throw new AppException({
-        code: 'UNAUTHORIZED',
+        code: ERROR_CODES.UNAUTHORIZED,
         message: 'Bearer token is required.',
         status: 401,
         hint: 'Authorization header must use the format: Bearer <token>.',

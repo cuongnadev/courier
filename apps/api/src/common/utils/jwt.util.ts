@@ -3,6 +3,7 @@ import { createHmac, timingSafeEqual } from 'crypto';
 import type { JwtPayload } from '../types/authenticated-request.type';
 import { AppException } from '../exceptions/app.exceptions';
 import { appConfig } from '../../config';
+import { ERROR_CODES } from '../constants';
 
 export function verifyJwtToken(token: string): JwtPayload {
   const [encodedHeader, encodedPayload, signature] = token.split('.');
@@ -28,7 +29,7 @@ export function verifyJwtToken(token: string): JwtPayload {
 
   if (payload.exp <= now) {
     throw new AppException({
-      code: 'TOKEN_EXPIRED',
+      code: ERROR_CODES.TOKEN_EXPIRED,
       message: 'Access token has expired.',
       status: 401,
       hint: 'Use the refresh token endpoint to obtain a new access token.',
@@ -61,7 +62,7 @@ function isSafeEqual(value: string, expectedValue: string): boolean {
 
 function throwInvalidToken(): never {
   throw new AppException({
-    code: 'INVALID_TOKEN',
+    code: ERROR_CODES.INVALID_TOKEN,
     message: 'Access token is invalid.',
     status: 401,
     hint: 'Provide a valid access token.',

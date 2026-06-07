@@ -7,15 +7,29 @@ import { createHmac, pbkdf2, randomBytes, timingSafeEqual } from 'crypto';
 import { promisify } from 'util';
 import { appConfig } from '../../config';
 import { PrismaService } from '../../database/prisma.service';
+
 import {
-  HASH_ALGORITHM,
+  BASE64_URL_ENCODING,
+  DEFAULT_EXPIRES_IN_SECONDS,
+  EXPIRES_IN_SECONDS_BY_UNIT,
+  JWT_ACCESS_TOKEN_TYPE,
+  JWT_ALGORITHM,
+  JWT_HEADER_TYPE,
+  JWT_REFRESH_TOKEN_TYPE,
+  PASSWORD_HASH_SEPARATOR,
+  PASSWORD_HASH_STRATEGY,
+  PASSWORD_SALT_LENGTH,
   HASH_ITERATIONS,
   HASH_KEY_LENGTH,
-} from './constants/auth.constants';
+  HASH_ALGORITHM,
+  DEFAULT_REFRESH_TOKEN_EXPIRES_IN,
+} from '@/common/constants';
+
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import type { AuthResponse, AuthUser } from './types/auth.types';
 import { verifyJwtToken } from '../../common/utils/jwt.util';
+import { createDefaultWorkspaceName } from '@/common/constants/workspace.constants';
 
 const pbkdf2Async = promisify(pbkdf2);
 
@@ -49,7 +63,7 @@ export class AuthService {
 
       await tx.workspace.create({
         data: {
-          name: `${fullName}'s Workspace`,
+          name: createDefaultWorkspaceName(fullName),
           ownerId: createdUser.id,
           members: {
             create: {
@@ -104,7 +118,7 @@ export class AuthService {
   async refresh(refreshToken: string): Promise<AuthResponse> {
     const payload = verifyJwtToken(refreshToken);
 
-    if (payload.type !== 'refresh') {
+    if (payload.type !== JWT_REFRESH_TOKEN_TYPE) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
@@ -114,7 +128,8 @@ export class AuthService {
   }
 
   private async hashPassword(password: string): Promise<string> {
-    const salt = randomBytes(16).toString('base64url');
+    const salt =
+      randomBytes(PASSWORD_SALT_LENGTH).toString(BASE64_URL_ENCODING);
     const derivedKey = await pbkdf2Async(
       password,
       salt,
@@ -124,23 +139,25 @@ export class AuthService {
     );
 
     return [
-      'pbkdf2',
+      PASSWORD_HASH_STRATEGY,
       HASH_ALGORITHM,
       HASH_ITERATIONS,
       salt,
-      derivedKey.toString('base64url'),
-    ].join('$');
+      derivedKey.toString(BASE64_URL_ENCODING),
+    ].join(PASSWORD_HASH_SEPARATOR);
   }
 
   private async verifyPassword(
     password: string,
     storedHash: string,
   ): Promise<boolean> {
-    const [strategy, algorithm, iterations, salt, hash] = storedHash.split('$');
+    const [strategy, algorithm, iterations, salt, hash] = storedHash.split(
+      PASSWORD_HASH_SEPARATOR,
+    );
 
     if (
       !strategy ||
-      strategy !== 'pbkdf2' ||
+      strategy !== PASSWORD_HASH_STRATEGY ||
       !algorithm ||
       !iterations ||
       !salt ||
@@ -157,7 +174,7 @@ export class AuthService {
       algorithm,
     );
 
-    const storedKey = Buffer.from(hash, 'base64url');
+    const storedKey = Buffer.from(hash, BASE64_URL_ENCODING);
 
     return (
       storedKey.length === derivedKey.length &&
@@ -173,7 +190,7 @@ export class AuthService {
         {
           sub: user.id,
           email: user.email,
-          type: 'access',
+          type: JWT_ACCESS_TOKEN_TYPE,
         },
         appConfig.jwt.expiresIn,
       ),
@@ -182,9 +199,9 @@ export class AuthService {
         {
           sub: user.id,
           email: user.email,
-          type: 'refresh',
+          type: JWT_REFRESH_TOKEN_TYPE,
         },
-        '7d',
+        DEFAULT_REFRESH_TOKEN_EXPIRES_IN,
       ),
     };
   }
@@ -193,7 +210,7 @@ export class AuthService {
     const expiresInSeconds = this.parseExpiresIn(expiresIn);
     const now = Math.floor(Date.now() / 1000);
 
-    const header = { alg: 'HS256', typ: 'JWT' };
+    const header = { alg: JWT_ALGORITHM, typ: JWT_HEADER_TYPE };
 
     const body = {
       ...payload,
@@ -206,9 +223,9 @@ export class AuthService {
       this.base64UrlJson(body),
     ].join('.');
 
-    const signature = createHmac('sha256', appConfig.jwt.secret)
+    const signature = createHmac(HASH_ALGORITHM, appConfig.jwt.secret)
       .update(unsignedToken)
-      .digest('base64url');
+      .digest(BASE64_URL_ENCODING);
 
     return `${unsignedToken}.${signature}`;
   }
@@ -217,23 +234,17 @@ export class AuthService {
     const match = expiresIn.match(/^(\d+)([smhd])?$/);
 
     if (!match) {
-      return 86_400;
+      return DEFAULT_EXPIRES_IN_SECONDS;
     }
 
     const value = Number(match[1]);
-    const unit = match[2] ?? 's';
-    const secondsByUnit: Record<string, number> = {
-      s: 1,
-      m: 60,
-      h: 3_600,
-      d: 86_400,
-    };
+    const unit = (match[2] ?? 's') as keyof typeof EXPIRES_IN_SECONDS_BY_UNIT;
 
-    return value * secondsByUnit[unit];
+    return value * EXPIRES_IN_SECONDS_BY_UNIT[unit];
   }
 
   private base64UrlJson(value: unknown): string {
-    return Buffer.from(JSON.stringify(value)).toString('base64url');
+    return Buffer.from(JSON.stringify(value)).toString(BASE64_URL_ENCODING);
   }
 
   private userSelect() {

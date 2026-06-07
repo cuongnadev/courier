@@ -20,6 +20,16 @@ import { UpdateRequestDto } from './dto/update-request.dto';
 import { GenerateTestCasesDto } from './dto/generate-test-cases.dto';
 
 import { appConfig } from '@/config/app.config';
+import {
+  DEFAULT_HEADER_VALUE,
+  DEFAULT_REQUEST_NAME,
+  DEFAULT_TEST_CASE_PROMPT,
+  ERROR_CODES,
+  METHODS_WITHOUT_BODY,
+  MODEL_RESPONSE_PREVIEW_LENGTH,
+  SET_COOKIE_HEADER,
+  TEST_CASE_GENERATOR_TIMEOUT_MS,
+} from '@/common/constants';
 
 type RunHeaderInput = {
   key: string;
@@ -128,7 +138,7 @@ export class RequestsService {
     private readonly prisma: PrismaService,
     private readonly workspaceService: WorkspacesService,
     private readonly collectionsService: CollectionsService,
-  ) { }
+  ) {}
 
   async create(
     workspaceId: string,
@@ -240,7 +250,7 @@ export class RequestsService {
           create:
             dto.headers?.map((header, index) => ({
               key: header.key,
-              value: header.value ?? '',
+              value: header.value ?? DEFAULT_HEADER_VALUE,
               enabled: header.enabled ?? true,
               sortOrder: index,
             })) ?? [],
@@ -376,7 +386,7 @@ export class RequestsService {
       name:
         run.request && !run.request.deletedAt
           ? run.request.name
-          : 'Untitled Request',
+          : DEFAULT_REQUEST_NAME,
       uri: run.uri,
       status: run.status,
       statusCode: run.statusCode,
@@ -463,7 +473,7 @@ export class RequestsService {
 
     if (!request) {
       throw new AppException({
-        code: 'NOT_FOUND',
+        code: ERROR_CODES.REQUEST_NOT_FOUND,
         message: 'Request not found.',
         status: 404,
         hint: 'The requested API request does not exist.',
@@ -550,7 +560,7 @@ export class RequestsService {
           data: headers.map((header, index) => ({
             requestId,
             key: header.key,
-            value: header.value ?? '',
+            value: header.value ?? DEFAULT_HEADER_VALUE,
             enabled: header.enabled ?? true,
             sortOrder: index,
           })),
@@ -629,7 +639,7 @@ export class RequestsService {
 
     if (!request) {
       throw new AppException({
-        code: 'NOT_FOUND',
+        code: ERROR_CODES.REQUEST_NOT_FOUND,
         message: 'Request not found.',
         status: 404,
         hint: 'The request does not exist in this collection.',
@@ -649,9 +659,7 @@ export class RequestsService {
         created_at: request.createdAt.toISOString(),
         updated_at: request.updatedAt.toISOString(),
       },
-      prompt:
-        dto.prompt?.trim() ||
-        'Generate test cases including missing body fields',
+      prompt: dto.prompt?.trim() || DEFAULT_TEST_CASE_PROMPT,
     };
 
     const modelResponse = await this.callGenerateTestCasesModel(payload);
@@ -795,9 +803,9 @@ export class RequestsService {
     const averageDurationMs =
       totalRuns > 0
         ? Math.round(
-          runs.reduce((total, run) => total + (run.durationMs ?? 0), 0) /
-          totalRuns,
-        )
+            runs.reduce((total, run) => total + (run.durationMs ?? 0), 0) /
+              totalRuns,
+          )
         : 0;
     const totalResponseSize = runs.reduce(
       (total, run) => total + (run.responseSize ?? 0),
@@ -850,7 +858,7 @@ export class RequestsService {
 
     if (!request) {
       throw new AppException({
-        code: 'NOT_FOUND',
+        code: ERROR_CODES.REQUEST_NOT_FOUND,
         message: 'Request not found.',
         status: 404,
         hint: 'The request does not exist in this collection.',
@@ -906,7 +914,7 @@ export class RequestsService {
 
     if (!testCase) {
       throw new AppException({
-        code: 'NOT_FOUND',
+        code: ERROR_CODES.REQUEST_TESTCASE_NOT_FOUND,
         message: 'Test case not found.',
         status: 404,
         hint: 'The requested test case does not exist.',
@@ -996,7 +1004,7 @@ export class RequestsService {
         .filter((header) => header.key.trim().length > 0)
         .map((header) => ({
           key: header.key.trim(),
-          value: header.value ?? '',
+          value: header.value ?? DEFAULT_HEADER_VALUE,
         })) ?? []
     );
   }
@@ -1012,11 +1020,7 @@ export class RequestsService {
   }
 
   private shouldSendBody(method: HttpMethod, bodyType: RequestBodyType) {
-    if (
-      method === HttpMethod.GET ||
-      method === HttpMethod.HEAD ||
-      method === HttpMethod.DELETE
-    ) {
+    if ((METHODS_WITHOUT_BODY as readonly HttpMethod[]).includes(method)) {
       return false;
     }
 
@@ -1031,14 +1035,14 @@ export class RequestsService {
     const headerEntries = Array.from(responseHeaders.entries());
 
     const fallbackSetCookieValues = headerEntries
-      .filter(([key]) => key.toLowerCase() === 'set-cookie')
+      .filter(([key]) => key.toLowerCase() === SET_COOKIE_HEADER)
       .map(([, value]) => value);
 
     const setCookieValues =
       headersWithGetSetCookie.getSetCookie?.() ?? fallbackSetCookieValues;
 
     const normalHeaderRows = headerEntries
-      .filter(([key]) => key.toLowerCase() !== 'set-cookie')
+      .filter(([key]) => key.toLowerCase() !== SET_COOKIE_HEADER)
       .map(([key, value]) => ({
         key,
         value,
@@ -1062,7 +1066,7 @@ export class RequestsService {
     return headers.reduce<Record<string, string | string[]>>(
       (result, header) => {
         const key = header.key;
-        const value = header.value ?? '';
+        const value = header.value ?? DEFAULT_HEADER_VALUE;
 
         const existingValue = result[key];
 
@@ -1247,7 +1251,10 @@ export class RequestsService {
     payload: GenerateTestCasesModelPayload,
   ): Promise<GenerateTestCasesModelResponse> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60_000);
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      TEST_CASE_GENERATOR_TIMEOUT_MS,
+    );
 
     try {
       const response = await fetch(appConfig.testCaseGenerator.url, {
@@ -1263,12 +1270,12 @@ export class RequestsService {
 
       if (!response.ok) {
         throw new AppException({
-          code: 'GENERATE_TEST_CASES_FAILED',
+          code: ERROR_CODES.GENERATE_TEST_CASES_FAILED,
           message: 'Failed to generate test cases.',
           status: 502,
           hint: `Model server returned ${response.status}: ${responseText.slice(
             0,
-            500,
+            MODEL_RESPONSE_PREVIEW_LENGTH,
           )}`,
           docs: '',
         });
@@ -1278,12 +1285,12 @@ export class RequestsService {
         return JSON.parse(responseText) as GenerateTestCasesModelResponse;
       } catch {
         throw new AppException({
-          code: 'INVALID_GENERATE_TEST_CASES_RESPONSE',
+          code: ERROR_CODES.INVALID_GENERATE_TEST_CASES_RESPONSE,
           message: 'Invalid generate test cases response.',
           status: 502,
           hint: `Model server did not return valid JSON: ${responseText.slice(
             0,
-            500,
+            MODEL_RESPONSE_PREVIEW_LENGTH,
           )}`,
           docs: '',
         });
@@ -1295,7 +1302,7 @@ export class RequestsService {
 
       if (error instanceof Error && error.name === 'AbortError') {
         throw new AppException({
-          code: 'GENERATE_TEST_CASES_TIMEOUT',
+          code: ERROR_CODES.GENERATE_TEST_CASES_TIMEOUT,
           message: 'Generate test cases request timed out.',
           status: 504,
           hint: 'The AI model took too long to respond.',
@@ -1304,7 +1311,7 @@ export class RequestsService {
       }
 
       throw new AppException({
-        code: 'GENERATE_TEST_CASES_MODEL_UNREACHABLE',
+        code: ERROR_CODES.GENERATE_TEST_CASES_MODEL_UNREACHABLE,
         message: 'Could not connect to test case generation model.',
         status: 502,
         hint:
