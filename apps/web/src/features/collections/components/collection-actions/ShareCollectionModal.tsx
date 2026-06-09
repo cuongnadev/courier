@@ -3,33 +3,26 @@ import { toast } from "sonner";
 import { Copy, Globe2, Lock, Mail } from "lucide-react";
 
 import {
+  Button,
+  Input,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-
-import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@repo/ui";
+
 import { useAuthStore } from "@/features/auth/store/auth.store";
 
 import { ShareMemberItem, type ShareMember } from "./ShareMemberItem";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
-
 
 type ShareCollectionModalProps = {
   open: boolean;
@@ -57,7 +50,7 @@ export function ShareCollectionModal({
   const [email, setEmail] = useState("");
 
   const user = useAuthStore((state) => state.user);
-  
+
   const { currentWorkspaceId } = useCurrentWorkspace();
 
   const shareLink = useMemo(() => {
@@ -247,9 +240,7 @@ export function ShareCollectionModal({
           </Field>
 
           <Field className="gap-2">
-            <FieldLabel className="text-[#404040]">
-              Invite by email
-            </FieldLabel>
+            <FieldLabel className="text-[#404040]">Invite by email</FieldLabel>
 
             <div className="flex gap-2">
               <Input

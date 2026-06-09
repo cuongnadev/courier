@@ -11,7 +11,7 @@ export function HeadersPanel({
   headers,
   onHeadersChange,
 }: HeadersPanelProps) {
-  const items: KeyValueItem[] = headers.map((header, index) => ({
+  const items: KeyValueItem[] = headers.map((header) => ({
     id: header.id,
     key: header.key,
     value: header.value,

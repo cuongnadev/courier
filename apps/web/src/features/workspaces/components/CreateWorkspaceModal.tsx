@@ -7,15 +7,13 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+  Button,
+  Input,
+} from "@repo/ui";
 
 import { useCreateWorkspace } from "@/features/workspaces/hooks/use-create-workspace";
 import {

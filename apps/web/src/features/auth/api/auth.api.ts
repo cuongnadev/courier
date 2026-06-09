@@ -25,9 +25,7 @@ export async function loginApi(data: LoginFormValues): Promise<AuthResponse> {
   return body.data;
 }
 
-export async function registerApi(
-  data: RegisterFormValues,
-): Promise<AuthResponse> {
+export async function registerApi(data: RegisterPayload): Promise<AuthResponse> {
   const body = await api.post<unknown, ApiResponse<AuthResponse>>(
     "/auth/register",
     data,

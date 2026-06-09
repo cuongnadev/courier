@@ -1,8 +1,6 @@
 import { Plus, X } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+import { Button, Checkbox, Input } from "@repo/ui";
 
 export type KeyValueItem = {
   id: string;
@@ -35,9 +33,9 @@ export function KeyValueEditor({
       items.map((item) =>
         item.id === id
           ? {
-            ...item,
-            [field]: value,
-          }
+              ...item,
+              [field]: value,
+            }
           : item,
       ),
     );

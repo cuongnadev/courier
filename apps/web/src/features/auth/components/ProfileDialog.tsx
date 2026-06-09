@@ -13,13 +13,13 @@ import {
 } from "lucide-react";
 
 import {
+  Button,
+  Input,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from "@repo/ui";
 
 import { useDeleteUser } from "@/features/auth/hooks/use-delete-user";
 import { useProfileActivityMetrics } from "@/features/dashboard/hooks/use-profile-activity-metrics";

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui";
 
 import { JsonCodeBlock } from "./JsonCodeBlock";
 import { ResponsePreviewPanel } from "./ResponsePreviewPanel";
@@ -53,9 +53,10 @@ export function ResponseBodyPanel({
                   focus-visible:ring-0
                   focus-visible:ring-offset-0
 
-                  ${isActive
-                    ? "border-[1.25px] border-[#E5E5E5] bg-white text-[#1C1917] hover:bg-white hover:text-[#1C1917]"
-                    : "border border-transparent bg-transparent text-[#525252] hover:bg-white hover:text-[#525252]"
+                  ${
+                    isActive
+                      ? "border-[1.25px] border-[#E5E5E5] bg-white text-[#1C1917] hover:bg-white hover:text-[#1C1917]"
+                      : "border border-transparent bg-transparent text-[#525252] hover:bg-white hover:text-[#525252]"
                   }
                 `}
               >

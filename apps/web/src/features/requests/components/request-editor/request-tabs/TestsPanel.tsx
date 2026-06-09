@@ -15,8 +15,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button, Textarea } from "@repo/ui";
 
 import {
   deleteRequestTestCaseApi,

@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui";
 import {
   PlusIcon,
   DownloadIcon,
   FolderIcon,
   ShareIcon,
 } from "@/components/common/icons";
-import { ExportCollectionDropdown, ShareCollectionModal } from "@/features/collections/components/collection-actions";
+import {
+  ExportCollectionDropdown,
+  ShareCollectionModal,
+} from "@/features/collections/components/collection-actions";
 
 import type { CollectionDetailResponse } from "@/features/collections/types";
 
@@ -86,7 +89,6 @@ export function CollectionDetailHeader({
             </Button>
 
             <ExportCollectionDropdown collection={collection}>
-
               <Button
                 variant="outline"
                 className="h-10 px-4 rounded-[12px] border-[1.25px] border-[#E5E5E5] bg-white hover:bg-neutral-50 text-sm font-medium text-[#1C1917] hover:text-[#1C1917]  data-[state=open]:bg-[#171717] data-[state=open]:text-white"
@@ -104,11 +106,13 @@ export function CollectionDetailHeader({
         </div>
       </header>
 
-      {shareOpen && <ShareCollectionModal
-        open={shareOpen}
-        onOpenChange={setShareOpen}
-        collection={collection}
-      />}
+      {shareOpen && (
+        <ShareCollectionModal
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          collection={collection}
+        />
+      )}
     </>
   );
 }

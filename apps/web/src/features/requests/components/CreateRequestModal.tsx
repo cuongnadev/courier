@@ -4,27 +4,23 @@ import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
 
 import { CheckCircleIcon, ChevronDownIcon } from "@/components/common/icons";
-import { Button } from "@/components/ui/button";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+  Input,
+} from "@repo/ui";
 
 import { useCollections } from "@/features/collections/hooks";
 import { useCreateRequest } from "@/features/requests/hooks";
@@ -107,6 +103,7 @@ export function CreateRequestModal({
         name: values.name,
         method: values.method,
         uri: values.uri,
+        headers: [],
         description: values.description?.trim() || null,
       },
     });

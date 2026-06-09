@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import type { RunRequestPayload } from "@/features/requests/types/request-run-payload.type";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui";
 
 import { ParamsPanel } from "./ParamsPanel";
 import { AuthorizationPanel } from "./AuthorizationPanel";

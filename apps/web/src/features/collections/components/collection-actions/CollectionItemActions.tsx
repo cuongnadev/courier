@@ -1,15 +1,14 @@
 import { Pencil, Trash2 } from "lucide-react";
 import { MoreIcon } from "@/components/common/icons";
 
-import { Button } from "@/components/ui/button";
-
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@repo/ui";
 
 import type { CollectionResponse } from "@/features/collections/types";
 

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui";
 import { ActivityIcon, Logo } from "@/components/common/icons";
 
 import { DashboardStatCard } from "@/features/dashboard/components/DashboardStatCard";
@@ -12,7 +12,10 @@ import { mapRecentActivityResponseToRecentActivity } from "@/features/dashboard/
 
 import { DASHBOARD_STATS } from "@/constants/dashboard-stats";
 
-import type { DashboardCollection, DashboardFlow } from "@/features/dashboard/types/dashboard.type";
+import type {
+  DashboardCollection,
+  DashboardFlow,
+} from "@/features/dashboard/types/dashboard.type";
 
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
@@ -22,17 +25,14 @@ export default function DashboardPage() {
 
   const user = useAuthStore((state) => state.user);
 
-  const displayName =
-    user?.fullName ??
-    user?.email?.split("@")[0] ??
-    "there";
+  const displayName = user?.fullName ?? user?.email?.split("@")[0] ?? "there";
 
   const { data: dashboardOverview } = useDashboardMetrics(currentWorkspaceId);
 
   const stats = DASHBOARD_STATS.map((stat) => ({
     ...stat,
     value: dashboardOverview?.[stat.key]?.toLocaleString?.() ?? "0",
-    badge: '+1', // fake data 
+    badge: "+1", // fake data
   }));
 
   const recentActivities =
@@ -41,12 +41,14 @@ export default function DashboardPage() {
     ) ?? [];
 
   const collections: DashboardCollection[] =
-    dashboardOverview?.latest_collections?.map((collection: DashboardCollection) => ({
-      id: collection.id,
-      name: collection.name,
-      requestsCount: collection.requestsCount,
-      color: collection.color,
-    })) ?? [];
+    dashboardOverview?.latest_collections?.map(
+      (collection: DashboardCollection) => ({
+        id: collection.id,
+        name: collection.name,
+        requestsCount: collection.requestsCount,
+        color: collection.color,
+      }),
+    ) ?? [];
 
   const activeFlows =
     dashboardOverview?.active_flows?.map((flow: DashboardFlow) => ({
@@ -66,7 +68,8 @@ export default function DashboardPage() {
             </h1>
 
             <p className="mt-2 w-[80%] text-[18px] text-[#D6D3D1]">
-              You have {dashboardOverview?.success_requests_today ?? 0} successful requests today
+              You have {dashboardOverview?.success_requests_today ?? 0}{" "}
+              successful requests today
             </p>
 
             <div className="mt-4 flex items-center gap-2">
@@ -126,10 +129,7 @@ export default function DashboardPage() {
             {/* list recent activity item */}
             <div>
               {recentActivities.map((activity) => (
-                <RecentActivityItem
-                  key={activity.id}
-                  activity={activity}
-                />
+                <RecentActivityItem key={activity.id} activity={activity} />
               ))}
             </div>
           </div>
@@ -168,10 +168,7 @@ export default function DashboardPage() {
               {/* list active flows */}
               <div className="space-y-3 p-3">
                 {activeFlows.map((flow) => (
-                  <DashboardFlowItem
-                    key={flow.id}
-                    flow={flow}
-                  />
+                  <DashboardFlowItem key={flow.id} flow={flow} />
                 ))}
               </div>
             </div>
