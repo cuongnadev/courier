@@ -3,10 +3,14 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { createHmac, pbkdf2, randomBytes, timingSafeEqual } from 'crypto';
 import { promisify } from 'util';
-import { appConfig } from '../../config';
-import { PrismaService } from '../../database/prisma.service';
+import { createHmac, pbkdf2, randomBytes, timingSafeEqual } from 'crypto';
+
+import { PrismaService } from '@/database/prisma.service';
+
+import { LoginDto, SignupDto } from '@/modules/auth/dto';
+
+import type { AuthResponse, AuthUser } from '@/modules/auth/types';
 
 import {
   BASE64_URL_ENCODING,
@@ -25,11 +29,10 @@ import {
   DEFAULT_REFRESH_TOKEN_EXPIRES_IN,
 } from '@/common/constants';
 
-import { LoginDto } from './dto/login.dto';
-import { SignupDto } from './dto/signup.dto';
-import type { AuthResponse, AuthUser } from './types/auth.types';
-import { verifyJwtToken } from '../../common/utils/jwt.util';
-import { createDefaultWorkspaceName } from '@/common/constants/workspace.constants';
+import { verifyJwtToken } from '@/common/utils';
+import { createDefaultWorkspaceName } from '@/common/constants';
+
+import { appConfig } from '@/config';
 
 const pbkdf2Async = promisify(pbkdf2);
 

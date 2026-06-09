@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { AppException } from '@/common/exceptions/app.exceptions';
+import { PrismaService } from '@/database/prisma.service';
+
 import {
   HttpMethod,
   RawBodyLanguage,
@@ -8,18 +9,17 @@ import {
   RequestRunStatus,
 } from '@/generated/prisma/enums';
 
-import { getTodayRange } from '../../common/utils/date-range.util';
-import { PrismaService } from '../../database/prisma.service';
-import { CollectionsService } from '../collections';
-import { WorkspacesService } from '../workspaces';
+import {
+  CreateAndRunRequestDto,
+  CreateRequestDto,
+  RunRequestDto,
+  UpdateRequestDto,
+  GenerateTestCasesDto,
+} from '@/modules/requests/dto';
 
-import { CreateAndRunRequestDto } from './dto/create-and-run-request.dto';
-import { CreateRequestDto } from './dto/create-request.dto';
-import { RunRequestDto } from './dto/run-request.dto';
-import { UpdateRequestDto } from './dto/update-request.dto';
-import { GenerateTestCasesDto } from './dto/generate-test-cases.dto';
+import { WorkspacesService } from '@/modules/workspaces/workspaces.service';
+import { CollectionsService } from '@/modules/collections/collections.service';
 
-import { appConfig } from '@/config/app.config';
 import {
   DEFAULT_HEADER_VALUE,
   DEFAULT_REQUEST_NAME,
@@ -30,6 +30,10 @@ import {
   SET_COOKIE_HEADER,
   TEST_CASE_GENERATOR_TIMEOUT_MS,
 } from '@/common/constants';
+import { getTodayRange } from '@/common/utils';
+import { AppException } from '@/common/exceptions';
+
+import { appConfig } from '@/config/app.config';
 
 type RunHeaderInput = {
   key: string;

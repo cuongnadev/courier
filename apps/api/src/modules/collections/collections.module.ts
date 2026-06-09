@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../../database/prisma.module';
-import { CollectionsController } from './collections.controller';
-import { CollectionsService } from './collections.service';
-import { WorkspacesModule } from '../workspaces';
+
+import { PrismaModule } from '@/database/prisma.module';
+
+import { CollectionsService } from '@/modules/collections/collections.service';
+import { CollectionsController } from '@/modules/collections/collections.controller';
+
+import { WorkspacesModule } from '@/modules/workspaces/workspaces.module';
 
 @Module({
   imports: [PrismaModule, WorkspacesModule],

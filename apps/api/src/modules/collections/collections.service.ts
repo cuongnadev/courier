@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { CreateCollectionDto } from './dto/create-collection.dto';
-import { UpdateCollectionDto } from './dto/update-collection.dto';
-import { WorkspacesService } from '../workspaces';
-import { AppException } from '@/common/exceptions/app.exceptions';
-import { ImportCollectionDto } from './dto/import-collection.dto';
+
+import { PrismaService } from '@/database/prisma.service';
+
+import {
+  CreateCollectionDto,
+  UpdateCollectionDto,
+  ImportCollectionDto,
+} from '@/modules/collections/dto';
+
+import { WorkspacesService } from '@/modules/workspaces/workspaces.service';
 
 import {
   HttpMethod,
@@ -18,6 +22,7 @@ import type {
   RequestBodyType as RequestBodyTypeType,
 } from '@/generated/prisma/enums';
 import { ERROR_CODES } from '@/common/constants';
+import { AppException } from '@/common/exceptions';
 
 @Injectable()
 export class CollectionsService {

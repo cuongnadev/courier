@@ -11,11 +11,16 @@ import {
   UseGuards,
   Version,
 } from '@nestjs/common';
-import { AuthGuard } from '../../common/guards/auth.guard';
-import type { AuthenticatedRequest } from '../../common/types/authenticated-request.type';
-import { CreateWorkspaceDto } from './dto/create-workspace.dto';
-import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
-import { WorkspacesService } from './workspaces.service';
+
+import { WorkspacesService } from '@/modules/workspaces/workspaces.service';
+
+import {
+  CreateWorkspaceDto,
+  UpdateWorkspaceDto,
+} from '@/modules/workspaces/dto';
+
+import { AuthGuard } from '@/common/guards';
+import type { AuthenticatedRequest } from '@/common/types';
 
 @Controller('workspaces')
 @UseGuards(AuthGuard)

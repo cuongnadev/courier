@@ -1,17 +1,23 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { LoggerMiddleware } from './common/middlewares/logger.middleware';
-import { PrismaModule } from './database/prisma.module';
-import { envSchema } from './config/env.schema';
-import { AuthModule } from './modules/auth/auth.module';
-import { CollectionsModule } from './modules/collections';
-import { DashboardModule } from './modules/dashboard/dashboard.module';
-import { FlowsModule } from './modules/flows';
-import { RequestTestcasesModule } from './modules/request-testcases';
-import { RequestsModule } from './modules/requests';
-import { UserModule } from './modules/user/user.module';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+
+import { PrismaModule } from '@/database/prisma.module';
+
+import { AppService } from '@/app.service';
+import { AppController } from '@/app.controller';
+
+import { AuthModule } from '@/modules/auth/auth.module';
+import { UserModule } from '@/modules/user/user.module';
+import { FlowsModule } from '@/modules/flows/flows.module';
+import { RequestsModule } from '@/modules/requests/requests.module';
+import { DashboardModule } from '@/modules/dashboard/dashboard.module';
+import { WorkspacesModule } from '@/modules/workspaces/workspaces.module';
+import { CollectionsModule } from '@/modules/collections/collections.module';
+import { RequestTestcasesModule } from '@/modules/request-testcases/request-testcases.module';
+
+import { LoggerMiddleware } from '@/common/middlewares';
+
+import { envSchema } from '@/config/env.schema';
 
 @Module({
   imports: [
@@ -27,6 +33,7 @@ import { UserModule } from './modules/user/user.module';
     RequestTestcasesModule,
     RequestsModule,
     UserModule,
+    WorkspacesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

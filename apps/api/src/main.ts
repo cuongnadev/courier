@@ -8,6 +8,8 @@ import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 
+import { AppModule } from '@/app.module';
+
 import {
   API_DEFAULT_VERSION,
   API_GLOBAL_PREFIX,
@@ -16,13 +18,11 @@ import {
   SWAGGER_TITLE,
   SWAGGER_VERSION,
 } from '@/common/constants';
+import { AppException } from '@/common/exceptions';
+import { HttpExceptionFilter } from '@/common/filters';
+import { ResponseInterceptor } from '@/common/interceptors';
 
-import { AppException } from './common/exceptions/app.exceptions';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
-
-import { AppModule } from './app.module';
-import { appConfig } from './config';
+import { appConfig } from '@/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

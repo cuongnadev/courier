@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../../database/prisma.module';
-import { WorkspacesController } from './workspaces.controller';
-import { WorkspacesService } from './workspaces.service';
+
+import { PrismaModule } from '@/database/prisma.module';
+
+import { WorkspacesService } from '@/modules/workspaces/workspaces.service';
+import { WorkspacesController } from '@/modules/workspaces/workspaces.controller';
 
 @Module({
   imports: [PrismaModule],

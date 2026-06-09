@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { AppException } from '@/common/exceptions/app.exceptions';
-import { PrismaService } from '../../database/prisma.service';
-import { RequestsService } from '../requests';
-import { CreateRequestTestcaseDto } from './dto/create-request-testcase.dto';
-import { UpdateRequestTestcaseDto } from './dto/update-request-testcase.dto';
+import { PrismaService } from '@/database/prisma.service';
+
+import {
+  CreateRequestTestcaseDto,
+  UpdateRequestTestcaseDto,
+} from '@/modules/request-testcases/dto';
+
+import { RequestsService } from '@/modules/requests/requests.service';
+
+import { AppException } from '@/common/exceptions';
 import { ERROR_CODES } from '@/common/constants';
 
 @Injectable()

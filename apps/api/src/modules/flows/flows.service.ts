@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { CreateFlowDto } from './dto/create-flow.dto';
-import { UpdateFlowDto } from './dto/update-flow.dto';
-import { WorkspacesService } from '../workspaces';
+
+import { PrismaService } from '@/database/prisma.service';
+
+import { CreateFlowDto, UpdateFlowDto } from '@/modules/flows/dto';
+
+import { WorkspacesService } from '@/modules/workspaces/workspaces.service';
 
 @Injectable()
 export class FlowsService {

@@ -11,12 +11,17 @@ import {
   UseGuards,
   Version,
 } from '@nestjs/common';
-import { AuthGuard } from '../../common/guards/auth.guard';
-import type { AuthenticatedRequest } from '../../common/types/authenticated-request.type';
-import { CollectionsService } from './collections.service';
-import { CreateCollectionDto } from './dto/create-collection.dto';
-import { UpdateCollectionDto } from './dto/update-collection.dto';
-import { ImportCollectionDto } from './dto/import-collection.dto';
+
+import {
+  CreateCollectionDto,
+  UpdateCollectionDto,
+  ImportCollectionDto,
+} from '@/modules/collections/dto';
+
+import { CollectionsService } from '@/modules/collections/collections.service';
+
+import { AuthGuard } from '@/common/guards';
+import type { AuthenticatedRequest } from '@/common/types';
 
 @Controller('workspaces/:workspaceId/collections')
 @UseGuards(AuthGuard)

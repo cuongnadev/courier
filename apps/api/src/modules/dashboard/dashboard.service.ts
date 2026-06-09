@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CollectionsService } from '../collections';
-import { FlowsService } from '../flows';
-import { RequestsService } from '../requests';
-import { WorkspacesService } from '../workspaces';
+
 import type {
   DashboardMetrics,
   ProfileActivityMetrics,
-} from './types/dashboard-metrics.type';
+} from '@/modules/dashboard/types';
+
+import { FlowsService } from '@/modules/flows/flows.service';
+import { RequestsService } from '@/modules/requests/requests.service';
+import { WorkspacesService } from '@/modules/workspaces/workspaces.service';
+import { CollectionsService } from '@/modules/collections/collections.service';
 
 @Injectable()
 export class DashboardService {

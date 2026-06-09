@@ -1,6 +1,7 @@
 import { IsIn, IsInt, IsOptional, IsString, MinLength } from 'class-validator';
-import { FlowStatus } from '../../../generated/prisma/enums';
-import type { FlowStatus as FlowStatusType } from '../../../generated/prisma/enums';
+
+import { FlowStatus } from '@/generated/prisma/enums';
+import type { FlowStatus as FlowStatusType } from '@/generated/prisma/enums';
 
 export class UpdateFlowDto {
   @IsOptional()

@@ -6,9 +6,11 @@ import {
   UseGuards,
   Version,
 } from '@nestjs/common';
-import { AuthGuard } from '../../common/guards/auth.guard';
-import type { AuthenticatedRequest } from '../../common/types/authenticated-request.type';
-import { UserService } from './user.service';
+
+import { UserService } from '@/modules/user/user.service';
+
+import { AuthGuard } from '@/common/guards';
+import type { AuthenticatedRequest } from '@/common/types';
 
 @Controller('users')
 export class UserController {

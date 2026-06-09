@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { CollectionsModule } from '../collections';
-import { FlowsModule } from '../flows';
-import { RequestsModule } from '../requests';
-import { WorkspacesModule } from '../workspaces';
-import { DashboardController } from './dashboard.controller';
-import { DashboardService } from './dashboard.service';
+
+import { DashboardService } from '@/modules/dashboard/dashboard.service';
+import { DashboardController } from '@/modules/dashboard/dashboard.controller';
+
+import { FlowsModule } from '@/modules/flows/flows.module';
+import { RequestsModule } from '@/modules/requests/requests.module';
+import { WorkspacesModule } from '@/modules/workspaces/workspaces.module';
+import { CollectionsModule } from '@/modules/collections/collections.module';
 
 @Module({
   imports: [CollectionsModule, FlowsModule, RequestsModule, WorkspacesModule],

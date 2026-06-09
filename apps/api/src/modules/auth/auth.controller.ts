@@ -11,11 +11,12 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 
-import { AuthService } from './auth.service';
-import { SignupDto } from './dto/signup.dto';
-import { LoginDto } from './dto/login.dto';
-import { AuthGuard } from '../../common/guards/auth.guard';
-import type { AuthenticatedRequest } from '../../common/types/authenticated-request.type';
+import { LoginDto, SignupDto } from '@/modules/auth/dto';
+
+import { AuthService } from '@/modules/auth/auth.service';
+
+import { AuthGuard } from '@/common/guards';
+import type { AuthenticatedRequest } from '@/common/types';
 
 @Controller('auth')
 export class AuthController {

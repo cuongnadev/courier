@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../../database/prisma.module';
-import { CollectionsModule } from '../collections';
-import { RequestsController } from './requests.controller';
+
+import { PrismaModule } from '@/database/prisma.module';
+
 import { RequestsService } from './requests.service';
-import { WorkspacesModule } from '../workspaces';
+import { RequestsController } from './requests.controller';
+
+import { WorkspacesModule } from '@/modules/workspaces/workspaces.module';
+import { CollectionsModule } from '@/modules/collections/collections.module';
 
 @Module({
   imports: [CollectionsModule, PrismaModule, WorkspacesModule],

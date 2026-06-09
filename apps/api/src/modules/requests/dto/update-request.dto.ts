@@ -13,12 +13,12 @@ import {
   HttpMethod,
   RawBodyLanguage,
   RequestBodyType,
-} from '../../../generated/prisma/enums';
+} from '@/generated/prisma/enums';
 import type {
   HttpMethod as HttpMethodType,
   RawBodyLanguage as RawBodyLanguageType,
   RequestBodyType as RequestBodyTypeType,
-} from '../../../generated/prisma/enums';
+} from '@/generated/prisma/enums';
 
 class UpdateRequestHeaderDto {
   @IsString()

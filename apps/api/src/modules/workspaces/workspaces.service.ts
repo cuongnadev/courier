@@ -3,9 +3,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { CreateWorkspaceDto } from './dto/create-workspace.dto';
-import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
+
+import { PrismaService } from '@/database/prisma.service';
+
+import {
+  CreateWorkspaceDto,
+  UpdateWorkspaceDto,
+} from '@/modules/workspaces/dto';
 
 @Injectable()
 export class WorkspacesService {

@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import type { AuthenticatedRequest } from '../types/authenticated-request.type';
-import { verifyJwtToken } from '../utils/jwt.util';
-import { AppException } from '../exceptions/app.exceptions';
+import type { AuthenticatedRequest } from '@/common/types';
+import { verifyJwtToken } from '@/common/utils';
+import { AppException } from '@/common/exceptions';
 import { ERROR_CODES } from '@/common/constants';
 
 @Injectable()
