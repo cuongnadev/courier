@@ -8,24 +8,18 @@ import { AsyncLoadingGate } from "@/components/common/loader/AsyncLoadingGate";
 function App() {
   const { isBootstrapping } = useBootstrapSession();
 
-  if (isBootstrapping) {
-    return (
-      <AsyncLoadingGate
-        isLoading={isBootstrapping}
-        fullScreen
-        label="Checking login session..."
-      >
-        <div />
-      </AsyncLoadingGate>
-    );
-  }
-
   return (
-    <>
-      <RouterProvider router={router} />
-      {import.meta.env.DEV && <TanStackRouterDevtools router={router} />}
-    </>
-  )
+    <AsyncLoadingGate
+      isLoading={isBootstrapping}
+      fullScreen
+      label="Checking login session..."
+    >
+      <>
+        <RouterProvider router={router} />
+        {import.meta.env.DEV && <TanStackRouterDevtools router={router} />}
+      </>
+    </AsyncLoadingGate>
+  );
 }
 
 export default App
