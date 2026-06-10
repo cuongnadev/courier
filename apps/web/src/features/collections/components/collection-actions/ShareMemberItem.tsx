@@ -9,7 +9,7 @@ export type ShareMember = {
   name: string;
   email?: string | null;
   role: ShareMemberRole;
-  avatarUrl?: string | null;
+  avatarUrl?: string;
   removable?: boolean;
 };
 

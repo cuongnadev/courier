@@ -23,6 +23,7 @@ import { useAuthStore } from "@/features/auth/store/auth.store";
 
 import { ShareMemberItem, type ShareMember } from "./ShareMemberItem";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+import { FALLBACKAVATAR } from "@/constants";
 
 type ShareCollectionModalProps = {
   open: boolean;
@@ -70,7 +71,7 @@ export function ShareCollectionModal({
         name: user.fullName ?? user.email ?? "Current user",
         email: user.email,
         role: "Owner",
-        avatarUrl: user.photoUrl ?? null,
+        avatarUrl: user.photoUrl ?? FALLBACKAVATAR,
         removable: false,
       },
     ];

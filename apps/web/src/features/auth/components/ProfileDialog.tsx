@@ -26,6 +26,8 @@ import { useProfileActivityMetrics } from "@/features/dashboard/hooks/use-profil
 import type { ProfileActivityDay } from "@/features/dashboard/types/dashboard.type";
 import type { User } from "@/features/auth/types/auth.type";
 
+import { FALLBACKAVATAR } from "@/constants";
+
 type ProfileDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -33,16 +35,13 @@ type ProfileDialogProps = {
   workspaceId?: string | null;
 };
 
-const fallbackAvatar =
-  "https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=Sophie";
-
 export function ProfileDialog({
   open,
   onOpenChange,
   user,
   workspaceId,
 }: ProfileDialogProps) {
-  const avatarUrl = user?.photoUrl || fallbackAvatar;
+  const avatarUrl = user?.photoUrl || FALLBACKAVATAR;
   const initials = getInitials(user?.fullName);
   const { data: activity, isLoading } = useProfileActivityMetrics(
     open ? (workspaceId ?? null) : null,

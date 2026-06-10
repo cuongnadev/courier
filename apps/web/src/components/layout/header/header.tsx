@@ -44,6 +44,8 @@ import { CreateCollectionModal } from "@/features/collections/components/collect
 import { CreateRequestModal } from "@/features/requests/components/CreateRequestModal";
 import { CreateWorkspaceModal } from "@/features/workspaces/components";
 
+import { FALLBACKAVATAR } from "@/constants";
+
 export function Header() {
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
   const [isCreateCollectionOpen, setIsCreateCollectionOpen] = useState(false);
@@ -400,7 +402,7 @@ export function Header() {
                   src={
                     user?.photoUrl
                       ? user?.photoUrl
-                      : "https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=Sophie"
+                      : FALLBACKAVATAR
                   }
                   alt="User avatar"
                   className="h-full w-full rounded-full object-cover"
