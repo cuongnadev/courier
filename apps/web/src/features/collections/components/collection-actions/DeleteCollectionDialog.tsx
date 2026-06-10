@@ -6,7 +6,7 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import type { CollectionResponse } from "@/features/collections/types/collection.type";
 

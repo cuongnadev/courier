@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import type { CollectionResponse } from "@/features/collections/types";
 

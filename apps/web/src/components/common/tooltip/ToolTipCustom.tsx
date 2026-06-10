@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "@repo/ui";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@courier/ui-kit";
 
 type IconTooltipButtonProps = {
   label: string;

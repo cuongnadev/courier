@@ -12,7 +12,7 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import { UploadIcon, XIcon } from "@/components/common/icons";
 

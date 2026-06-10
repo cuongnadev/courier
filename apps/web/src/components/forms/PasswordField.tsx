@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-import { Input } from "@repo/ui";
+import { Input } from "@courier/ui-kit";
 
 type Props = React.InputHTMLAttributes<HTMLInputElement>;
 

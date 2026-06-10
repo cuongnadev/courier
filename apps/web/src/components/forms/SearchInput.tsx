@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 
-import { Input, FieldLabel } from "@repo/ui";
+import { Input, FieldLabel } from "@courier/ui-kit";
 
 type SearchInputProps = {
   placeholder?: string;

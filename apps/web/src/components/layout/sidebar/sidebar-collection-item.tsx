@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 
-import { Button } from "@repo/ui";
+import { Button } from "@courier/ui-kit";
 import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
 
 type SidebarCollectionItemProps = {

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import type {
   RawBodyLanguage,

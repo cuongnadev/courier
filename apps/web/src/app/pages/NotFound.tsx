@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, Home } from "lucide-react";
 
-import { Button } from "@repo/ui";
+import { Button } from "@courier/ui-kit";
 
 type NotFoundProps = {
   fullScreen?: boolean;

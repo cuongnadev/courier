@@ -10,7 +10,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import type {
   CollectionColor,

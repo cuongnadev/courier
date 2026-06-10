@@ -1,6 +1,6 @@
 import { Loader2, Play, Save } from "lucide-react";
 
-import { Button, Input } from "@repo/ui";
+import { Button, Input } from "@courier/ui-kit";
 
 import { RequestMethodSelect } from "./request-tabs";
 

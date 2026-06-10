@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 
 import { SearchInput } from "@/components/forms/SearchInput";
-import { Button } from "@repo/ui";
+import { Button } from "@courier/ui-kit";
 import { WORKSPACEITEMS, TOOLITEMS, TEAMITEMS } from "@/constants/sidebar";
 
 import { Logo, FolderIcon, PlusIcon } from "@/components/common/icons";

@@ -17,7 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import { useAuthStore } from "@/features/auth/store/auth.store";
 

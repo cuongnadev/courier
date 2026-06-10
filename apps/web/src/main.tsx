@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { Toaster } from "sonner";
 
 import { AppProvider } from "./app/providers/app-provider";
-import { TooltipProvider } from "@repo/ui";
+import { TooltipProvider } from "@courier/ui-kit";
 import App from "./app";
 
 import "./styles/index.css";

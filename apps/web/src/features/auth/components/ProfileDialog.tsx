@@ -19,7 +19,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import { useDeleteUser } from "@/features/auth/hooks/use-delete-user";
 import { useProfileActivityMetrics } from "@/features/dashboard/hooks/use-profile-activity-metrics";

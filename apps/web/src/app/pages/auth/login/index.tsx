@@ -10,7 +10,7 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import { GitHubIcon } from "@/components/common/icons/GitHubIcon";
 

@@ -1,6 +1,6 @@
 import { XIcon } from "@/components/common/icons";
 
-import { Button } from "@repo/ui";
+import { Button } from "@courier/ui-kit";
 
 export type ShareMemberRole = "Owner" | "Editor" | "Viewer";
 

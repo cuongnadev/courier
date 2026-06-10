@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import { requestMethodTextStyles } from "@/features/requests/utils/request-method-style.util";
 import type { CSSProperties } from "react";

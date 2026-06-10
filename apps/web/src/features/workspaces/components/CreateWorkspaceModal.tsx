@@ -13,7 +13,7 @@ import {
   FieldLabel,
   Button,
   Input,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import { useCreateWorkspace } from "@/features/workspaces/hooks/use-create-workspace";
 import {

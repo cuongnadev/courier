@@ -20,7 +20,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import { useCollections } from "@/features/collections/hooks";
 import { useCreateRequest } from "@/features/requests/hooks";

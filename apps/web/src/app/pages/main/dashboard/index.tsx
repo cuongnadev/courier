@@ -1,4 +1,4 @@
-import { Button } from "@repo/ui";
+import { Button } from "@courier/ui-kit";
 import { ActivityIcon, Logo } from "@/components/common/icons";
 
 import { DashboardStatCard } from "@/features/dashboard/components/DashboardStatCard";

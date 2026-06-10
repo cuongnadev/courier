@@ -19,7 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import { COLLECTION_COLORS } from "@/constants/collection";
 

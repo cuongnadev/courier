@@ -19,7 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
 

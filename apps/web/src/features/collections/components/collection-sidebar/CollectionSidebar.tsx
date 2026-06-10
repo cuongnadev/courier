@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button } from "@repo/ui";
+import { Button } from "@courier/ui-kit";
 import { SearchInput } from "@/components/forms/SearchInput";
 import { UploadIcon, PlusIcon } from "@/components/common/icons";
 import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";

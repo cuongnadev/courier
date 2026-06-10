@@ -1,6 +1,6 @@
 import { Code2, PlayCircle } from "lucide-react";
 
-import { Textarea } from "@repo/ui";
+import { Textarea } from "@courier/ui-kit";
 
 export function PreRequestScriptPanel() {
   return (

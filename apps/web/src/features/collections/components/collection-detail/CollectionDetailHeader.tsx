@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from "@repo/ui";
+import { Button } from "@courier/ui-kit";
 import {
   PlusIcon,
   DownloadIcon,

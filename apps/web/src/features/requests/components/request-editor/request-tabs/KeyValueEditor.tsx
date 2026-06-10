@@ -1,6 +1,6 @@
 import { Plus, X } from "lucide-react";
 
-import { Button, Checkbox, Input } from "@repo/ui";
+import { Button, Checkbox, Input } from "@courier/ui-kit";
 
 export type KeyValueItem = {
   id: string;

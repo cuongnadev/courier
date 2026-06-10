@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button, Input } from "@repo/ui";
+import { Button, Input } from "@courier/ui-kit";
 
 import { PlusIcon, SendIcon, XIcon } from "@/components/common/icons";
 

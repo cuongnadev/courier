@@ -3,7 +3,7 @@ import { PanelRightOpen } from "lucide-react";
 
 import type { RequestRunResponse } from "@/features/requests/types/request-run.type";
 
-import { Button } from "@repo/ui";
+import { Button } from "@courier/ui-kit";
 import { XIcon } from "@/components/common/icons";
 
 import { ResponseBodyPanel } from "./ResponseBodyPanel";

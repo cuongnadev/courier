@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { Button } from "@repo/ui";
+import { Button } from "@courier/ui-kit";
 
 import { JsonCodeBlock } from "./JsonCodeBlock";
 import { ResponsePreviewPanel } from "./ResponsePreviewPanel";

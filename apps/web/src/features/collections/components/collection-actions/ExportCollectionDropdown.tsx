@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@repo/ui";
+} from "@courier/ui-kit";
 
 import type { ExportableCollection } from "@/features/collections/types";
 
