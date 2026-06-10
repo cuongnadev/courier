@@ -6,6 +6,7 @@ import type { AxiosError } from "axios";
 import { loginApi } from "@/features/auth/api/auth.api";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import type { ErrorResponse } from "@/features/auth/types/auth.type";
+import { ROUTE_TO } from "@/constants/route-paths";
 
 export function useLogin() {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ export function useLogin() {
             );
 
             await navigate({
-                to: "/",
+                to: ROUTE_TO.ROOT,
                 replace: true,
             });
         },

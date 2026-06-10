@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { deleteUserApi, logoutApi } from "@/features/auth/api/auth.api";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 
+import { ROUTE_TO } from "@/constants/route-paths";
+
 export function useDeleteUser() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -27,7 +29,7 @@ export function useDeleteUser() {
       toast.success("Account deleted.");
 
       await navigate({
-        to: "/login",
+        to: ROUTE_TO.LOGIN,
         replace: true,
       });
     },

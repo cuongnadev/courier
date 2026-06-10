@@ -6,6 +6,8 @@ import type { AxiosError } from "axios";
 import { registerApi } from "@/features/auth/api/auth.api";
 import type { ErrorResponse } from "@/features/auth/types/auth.type";
 
+import { ROUTE_TO } from "@/constants/route-paths";
+
 export function useRegister() {
     const navigate = useNavigate();
 
@@ -18,7 +20,7 @@ export function useRegister() {
             );
 
             await navigate({
-                to: "/login",
+                to: ROUTE_TO.LOGIN,
             });
         },
 

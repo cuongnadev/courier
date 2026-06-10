@@ -23,6 +23,8 @@ import {
 
 import { useRequestEditorTabsStore } from "@/features/requests/store/request-editor-tabs.store";
 
+import { ROUTE_TO } from "@/constants/route-paths";
+
 const EmptyRequestEditorState = () => {
   const { View } = useLottie(
     {
@@ -169,7 +171,7 @@ export function RequestEditor({
     replace?: boolean;
   }) => {
     void navigate({
-      to: "/workspaces/$workspaceId/collections/$collectionId/requests/$requestId",
+      to: ROUTE_TO.WORKSPACE_REQUEST_DETAIL,
       params: {
         workspaceId: params.workspaceId,
         collectionId: params.collectionId,

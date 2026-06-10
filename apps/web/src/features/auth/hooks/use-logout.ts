@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import { logoutApi } from '@/features/auth/api/auth.api';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 
+import { ROUTE_TO } from '@/constants/route-paths';
+
 export function useLogout() {
   const navigate = useNavigate();
 
@@ -27,7 +29,7 @@ export function useLogout() {
       toast.success('Logged out successfully');
 
       await navigate({
-        to: '/login',
+        to: ROUTE_TO.LOGIN,
         replace: true,
       });
     },

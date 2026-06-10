@@ -2,6 +2,8 @@ import { createRoute } from '@tanstack/react-router'
 
 import { RootRoute } from './__root';
 
+import { ROUTE_PATHS } from "@/constants/route-paths";
+
 /**
  * Layouts
  */
@@ -23,7 +25,7 @@ import RequestPage from '@/app/pages/main/requests';
 
 export const indexRoute = createRoute({
   getParentRoute: () => RootRoute,
-  path: "/",
+  path: ROUTE_PATHS.ROOT,
   component: IndexRedirectPage,
 });
 
@@ -35,7 +37,7 @@ export const authLayoutRoute = createRoute({
 
 export const mainLayoutRoute = createRoute({
   getParentRoute: () => RootRoute,
-  path: "/workspaces/$workspaceId",
+  path: ROUTE_PATHS.WORKSPACE.ROOT,
   component: MainLayout,
 });
 
@@ -46,38 +48,38 @@ export const mainLayoutRoute = createRoute({
 
 export const dashboardRoute = createRoute({
   getParentRoute: () => mainLayoutRoute,
-  path: '/',
+  path: ROUTE_PATHS.WORKSPACE.DASHBOARD,
 
   component: DashboardPage,
 });
 
 export const collectionsRoute = createRoute({
   getParentRoute: () => mainLayoutRoute,
-  path: '/collections',
+  path: ROUTE_PATHS.WORKSPACE.COLLECTIONS,
 
   component: CollectionsPage,
 });
 
 export const collectionDetailRoute = createRoute({
   getParentRoute: () => mainLayoutRoute,
-  path: "/collections/$collectionId",
+  path: ROUTE_PATHS.WORKSPACE.COLLECTION_DETAIL,
   component: CollectionsPage,
 });
 
 export const requestDetailRoute = createRoute({
   getParentRoute: () => mainLayoutRoute,
-  path: "/collections/$collectionId/requests/$requestId",
+  path: ROUTE_PATHS.WORKSPACE.REQUEST_DETAIL,
   component: RequestPage,
 });
 
 export const loginRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
-  path: '/login',
+  path: ROUTE_PATHS.AUTH.LOGIN,
   component: LoginPage,
 });
 export const registerRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
-  path: '/register',
+  path: ROUTE_PATHS.AUTH.REGISTER,
   component: RegisterPage,
 });
 // ... other routes

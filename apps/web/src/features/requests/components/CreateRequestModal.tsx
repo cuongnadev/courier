@@ -30,6 +30,7 @@ import {
   type CreateRequestFormValues,
 } from "@/features/requests/schemas/create-request.schema";
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+import { ROUTE_TO } from "@/constants/route-paths";
 
 type CreateRequestModalProps = {
   open: boolean;
@@ -111,7 +112,7 @@ export function CreateRequestModal({
     handleClose();
 
     void navigate({
-      to: "/workspaces/$workspaceId/collections/$collectionId/requests/$requestId",
+      to: ROUTE_TO.WORKSPACE_REQUEST_DETAIL,
       params: {
         workspaceId: selectedWorkspaceId,
         collectionId: values.collectionId,

@@ -2,6 +2,8 @@ import { useNavigate } from "@tanstack/react-router";
 
 import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
+import { ROUTE_TO } from "@/constants/route-paths";
+
 export function useSwitchWorkspace() {
   const navigate = useNavigate();
 
@@ -19,7 +21,7 @@ export function useSwitchWorkspace() {
     setCurrentWorkspaceId(workspaceId);
 
     navigate({
-      to: "/workspaces/$workspaceId",
+      to: ROUTE_TO.WORKSPACE_DASHBOARD,
       params: {
         workspaceId,
       },

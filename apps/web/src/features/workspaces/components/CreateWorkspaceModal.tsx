@@ -21,6 +21,8 @@ import {
   type CreateWorkspaceFormValues,
 } from "@/features/workspaces/schemas/create-workspace.schema";
 
+import { ROUTE_TO } from "@/constants/route-paths";
+
 type CreateWorkspaceModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -57,7 +59,7 @@ export function CreateWorkspaceModal({
     handleClose();
 
     void navigate({
-      to: "/workspaces/$workspaceId",
+      to: ROUTE_TO.WORKSPACE_DASHBOARD,
       params: {
         workspaceId: workspace.id,
       },
