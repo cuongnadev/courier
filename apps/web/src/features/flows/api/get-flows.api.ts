@@ -1,6 +1,8 @@
 import { api } from "@/lib/axios";
-import type { FlowResponse } from "@/features/flows/types/flow.type";
+
 import type { ApiResponse } from "@/types/api.type";
+
+import type { FlowResponse } from "@/features/flows/types";
 
 export async function getFlowsApi(
   workspaceId: string,

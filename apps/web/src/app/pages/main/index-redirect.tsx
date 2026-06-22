@@ -1,11 +1,12 @@
 import { Navigate, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { useWorkspaceStore } from "@/features/workspaces/store/workspace.store";
-import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
+import { useAuthStore } from "@/features/auth/store";
+import { useWorkspaceStore } from "@/features/workspaces/store";
 
-import { ROUTE_TO } from "@/constants/route-paths";
+import { useWorkspaces } from "@/features/workspaces/hooks";
+
+import { ROUTE_TO } from "@/constants";
 
 export default function IndexRedirectPage() {
   const navigate = useNavigate();

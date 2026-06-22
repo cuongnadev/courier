@@ -35,14 +35,18 @@ import {
   PlusIcon,
   LogOutIcon,
 } from "@/components/common/icons";
-import { mapWorkspaceHeader } from "@/features/workspaces/utils/map-workspace";
-import { useLogout } from "@/features/auth/hooks/use-logout";
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { ProfileDialog } from "@/features/auth/components/ProfileDialog";
+
+import { ProfileDialog } from "@/features/profile/components/ProfileDialog";
 import { useSwitchWorkspace } from "@/features/workspaces/hooks/use-switch-workspace";
 import { CreateCollectionModal } from "@/features/collections/components/collection-actions";
 import { CreateRequestModal } from "@/features/requests/components/CreateRequestModal";
 import { CreateWorkspaceModal } from "@/features/workspaces/components";
+
+import { mapWorkspaceHeader } from "@/features/workspaces/utils";
+
+import { useLogout } from "@/features/auth/hooks";
+
+import { useAuthStore } from "@/features/auth/store";
 
 import { FALLBACKAVATAR } from "@/constants";
 

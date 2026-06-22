@@ -1,6 +1,6 @@
 import { CollectionDetailItem } from "@/features/collections/components/collection-detail";
 
-import type { ApiRequestListItem } from "@/features/requests/types/request.type";
+import type { ApiRequestListItem } from "@/features/requests/types";
 
 type CollectionDetailListProps = {
   workspaceId: string;

@@ -1,9 +1,11 @@
 import { Outlet } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
 
-import { Logo } from '@/components/common/icons/LogoIcon';
-import { FlashIcon } from '@/components/common/icons/FlashIcon';
-import { CheckCircleIcon } from '@/components/common/icons/CheckCircleIcon';
+import { 
+    Logo,
+    FlashIcon,
+    CheckCircleIcon
+} from '@/components/common/icons';
 
 import { PublicRoute } from '@/features/auth/components/PublicRoute';
 

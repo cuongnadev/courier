@@ -2,7 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { createCollectionApi } from "@/features/collections/api";
-import type { CreateCollectionFormValues } from "@/features/collections/schemas/create-collection.schema";
+
+import type { CreateCollectionFormValues } from "@/features/collections/schemas";
 
 export function useCreateCollection(workspaceId?: string | null) {
   const queryClient = useQueryClient();

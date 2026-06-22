@@ -1,7 +1,7 @@
 import type {
   WorkspaceHeaderItem,
   WorkspaceResponse,
-} from '@/features/workspaces/types/workspace.type';
+} from '@/features/workspaces/types';
 
 function getWorkspaceShort(name: string): string {
   return name

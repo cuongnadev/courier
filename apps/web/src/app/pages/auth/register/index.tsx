@@ -12,15 +12,16 @@ import {
   Input,
 } from "@courier/ui-kit";
 
-import { GitHubIcon } from "@/components/common/icons/GitHubIcon";
 import { PasswordField } from "@/components/forms/PasswordField";
+
+import { GitHubIcon } from "@/components/common/icons";
 
 import {
   registerSchema,
   type RegisterFormValues,
-} from "@/features/auth/schemas/auth.schema";
+} from "@/features/auth/schemas";
 
-import { useRegister } from "@/features/auth/hooks/use-register";
+import { useRegister } from "@/features/auth/hooks";
 
 export default function Register() {
   const registerMutation = useRegister();

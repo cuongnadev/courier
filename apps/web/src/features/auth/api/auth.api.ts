@@ -3,13 +3,14 @@ import { api, rawApi } from "@/lib/axios";
 import type {
   LoginFormValues,
   RegisterFormValues,
-} from "@/features/auth/schemas/auth.schema";
+} from "@/features/auth/schemas";
+
 import type {
   AuthResponse,
   RefreshTokenResponse,
   User,
-} from "@/features/auth/types/auth.type";
-import type { ApiResponse } from "@/types/api.type";
+} from "@/features/auth/types";
+import type { ApiResponse } from "@/types";
 
 export type RegisterPayload = Omit<
   RegisterFormValues,

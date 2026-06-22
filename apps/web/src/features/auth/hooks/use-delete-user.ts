@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-import { deleteUserApi, logoutApi } from "@/features/auth/api/auth.api";
-import { useAuthStore } from "@/features/auth/store/auth.store";
+import { deleteUserApi, logoutApi } from "@/features/auth/api";
+import { useAuthStore } from "@/features/auth/store";
 
-import { ROUTE_TO } from "@/constants/route-paths";
+import { ROUTE_TO } from "@/constants";
 
 export function useDeleteUser() {
   const navigate = useNavigate();

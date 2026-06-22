@@ -1,10 +1,10 @@
 import { api } from "@/lib/axios";
 
-import type { ApiResponse } from "@/types/api.type";
+import type { ApiResponse } from "@/types";
 import type {
   CollectionResponse,
   CollectionColor,
-} from "@/features/collections/types/collection.type";
+} from "@/features/collections/types";
 
 export type UpdateCollectionPayload = {
   name?: string;

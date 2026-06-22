@@ -1,13 +1,12 @@
-// features/auth/hooks/use-logout.ts
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 
-import { logoutApi } from '@/features/auth/api/auth.api';
-import { useAuthStore } from '@/features/auth/store/auth.store';
+import { logoutApi } from '@/features/auth/api';
 
-import { ROUTE_TO } from '@/constants/route-paths';
+import { useAuthStore } from '@/features/auth/store';
+
+import { ROUTE_TO } from '@/constants';
 
 export function useLogout() {
   const navigate = useNavigate();

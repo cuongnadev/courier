@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
-import type { RequestMethod } from "@/types/api.type";
+import type { RequestMethod } from "@/types";
 
 type SidebarSubItemProps = {
     to: string;

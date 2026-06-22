@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import { getMeApi, refreshTokenApi } from "@/features/auth/api/auth.api";
-import { useAuthStore } from "@/features/auth/store/auth.store";
+import { getMeApi, refreshTokenApi } from "@/features/auth/api";
+
+import { useAuthStore } from "@/features/auth/store";
 
 const MAX_BOOTSTRAP_RETRIES = 5;
 const BOOTSTRAP_RETRY_DELAY_MS = 1000;

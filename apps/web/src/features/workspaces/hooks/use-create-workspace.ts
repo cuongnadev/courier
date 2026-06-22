@@ -2,8 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { createWorkspaceApi } from "@/features/workspaces/api";
-import { useWorkspaceStore } from "@/features/workspaces/store/workspace.store";
-import type { CreateWorkspaceFormValues } from "@/features/workspaces/schemas/create-workspace.schema";
+
+import { useWorkspaceStore } from "@/features/workspaces/store";
+
+import type { CreateWorkspaceFormValues } from "@/features/workspaces/schemas";
 
 export function useCreateWorkspace() {
   const queryClient = useQueryClient();

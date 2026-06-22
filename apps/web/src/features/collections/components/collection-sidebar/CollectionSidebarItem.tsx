@@ -3,6 +3,7 @@ import { FolderIcon } from "@/components/common/icons";
 import type { CollectionResponse } from "@/features/collections/types";
 
 import { collectionBackgroundStyles } from "@/features/collections/utils";
+
 import { CollectionItemActions } from "../collection-actions/CollectionItemActions";
 
 type CollectionSidebarItemProps = {

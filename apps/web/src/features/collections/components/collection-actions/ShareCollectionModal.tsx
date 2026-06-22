@@ -19,10 +19,12 @@ import {
   DropdownMenuTrigger,
 } from "@courier/ui-kit";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
-
 import { ShareMemberItem, type ShareMember } from "./ShareMemberItem";
-import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+
+import { useAuthStore } from "@/features/auth/store";
+
+import { useCurrentWorkspace } from "@/features/workspaces/hooks";
+
 import { FALLBACKAVATAR } from "@/constants";
 
 type ShareCollectionModalProps = {

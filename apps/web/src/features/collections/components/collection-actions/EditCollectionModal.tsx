@@ -15,7 +15,7 @@ import {
 import type {
   CollectionColor,
   CollectionResponse,
-} from "@/features/collections/types/collection.type";
+} from "@/features/collections/types";
 
 const COLLECTION_COLORS: CollectionColor[] = [
   "#F59E0B",

@@ -1,8 +1,8 @@
 import { Navigate } from "@tanstack/react-router";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useAuthStore } from "@/features/auth/store";
 
-import { ROUTE_TO } from "@/constants/route-paths";
+import { ROUTE_TO } from "@/constants";
 
 type PublicRouteProps = {
   children: React.ReactNode;

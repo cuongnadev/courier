@@ -1,12 +1,12 @@
 import { api } from "@/lib/axios";
 
-import type { ApiResponse } from "@/types/api.type";
-import type { RequestRunResponse } from "@/features/requests/types/request-run.type";
-import type {
+import type { ApiResponse } from "@/types";
+import type { 
+  RequestRunResponse,
   RunRequestPayload,
   CreateAndRunRequestPayload,
   CreateAndRunRequestResponse,
-} from "@/features/requests/types/request-run-payload.type";
+} from "@/features/requests/types";
 
 type RunSavedRequestParams = {
   workspaceId: string;

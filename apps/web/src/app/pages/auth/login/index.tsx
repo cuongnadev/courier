@@ -12,15 +12,15 @@ import {
   FieldLabel,
 } from "@courier/ui-kit";
 
-import { GitHubIcon } from "@/components/common/icons/GitHubIcon";
+import { GitHubIcon } from "@/components/common/icons";
+import { PasswordField } from "@/components/forms/PasswordField";
 
 import {
   loginSchema,
   type LoginFormValues,
 } from "@/features/auth/schemas/auth.schema";
 
-import { useLogin } from "@/features/auth/hooks/use-login";
-import { PasswordField } from "@/components/forms/PasswordField";
+import { useLogin } from "@/features/auth/hooks";
 
 export default function Login() {
   const loginMutation = useLogin();

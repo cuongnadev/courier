@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 
 import { useCollections } from "@/features/collections/hooks";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks";
 
 import { CollectionSidebar } from "@/features/collections/components/collection-sidebar";
 import { CollectionDetail } from "@/features/collections/components/collection-detail";
-import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
 
-import { ROUTE_TO } from "@/constants/route-paths";
+import { ROUTE_TO } from "@/constants";
 
 export default function CollectionsPage() {
   const navigate = useNavigate();

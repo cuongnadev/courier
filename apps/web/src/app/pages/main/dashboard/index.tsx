@@ -6,19 +6,19 @@ import { RecentActivityItem } from "@/features/dashboard/components/RecentActivi
 import { DashboardCollectionItem } from "@/features/dashboard/components/DashboardCollectionItem";
 import { DashboardFlowItem } from "@/features/dashboard/components/DashboardActiveFlowsItem";
 
-import { useDashboardMetrics } from "@/features/dashboard/hooks/use-dashboard-metrics";
+import { useDashboardMetrics } from "@/features/dashboard/hooks";
 
-import { mapRecentActivityResponseToRecentActivity } from "@/features/dashboard/utils/recent-activity.mapper";
+import { mapRecentActivityResponseToRecentActivity } from "@/features/dashboard/utils";
 
-import { DASHBOARD_STATS } from "@/constants/dashboard-stats";
+import { DASHBOARD_STATS } from "@/constants";
 
 import type {
   DashboardCollection,
   DashboardFlow,
-} from "@/features/dashboard/types/dashboard.type";
+} from "@/features/dashboard/types";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+import { useAuthStore } from "@/features/auth/store";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks";
 
 export default function DashboardPage() {
   const { currentWorkspaceId } = useCurrentWorkspace();

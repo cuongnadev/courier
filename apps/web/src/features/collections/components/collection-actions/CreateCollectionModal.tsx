@@ -23,15 +23,15 @@ import {
 
 import { COLLECTION_COLORS } from "@/constants/collection";
 
-import { mapWorkspaceHeader } from "@/features/workspaces/utils/map-workspace";
+import { mapWorkspaceHeader } from "@/features/workspaces/utils";
 
 import {
   createCollectionSchema,
   type CreateCollectionFormValues,
-} from "@/features/collections/schemas/create-collection.schema";
+} from "@/features/collections/schemas";
 
 import { useCreateCollection } from "@/features/collections/hooks";
-import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks";
 
 type CreateCollectionModalProps = {
   open: boolean;

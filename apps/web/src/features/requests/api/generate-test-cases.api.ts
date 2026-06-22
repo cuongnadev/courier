@@ -1,12 +1,13 @@
 import { api } from "@/lib/axios";
 
-import type { ApiResponse } from "@/types/api.type";
+import type { ApiResponse } from "@/types";
+
 import type {
   DeleteTestCaseResponse,
   GenerateTestCasesPayload,
   GenerateTestCasesResponse,
   ListTestCasesResponse,
-} from "@/features/requests/types/generate-test-cases.type";
+} from "@/features/requests/types";
 
 type BaseTestCasesParams = {
   workspaceId: string;

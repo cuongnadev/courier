@@ -18,7 +18,7 @@ import {
   useImportCollection,
   useUpdateCollection,
 } from "@/features/collections/hooks";
-import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks";
 
 import type { CollectionResponse } from "@/features/collections/types";
 

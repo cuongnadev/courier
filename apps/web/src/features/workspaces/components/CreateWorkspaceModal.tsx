@@ -15,13 +15,14 @@ import {
   Input,
 } from "@courier/ui-kit";
 
-import { useCreateWorkspace } from "@/features/workspaces/hooks/use-create-workspace";
+import { useCreateWorkspace } from "@/features/workspaces/hooks";
+
 import {
   createWorkspaceSchema,
   type CreateWorkspaceFormValues,
-} from "@/features/workspaces/schemas/create-workspace.schema";
+} from "@/features/workspaces/schemas";
 
-import { ROUTE_TO } from "@/constants/route-paths";
+import { ROUTE_TO } from "@/constants";
 
 type CreateWorkspaceModalProps = {
   open: boolean;

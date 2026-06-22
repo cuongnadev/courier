@@ -1,5 +1,6 @@
 import type { COLLECTION_COLORS } from "@/constants/collection";
-import type { ApiRequestListItem } from "@/features/requests/types/request.type";
+
+import type { ApiRequestListItem } from "@/features/requests/types";
 
 export type CollectionColor =
   (typeof COLLECTION_COLORS)[number];

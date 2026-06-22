@@ -1,9 +1,9 @@
 // Fake data for now, replace with backend query later
 // import { mockToolCounts } from "../data/mock-tool-counts";
 
-import { useFlows } from "@/features/flows/hooks/use-flows";
+import { useFlows } from "@/features/flows/hooks";
 
-import type { ToolCounts } from "@/features/tools/types/tool.type";
+import type { ToolCounts } from "@/features/tools/types";
 
 export function useToolCounts(workspaceId?: string) {
     const {

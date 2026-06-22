@@ -1,6 +1,8 @@
-import { RouterProvider } from "@tanstack/react-router"
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { useBootstrapSession } from "@/features/auth/hooks/use-bootstrap-session";
+import { RouterProvider } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+
+import { useBootstrapSession } from "@/features/auth/hooks";
+
 import { router } from "./router"
 import { AsyncLoadingGate } from "@/components/common/loader/AsyncLoadingGate";
 

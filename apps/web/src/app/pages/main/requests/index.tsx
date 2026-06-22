@@ -1,7 +1,8 @@
 import { useParams } from "@tanstack/react-router";
 
 import { RequestEditor } from "@/features/requests/components/request-editor";
-import { useRequestDetail } from "@/features/requests/hooks/use-request-detail";
+
+import { useRequestDetail } from "@/features/requests/hooks";
 
 export default function RequestPage() {
   const { workspaceId, collectionId, requestId } = useParams({

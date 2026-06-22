@@ -1,13 +1,12 @@
-import type { RequestMethod } from "@/types/api.type";
+import type { RequestMethod } from "@/types";
 
 import type {
   ApiRequestDetailResponse,
   ApiRequestHeaderResponse,
   RawBodyLanguage,
   RequestBodyType,
-} from "@/features/requests/types/request.type";
-
-import type { RequestRunResponse } from "@/features/requests/types/request-run.type";
+  RequestRunResponse
+} from "@/features/requests/types";
 
 export type RunRequestHeaderPayload = Omit<ApiRequestHeaderResponse, "sortOrder" | "requestId">;
 

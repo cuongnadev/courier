@@ -24,13 +24,16 @@ import {
 
 import { useCollections } from "@/features/collections/hooks";
 import { useCreateRequest } from "@/features/requests/hooks";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks";
+
 import { RequestMethodSelect } from "@/features/requests/components/request-editor/request-tabs";
+
 import {
   createRequestSchema,
   type CreateRequestFormValues,
-} from "@/features/requests/schemas/create-request.schema";
-import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
-import { ROUTE_TO } from "@/constants/route-paths";
+} from "@/features/requests/schemas";
+
+import { ROUTE_TO } from "@/constants";
 
 type CreateRequestModalProps = {
   open: boolean;

@@ -1,6 +1,6 @@
 import { FlowsIcon } from "@/components/common/icons";
 
-import type { DashboardFlow } from "@/features/dashboard/types/dashboard.type";
+import type { DashboardFlow } from "@/features/dashboard/types";
 
 type DashboardFlowItemProps = {
   flow: DashboardFlow;

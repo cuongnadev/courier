@@ -9,9 +9,9 @@ import type {
 import type {
   RawBodyLanguage,
   RequestBodyType,
-} from "@/features/requests/types/request.type";
+} from "@/features/requests/types";
 
-import type { RequestMethod } from "@/types/api.type";
+import type { RequestMethod } from "@/types";
 
 const COLLECTION_COLOR_VALUES = [
   "#F59E0B",

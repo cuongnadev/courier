@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getProfileActivityMetrics } from "@/features/dashboard/api/dashboard.api";
+import { getProfileActivityMetrics } from "@/features/dashboard/api";
 
 export function useProfileActivityMetrics(workspaceId: string | null) {
   return useQuery({
