@@ -8,22 +8,35 @@ import {
 } from "@/components/common/icons";
 import {
   ExportCollectionDropdown,
-  ShareCollectionModal,
 } from "@/features/collections/components/collection-actions";
+import { ShareModal } from "@/features/sharing/components/ShareModal";
 
 import type { CollectionDetailResponse } from "@/features/collections/types";
 
 import { formatDate } from "@/lib/utils";
 import { collectionBackgroundStyles } from "@/features/collections/utils";
+import { createOwnerMember } from "@/features/sharing/utils";
+
+import { useAuthStore } from "@/features/auth/store";
+import { CreateRequestModal } from "@/features/requests/components/CreateRequestModal";
 
 type CollectionDetailHeaderProps = {
   collection: CollectionDetailResponse;
+  workspaceId: string;
 };
 
 export function CollectionDetailHeader({
   collection,
+  workspaceId
 }: CollectionDetailHeaderProps) {
   const [shareOpen, setShareOpen] = useState(false);
+  const [isCreateRequestOpen, setIsCreateRequestOpen] = useState(false);
+
+  const user = useAuthStore(
+    (state) => state.user,
+  );
+
+  const members = createOwnerMember(user);
 
   const backgroundColor = collectionBackgroundStyles[collection.color];
 
@@ -98,7 +111,10 @@ export function CollectionDetailHeader({
               </Button>
             </ExportCollectionDropdown>
 
-            <Button className="h-10 px-4 rounded-[12px] bg-[#155DFC] text-sm font-medium text-white hover:bg-blue-700">
+            <Button 
+              onClick={() => setIsCreateRequestOpen(!isCreateRequestOpen)}
+              className="h-10 px-4 rounded-[12px] bg-[#155DFC] text-sm font-medium text-white hover:bg-blue-700"
+            >
               <PlusIcon width={16} height={16} iconColor="white" />
               Add Request
             </Button>
@@ -106,11 +122,43 @@ export function CollectionDetailHeader({
         </div>
       </header>
 
+      <CreateRequestModal
+        open={isCreateRequestOpen}
+        onOpenChange={setIsCreateRequestOpen}
+        workspaceId={workspaceId}
+      />
+
       {shareOpen && (
-        <ShareCollectionModal
+        <ShareModal
           open={shareOpen}
           onOpenChange={setShareOpen}
-          collection={collection}
+          workspaceId= {workspaceId}
+          target={{
+            id: collection.id,
+            name: collection.name,
+            type: "collection",
+          }}
+          members={members}
+          onInvite={async (email) => {
+            // TODO:
+            // call invite collection member api
+
+            console.log(
+              "Invite:",
+              email,
+            );
+          }}
+          onRemoveMember={async (
+            memberId,
+          ) => {
+            // TODO:
+            // call remove collection member api
+
+            console.log(
+              "Remove:",
+              memberId,
+            );
+          }}
         />
       )}
     </>

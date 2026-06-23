@@ -41,7 +41,9 @@ import { useSwitchWorkspace } from "@/features/workspaces/hooks/use-switch-works
 import { CreateCollectionModal } from "@/features/collections/components/collection-actions";
 import { CreateRequestModal } from "@/features/requests/components/CreateRequestModal";
 import { CreateWorkspaceModal } from "@/features/workspaces/components";
+import { ShareModal } from "@/features/sharing/components/ShareModal";
 
+import { createOwnerMember } from "@/features/sharing/utils";
 import { mapWorkspaceHeader } from "@/features/workspaces/utils";
 
 import { useLogout } from "@/features/auth/hooks";
@@ -55,8 +57,10 @@ export function Header() {
   const [isCreateCollectionOpen, setIsCreateCollectionOpen] = useState(false);
   const [isCreateRequestOpen, setIsCreateRequestOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const user = useAuthStore((state) => state.user);
+  const members = createOwnerMember(user);
   const {
     workspaces,
     currentWorkspace,
@@ -369,6 +373,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
+              onClick={() => setShareOpen(!shareOpen)}
               className="p-2 rounded-lg hover:bg-neutral-50"
             >
               <ShareIcon />
@@ -493,6 +498,40 @@ export function Header() {
         user={user}
         workspaceId={currentWorkspaceId}
       />
+
+      {shareOpen && (
+        <ShareModal
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          workspaceId= {currentWorkspaceItem?.id}
+          target={{
+            id: currentWorkspaceItem!.id,
+            name: currentWorkspaceItem!.name,
+            type: "workspace",
+          }}
+          members={members}
+          onInvite={async (email) => {
+            // TODO:
+            // call invite collection member api
+
+            console.log(
+              "Invite:",
+              email,
+            );
+          }}
+          onRemoveMember={async (
+            memberId,
+          ) => {
+            // TODO:
+            // call remove collection member api
+
+            console.log(
+              "Remove:",
+              memberId,
+            );
+          }}
+        />
+      )}
     </header>
   );
 }
