@@ -1,6 +1,8 @@
 import { ActivityIcon, CheckCircleIcon, ClockIcon } from "@/components/common/icons";
-import type { RecentActivity } from "@/features/requests/types/request-run.type";
-import { requestMethodStyles } from "@/features/requests/utils/request-method-style.util";
+
+import type { RecentActivity } from "@/features/requests/types";
+
+import { requestMethodStyles } from "@/features/requests/utils";
 
 type RecentActivityItemProps = {
   activity: RecentActivity

@@ -1,4 +1,4 @@
-import type { CollectionColor } from "@/features/collections/types/collection.type";
+import type { CollectionColor } from "@/features/collections/types";
 
 export const collectionBackgroundStyles: Record<
   CollectionColor,

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getFlowsApi } from '@/features/flows/api/get-flows.api';
+import { getFlowsApi } from '@/features/flows/api';
 
 export function useFlows(workspaceId?: string) {
   return useQuery({

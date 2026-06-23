@@ -7,9 +7,11 @@ import {
   UseGuards,
   Version,
 } from '@nestjs/common';
-import { AuthGuard } from '../../common/guards/auth.guard';
-import type { AuthenticatedRequest } from '../../common/types/authenticated-request.type';
-import { DashboardService } from './dashboard.service';
+
+import { DashboardService } from '@/modules/dashboard/dashboard.service';
+
+import { AuthGuard } from '@/common/guards';
+import type { AuthenticatedRequest } from '@/common/types';
 
 @Controller('workspaces/:workspaceId/dashboard')
 @UseGuards(AuthGuard)

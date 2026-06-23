@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getDashboardMetrics } from "@/features/dashboard/api/dashboard.api";
+import { getDashboardMetrics } from "@/features/dashboard/api";
 
 export const useDashboardMetrics = (workspaceId: string | null) => {
   return useQuery({

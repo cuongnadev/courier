@@ -1,21 +1,21 @@
 import { useState } from "react";
 
 import {
+  Button,
+  Input,
+  Field,
+  FieldGroup,
+  FieldLabel,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+} from "@courier/ui-kit";
 
 import type {
   CollectionColor,
   CollectionResponse,
-} from "@/features/collections/types/collection.type";
+} from "@/features/collections/types";
 
 const COLLECTION_COLORS: CollectionColor[] = [
   "#F59E0B",
@@ -54,9 +54,7 @@ function EditCollectionForm({
   onSubmit,
 }: EditCollectionFormProps) {
   const [name, setName] = useState(collection.name);
-  const [description, setDescription] = useState(
-    collection.description ?? "",
-  );
+  const [description, setDescription] = useState(collection.description ?? "");
   const [color, setColor] = useState<CollectionColor>(collection.color);
 
   const handleSubmit = async () => {
@@ -125,10 +123,7 @@ function EditCollectionForm({
                   h-8 w-8 rounded-full border-2 transition
                   ring-offset-2 ring-offset-white
                   focus:outline-none focus:ring-2 focus:ring-[#171717]
-                  ${color === item
-                    ? "border-[#171717]"
-                    : "border-transparent"
-                  }
+                  ${color === item ? "border-[#171717]" : "border-transparent"}
                 `}
                 style={{ backgroundColor: item }}
               />

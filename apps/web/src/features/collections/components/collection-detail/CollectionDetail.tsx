@@ -23,7 +23,7 @@ export function CollectionDetail({
 
   return (
     <main className="flex min-h-0 flex-1 flex-col bg-white">
-      <CollectionDetailHeader collection={collection} />
+      <CollectionDetailHeader collection={collection} workspaceId={workspaceId} />
 
       <div className="min-h-0 flex-1 overflow-y-auto dashboard-scrollbar">
         <CollectionDetailList workspaceId={workspaceId} collectionId={collection.id} requests={collection.requests} />

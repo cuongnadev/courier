@@ -1,8 +1,8 @@
 import { api } from "@/lib/axios";
 
-import type { ApiResponse } from "@/types/api.type";
-import type { ApiRequestDetailResponse } from "@/features/requests/types/request.type";
-import type { CreateRequestPayload } from "@/features/requests/types/request-save-payload.type";
+import type { ApiResponse } from "@/types";
+
+import type { ApiRequestDetailResponse, CreateRequestPayload } from "@/features/requests/types";
 
 type CreateRequestApiParams = {
   workspaceId: string;

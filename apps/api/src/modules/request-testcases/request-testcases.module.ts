@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../../database/prisma.module';
-import { RequestsModule } from '../requests';
-import { RequestTestcasesController } from './request-testcases.controller';
-import { RequestTestcasesService } from './request-testcases.service';
+
+import { PrismaModule } from '@/database/prisma.module';
+
+import { RequestTestcasesService } from '@/modules/request-testcases/request-testcases.service';
+import { RequestTestcasesController } from '@/modules/request-testcases/request-testcases.controller';
+
+import { RequestsModule } from '@/modules/requests/requests.module';
 
 @Module({
   imports: [PrismaModule, RequestsModule],

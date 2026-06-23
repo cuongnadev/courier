@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@courier/ui-kit";
 
 import { requestMethodTextStyles } from "@/features/requests/utils/request-method-style.util";
 import type { CSSProperties } from "react";
@@ -71,7 +71,9 @@ export function RequestMethodSelect({
         "
       >
         {METHODS.map((method) => {
-          const methodColor = getColorFromTextClass(requestMethodTextStyles[method]);
+          const methodColor = getColorFromTextClass(
+            requestMethodTextStyles[method],
+          );
 
           return (
             <SelectItem

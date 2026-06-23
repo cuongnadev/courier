@@ -28,5 +28,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "../../packages/ui/src/hooks/index.ts", "../../packages/ui/src/hooks/use-debounce.ts", "../../packages/ui/src/hooks/use-toggle.ts"]
 }

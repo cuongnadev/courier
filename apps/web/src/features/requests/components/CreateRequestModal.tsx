@@ -4,36 +4,36 @@ import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
 
 import { CheckCircleIcon, ChevronDownIcon } from "@/components/common/icons";
-import { Button } from "@/components/ui/button";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+  Input,
+} from "@courier/ui-kit";
 
 import { useCollections } from "@/features/collections/hooks";
 import { useCreateRequest } from "@/features/requests/hooks";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks";
+
 import { RequestMethodSelect } from "@/features/requests/components/request-editor/request-tabs";
+
 import {
   createRequestSchema,
   type CreateRequestFormValues,
-} from "@/features/requests/schemas/create-request.schema";
-import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+} from "@/features/requests/schemas";
+
+import { ROUTE_TO } from "@/constants";
 
 type CreateRequestModalProps = {
   open: boolean;
@@ -107,6 +107,7 @@ export function CreateRequestModal({
         name: values.name,
         method: values.method,
         uri: values.uri,
+        headers: [],
         description: values.description?.trim() || null,
       },
     });
@@ -114,7 +115,7 @@ export function CreateRequestModal({
     handleClose();
 
     void navigate({
-      to: "/workspaces/$workspaceId/collections/$collectionId/requests/$requestId",
+      to: ROUTE_TO.WORKSPACE_REQUEST_DETAIL,
       params: {
         workspaceId: selectedWorkspaceId,
         collectionId: values.collectionId,

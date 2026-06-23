@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button, Input } from "@courier/ui-kit";
 
 import { PlusIcon, SendIcon, XIcon } from "@/components/common/icons";
 
@@ -92,9 +91,10 @@ function RequestTabItem({
         text-sm font-medium shadow-none transition-colors
         focus-visible:ring-0 focus-visible:ring-offset-0
 
-        ${active
-          ? "border-[1.25px] border-[#E5E5E5] bg-white text-[#171717] shadow-sm hover:bg-white hover:text-[#171717]"
-          : "border border-transparent bg-transparent text-[#525252] hover:border-[#E5E5E5] hover:bg-white hover:text-[#525252]"
+        ${
+          active
+            ? "border-[1.25px] border-[#E5E5E5] bg-white text-[#171717] shadow-sm hover:bg-white hover:text-[#171717]"
+            : "border border-transparent bg-transparent text-[#525252] hover:border-[#E5E5E5] hover:bg-white hover:text-[#525252]"
         }
       `}
     >

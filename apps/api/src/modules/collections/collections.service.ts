@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { CreateCollectionDto } from './dto/create-collection.dto';
-import { UpdateCollectionDto } from './dto/update-collection.dto';
-import { WorkspacesService } from '../workspaces';
-import { AppException } from '@/common/exceptions/app.exceptions';
-import { ImportCollectionDto } from './dto/import-collection.dto';
+
+import { PrismaService } from '@/database/prisma.service';
+
+import {
+  CreateCollectionDto,
+  UpdateCollectionDto,
+  ImportCollectionDto,
+} from '@/modules/collections/dto';
+
+import { WorkspacesService } from '@/modules/workspaces/workspaces.service';
 
 import {
   HttpMethod,
@@ -17,6 +21,8 @@ import type {
   RawBodyLanguage as RawBodyLanguageType,
   RequestBodyType as RequestBodyTypeType,
 } from '@/generated/prisma/enums';
+import { ERROR_CODES } from '@/common/constants';
+import { AppException } from '@/common/exceptions';
 
 @Injectable()
 export class CollectionsService {
@@ -164,7 +170,7 @@ export class CollectionsService {
 
     if (!collection) {
       throw new AppException({
-        code: 'NOT_FOUND',
+        code: ERROR_CODES.COLLECTION_NOT_FOUND,
         message: 'Collection not found.',
         status: 404,
         hint: 'The requested collection does not exist or has been deleted.',
@@ -250,7 +256,7 @@ export class CollectionsService {
 
     if (!collection) {
       throw new AppException({
-        code: 'NOT_FOUND',
+        code: ERROR_CODES.COLLECTION_NOT_FOUND,
         message: 'Collection not found.',
         status: 404,
         hint: 'The collection does not exist in this workspace.',
@@ -282,7 +288,7 @@ export class CollectionsService {
 
     if (collection) {
       throw new AppException({
-        code: 'CONFLICT',
+        code: ERROR_CODES.COLLECTION_NAME_EXISTS,
         message: 'Collection name already exists.',
         status: 409,
         hint: 'Use a different collection name in this workspace.',

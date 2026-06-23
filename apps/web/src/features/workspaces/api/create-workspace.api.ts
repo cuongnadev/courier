@@ -1,8 +1,9 @@
 import { api } from "@/lib/axios";
-import type { ApiResponse } from "@/types/api.type";
 
-import type { CreateWorkspaceFormValues } from "@/features/workspaces/schemas/create-workspace.schema";
-import type { WorkspaceResponse } from "@/features/workspaces/types/workspace.type";
+import type { ApiResponse } from "@/types";
+import type { WorkspaceResponse } from "@/features/workspaces/types";
+
+import type { CreateWorkspaceFormValues } from "@/features/workspaces/schemas";
 
 export async function createWorkspaceApi(
   data: CreateWorkspaceFormValues,

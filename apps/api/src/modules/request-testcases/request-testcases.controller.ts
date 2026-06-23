@@ -12,11 +12,16 @@ import {
   UseGuards,
   Version,
 } from '@nestjs/common';
-import { AuthGuard } from '../../common/guards/auth.guard';
-import type { AuthenticatedRequest } from '../../common/types/authenticated-request.type';
-import { CreateRequestTestcaseDto } from './dto/create-request-testcase.dto';
-import { UpdateRequestTestcaseDto } from './dto/update-request-testcase.dto';
-import { RequestTestcasesService } from './request-testcases.service';
+
+import {
+  CreateRequestTestcaseDto,
+  UpdateRequestTestcaseDto,
+} from '@/modules/request-testcases/dto';
+
+import { RequestTestcasesService } from '@/modules/request-testcases/request-testcases.service';
+
+import { AuthGuard } from '@/common/guards';
+import type { AuthenticatedRequest } from '@/common/types';
 
 @Controller('workspaces/:workspaceId/requests/:requestId/testcases')
 @UseGuards(AuthGuard)

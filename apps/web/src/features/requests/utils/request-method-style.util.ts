@@ -1,4 +1,4 @@
-import type { RequestMethod } from "@/types/api.type";
+import type { RequestMethod } from "@/types";
 
 export const requestMethodStyles: Record<
   RequestMethod,

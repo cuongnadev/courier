@@ -1,8 +1,6 @@
 import type { CollectionColor } from "@/features/collections/types";
-import type { ApiRequestResponse, RawBodyLanguage, RequestBodyType } from "@/features/requests/types/request.type";
-
-
-import type { RequestMethod } from "@/types/api.type";
+import type { ApiRequestResponse, RawBodyLanguage, RequestBodyType } from "@/features/requests/types";
+import type { RequestMethod } from "@/types";
 
 export type ExportedCollectionJson = {
   id?: unknown;

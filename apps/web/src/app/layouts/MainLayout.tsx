@@ -3,9 +3,11 @@ import { Navigate, Outlet, useParams } from '@tanstack/react-router';
 
 import { Header } from '@/components/layout/header/header';
 import { Sidebar } from '@/components/layout/sidebar/sidebar';
-import { useAuthStore } from '@/features/auth/store/auth.store';
 
-import { useWorkspaceStore } from '@/features/workspaces/store/workspace.store';
+import { useAuthStore } from '@/features/auth/store';
+import { useWorkspaceStore } from '@/features/workspaces/store';
+
+import { ROUTE_TO } from '@/constants/route-paths';
 
 export default function MainLayout() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -25,7 +27,7 @@ export default function MainLayout() {
   if (!isAuthenticated) {
     return (
       <Navigate
-        to="/login"
+        to={ROUTE_TO.LOGIN}
         replace
       />
     );

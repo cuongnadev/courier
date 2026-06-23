@@ -1,4 +1,4 @@
-import type { RecentActivity, RecentActivityResponse } from "@/features/requests/types/request-run.type";
+import type { RecentActivity, RecentActivityResponse } from "@/features/requests/types";
 
 export function mapRecentActivityResponseToRecentActivity(
   run: RecentActivityResponse,

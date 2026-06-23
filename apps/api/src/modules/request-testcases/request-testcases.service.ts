@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { AppException } from '@/common/exceptions/app.exceptions';
-import { PrismaService } from '../../database/prisma.service';
-import { RequestsService } from '../requests';
-import { CreateRequestTestcaseDto } from './dto/create-request-testcase.dto';
-import { UpdateRequestTestcaseDto } from './dto/update-request-testcase.dto';
+import { PrismaService } from '@/database/prisma.service';
+
+import {
+  CreateRequestTestcaseDto,
+  UpdateRequestTestcaseDto,
+} from '@/modules/request-testcases/dto';
+
+import { RequestsService } from '@/modules/requests/requests.service';
+
+import { AppException } from '@/common/exceptions';
+import { ERROR_CODES } from '@/common/constants';
 
 @Injectable()
 export class RequestTestcasesService {
@@ -185,7 +191,7 @@ export class RequestTestcasesService {
 
   private notFound() {
     return new AppException({
-      code: 'NOT_FOUND',
+      code: ERROR_CODES.REQUEST_TESTCASE_NOT_FOUND,
       message: 'Request testcase not found.',
       status: 404,
       hint: 'The requested testcase does not exist for this request.',

@@ -4,41 +4,34 @@ import { CheckCircleIcon, ChevronDownIcon } from "@/components/common/icons";
 import { useForm } from "react-hook-form";
 
 import {
+  Button,
+  Input,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-
-import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from "@courier/ui-kit";
 
 import { COLLECTION_COLORS } from "@/constants/collection";
 
-import { mapWorkspaceHeader } from "@/features/workspaces/utils/map-workspace";
+import { mapWorkspaceHeader } from "@/features/workspaces/utils";
 
 import {
   createCollectionSchema,
   type CreateCollectionFormValues,
-} from "@/features/collections/schemas/create-collection.schema";
+} from "@/features/collections/schemas";
 
 import { useCreateCollection } from "@/features/collections/hooks";
-import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks";
 
 type CreateCollectionModalProps = {
   open: boolean;
@@ -51,11 +44,8 @@ export function CreateCollectionModal({
   onOpenChange,
   workspaceId,
 }: CreateCollectionModalProps) {
-  const {
-    workspaces,
-    currentWorkspace,
-    currentWorkspaceId
-  } = useCurrentWorkspace();
+  const { workspaces, currentWorkspace, currentWorkspaceId } =
+    useCurrentWorkspace();
 
   const workspaceItems = workspaces.map(mapWorkspaceHeader);
 
@@ -315,9 +305,10 @@ export function CreateCollectionModal({
                       hover:scale-110 hover:shadow-md
                       active:scale-95
 
-                      ${selectedColor === color
-                        ? "border-[#171717] ring-2 ring-black/10"
-                        : "border-transparent"
+                      ${
+                        selectedColor === color
+                          ? "border-[#171717] ring-2 ring-black/10"
+                          : "border-transparent"
                       }
                     `}
                     style={{ backgroundColor: color }}
@@ -346,7 +337,9 @@ export function CreateCollectionModal({
 
             <Button
               type="submit"
-              disabled={!selectedWorkspaceId || createCollectionMutation.isPending}
+              disabled={
+                !selectedWorkspaceId || createCollectionMutation.isPending
+              }
               className="
                 h-10 rounded-[12px]
                 bg-[#FE9A00] text-[#171717]

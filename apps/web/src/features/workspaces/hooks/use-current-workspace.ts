@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 
-import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
-import { useWorkspaceStore } from "@/features/workspaces/store/workspace.store";
+import { useWorkspaces } from "@/features/workspaces/hooks";
+
+import { useWorkspaceStore } from "@/features/workspaces/store";
 
 export function useCurrentWorkspace() {
   const { data: workspaces = [], isLoading } = useWorkspaces();

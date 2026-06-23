@@ -3,13 +3,14 @@ import { api, rawApi } from "@/lib/axios";
 import type {
   LoginFormValues,
   RegisterFormValues,
-} from "@/features/auth/schemas/auth.schema";
+} from "@/features/auth/schemas";
+
 import type {
   AuthResponse,
   RefreshTokenResponse,
   User,
-} from "@/features/auth/types/auth.type";
-import type { ApiResponse } from "@/types/api.type";
+} from "@/features/auth/types";
+import type { ApiResponse } from "@/types";
 
 export type RegisterPayload = Omit<
   RegisterFormValues,
@@ -25,9 +26,7 @@ export async function loginApi(data: LoginFormValues): Promise<AuthResponse> {
   return body.data;
 }
 
-export async function registerApi(
-  data: RegisterFormValues,
-): Promise<AuthResponse> {
+export async function registerApi(data: RegisterPayload): Promise<AuthResponse> {
   const body = await api.post<unknown, ApiResponse<AuthResponse>>(
     "/auth/register",
     data,

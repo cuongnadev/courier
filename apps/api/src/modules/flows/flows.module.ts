@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../../database/prisma.module';
-import { FlowsController } from './flows.controller';
-import { FlowsService } from './flows.service';
-import { WorkspacesModule } from '../workspaces';
+
+import { PrismaModule } from '@/database/prisma.module';
+
+import { FlowsService } from '@/modules/flows/flows.service';
+import { FlowsController } from '@/modules/flows/flows.controller';
+
+import { WorkspacesModule } from '@/modules/workspaces/workspaces.module';
 
 @Module({
   imports: [PrismaModule, WorkspacesModule],

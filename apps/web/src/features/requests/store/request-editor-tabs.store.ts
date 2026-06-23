@@ -1,8 +1,6 @@
 import { create } from "zustand";
 
-import type { ApiRequestDetailResponse } from "@/features/requests/types/request.type";
-import type { RequestRunResponse } from "@/features/requests/types/request-run.type";
-import type { RunRequestPayload } from "@/features/requests/types/request-run-payload.type";
+import type { ApiRequestDetailResponse, RequestRunResponse, RunRequestPayload } from "@/features/requests/types";
 
 export type RequestEditorTab = {
   tabId: string;
@@ -36,6 +34,7 @@ function buildPayloadFromRequest(
 
     headers:
       request.headers?.map((header) => ({
+        id: header.id,
         key: header.key,
         value: header.value ?? "",
         enabled: header.enabled,

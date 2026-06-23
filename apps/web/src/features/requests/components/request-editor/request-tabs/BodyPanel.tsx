@@ -1,15 +1,16 @@
 import { Braces, FileText, TableProperties, WandSparkles } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
+  Button,
+  RadioGroup,
+  RadioGroupItem,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+  Textarea,
+} from "@courier/ui-kit";
 
 import type {
   RawBodyLanguage,
@@ -35,22 +36,22 @@ const BODY_MODES: {
   label: string;
   icon: React.ElementType;
 }[] = [
-    {
-      value: "JSON",
-      label: "JSON",
-      icon: Braces,
-    },
-    {
-      value: "FORM_DATA",
-      label: "Form Data",
-      icon: TableProperties,
-    },
-    {
-      value: "RAW",
-      label: "Raw",
-      icon: FileText,
-    },
-  ];
+  {
+    value: "JSON",
+    label: "JSON",
+    icon: Braces,
+  },
+  {
+    value: "FORM_DATA",
+    label: "Form Data",
+    icon: TableProperties,
+  },
+  {
+    value: "RAW",
+    label: "Raw",
+    icon: FileText,
+  },
+];
 
 const RAW_LANGUAGES = [
   "TEXT",
@@ -62,7 +63,7 @@ const RAW_LANGUAGES = [
 
 function getBodyMode(
   bodyType: RequestBodyType,
-  rawBodyLanguage: RawBodyLanguage
+  rawBodyLanguage: RawBodyLanguage,
 ): BodyMode {
   if (bodyType === "FORM_DATA" || bodyType === "X_WWW_FORM_URLENCODED") {
     return "FORM_DATA";
@@ -141,9 +142,10 @@ export function BodyPanel({
               className={`
                 flex h-9 cursor-pointer items-center gap-2 rounded-[10px]
                 border px-3 text-sm font-medium transition-colors
-                ${isActive
-                  ? "border-amber-300 bg-amber-50 text-amber-700"
-                  : "border-[#E5E5E5] bg-white text-[#525252] hover:border-[#D4D4D4] hover:bg-[#FAFAFA] hover:text-[#171717]"
+                ${
+                  isActive
+                    ? "border-amber-300 bg-amber-50 text-amber-700"
+                    : "border-[#E5E5E5] bg-white text-[#525252] hover:border-[#D4D4D4] hover:bg-[#FAFAFA] hover:text-[#171717]"
                 }
               `}
             >
@@ -320,11 +322,12 @@ export function BodyPanel({
                     shadow-[0_8px_30px_rgba(0,0,0,0.08)]
                   "
                 >
-                  {RAW_LANGUAGES.filter((language) => language !== "JSON").map((language) => (
-                    <SelectItem
-                      key={language}
-                      value={language}
-                      className="
+                  {RAW_LANGUAGES.filter((language) => language !== "JSON").map(
+                    (language) => (
+                      <SelectItem
+                        key={language}
+                        value={language}
+                        className="
                         h-8 cursor-pointer rounded-[8px]
                         px-3 pr-8
                         text-xs font-semibold
@@ -349,10 +352,11 @@ export function BodyPanel({
                         [&_span]:!text-inherit
                         [&_svg]:!text-[#171717]
                       "
-                    >
-                      {language}
-                    </SelectItem>
-                  ))}
+                      >
+                        {language}
+                      </SelectItem>
+                    ),
+                  )}
                 </SelectContent>
               </Select>
             </div>

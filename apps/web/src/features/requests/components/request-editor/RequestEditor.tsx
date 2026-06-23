@@ -23,6 +23,8 @@ import {
 
 import { useRequestEditorTabsStore } from "@/features/requests/store/request-editor-tabs.store";
 
+import { ROUTE_TO } from "@/constants/route-paths";
+
 const EmptyRequestEditorState = () => {
   const { View } = useLottie(
     {
@@ -129,6 +131,12 @@ export function RequestEditor({
 
       graphqlQuery: activeTab.payload.graphqlQuery,
       graphqlVariables: activeTab.payload.graphqlVariables,
+
+      headers: activeTab.payload.headers.map((header) => ({
+      key: header.key,
+      value: header.value,
+      enabled: header.enabled,
+    })),
     };
   };
 
@@ -147,6 +155,12 @@ export function RequestEditor({
 
       graphqlQuery: activeTab.payload.graphqlQuery,
       graphqlVariables: activeTab.payload.graphqlVariables,
+
+      headers: activeTab.payload.headers.map((header) => ({
+      key: header.key,
+      value: header.value,
+      enabled: header.enabled,
+    })),
     };
   };
 
@@ -157,7 +171,7 @@ export function RequestEditor({
     replace?: boolean;
   }) => {
     void navigate({
-      to: "/workspaces/$workspaceId/collections/$collectionId/requests/$requestId",
+      to: ROUTE_TO.WORKSPACE_REQUEST_DETAIL,
       params: {
         workspaceId: params.workspaceId,
         collectionId: params.collectionId,

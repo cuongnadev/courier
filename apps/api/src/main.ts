@@ -8,12 +8,21 @@ import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 
-import { AppException } from './common/exceptions/app.exceptions';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { AppModule } from '@/app.module';
 
-import { AppModule } from './app.module';
-import { appConfig } from './config';
+import {
+  API_DEFAULT_VERSION,
+  API_GLOBAL_PREFIX,
+  ERROR_CODES,
+  SWAGGER_DESCRIPTION,
+  SWAGGER_TITLE,
+  SWAGGER_VERSION,
+} from '@/common/constants';
+import { AppException } from '@/common/exceptions';
+import { HttpExceptionFilter } from '@/common/filters';
+import { ResponseInterceptor } from '@/common/interceptors';
+
+import { appConfig } from '@/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,7 +32,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.setGlobalPrefix('api.courier.dev');
+  app.setGlobalPrefix(API_GLOBAL_PREFIX);
 
   app.use(helmet());
 
@@ -40,7 +49,7 @@ async function bootstrap() {
         }, {});
 
         return new AppException({
-          code: 'VALIDATION_FAILED',
+          code: ERROR_CODES.VALIDATION_FAILED,
           message: 'Validation failed.',
           status: 400,
           fields,
@@ -55,13 +64,14 @@ async function bootstrap() {
 
   app.enableVersioning({
     type: VersioningType.URI,
-    defaultVersion: '1',
+    defaultVersion: API_DEFAULT_VERSION,
   });
 
   if (appConfig.env === 'development') {
     const config = new DocumentBuilder()
-      .setTitle('Courier API')
-      .setVersion('1.0')
+      .setTitle(SWAGGER_TITLE)
+      .setVersion(SWAGGER_VERSION)
+      .setDescription(SWAGGER_DESCRIPTION)
       .build();
 
     const document: OpenAPIObject = SwaggerModule.createDocument(app, config);

@@ -6,9 +6,9 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@courier/ui-kit";
 
-import type { CollectionResponse } from "@/features/collections/types/collection.type";
+import type { CollectionResponse } from "@/features/collections/types";
 
 type DeleteCollectionDialogProps = {
   open: boolean;

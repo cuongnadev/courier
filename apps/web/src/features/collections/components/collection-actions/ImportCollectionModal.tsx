@@ -3,20 +3,17 @@ import { toast } from "sonner";
 import { FileJson } from "lucide-react";
 
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-
-import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
+} from "@courier/ui-kit";
 
-import { Button } from "@/components/ui/button";
 import { UploadIcon, XIcon } from "@/components/common/icons";
 
 type ImportCollectionModalProps = {
@@ -183,9 +180,7 @@ export function ImportCollectionModal({
           </Field>
 
           <Field className="gap-2">
-            <FieldLabel className="text-[#404040]">
-              Collection File
-            </FieldLabel>
+            <FieldLabel className="text-[#404040]">Collection File</FieldLabel>
 
             <div
               onDragOver={handleDragOver}
@@ -197,9 +192,10 @@ export function ImportCollectionModal({
                 justify-center rounded-[16px] border border-dashed
                 px-6 py-8 text-center transition
 
-                ${dragActive
-                  ? "border-[#FE9A00] bg-[#FFF7ED]"
-                  : "border-[#D6D3CF] bg-[#FAFAFA]"
+                ${
+                  dragActive
+                    ? "border-[#FE9A00] bg-[#FFF7ED]"
+                    : "border-[#D6D3CF] bg-[#FAFAFA]"
                 }
 
                 hover:border-[#FE9A00]
@@ -208,11 +204,7 @@ export function ImportCollectionModal({
             >
               {!selectedFile ? (
                 <>
-                  <UploadIcon
-                    width={44}
-                    height={44}
-                    iconColor="#A3A3A3"
-                  />
+                  <UploadIcon width={44} height={44} iconColor="#A3A3A3" />
 
                   <p className="text-base font-medium text-[#171717]">
                     Drop your JSON file here

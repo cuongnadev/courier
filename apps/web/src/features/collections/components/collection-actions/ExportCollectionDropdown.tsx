@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@courier/ui-kit";
 
 import type { ExportableCollection } from "@/features/collections/types";
 
@@ -49,11 +49,7 @@ export function ExportCollectionDropdown({
     try {
       const content = exportCollectionAsCurl(collection);
 
-      downloadFile(
-        `${filename}.curl.txt`,
-        content,
-        "text/plain;charset=utf-8",
-      );
+      downloadFile(`${filename}.curl.txt`, content, "text/plain;charset=utf-8");
 
       toast.success("Collection exported as cURL.");
     } catch {

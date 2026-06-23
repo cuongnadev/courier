@@ -1,9 +1,10 @@
 import { api } from "@/lib/axios";
+
 import type {
   DashboardMetrics,
-  ProfileActivityMetrics,
-} from "@/features/dashboard/types/dashboard.type";
-import type { ApiResponse } from "@/types/api.type";
+} from "@/features/dashboard/types";
+import type { ProfileActivityMetrics } from "@/features/profile/types";
+import type { ApiResponse } from "@/types";
 
 export const getDashboardMetrics = async (
   workspaceId: string,

@@ -3,8 +3,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
 
-import { registerApi } from "@/features/auth/api/auth.api";
-import type { ErrorResponse } from "@/features/auth/types/auth.type";
+import { registerApi } from "@/features/auth/api";
+
+import type { ErrorResponse } from "@/features/auth/types";
+
+import { ROUTE_TO } from "@/constants";
 
 export function useRegister() {
     const navigate = useNavigate();
@@ -18,7 +21,7 @@ export function useRegister() {
             );
 
             await navigate({
-                to: "/login",
+                to: ROUTE_TO.LOGIN,
             });
         },
 

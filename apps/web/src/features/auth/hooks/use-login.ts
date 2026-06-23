@@ -3,9 +3,13 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
 
-import { loginApi } from "@/features/auth/api/auth.api";
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import type { ErrorResponse } from "@/features/auth/types/auth.type";
+import { loginApi } from "@/features/auth/api";
+
+import { useAuthStore } from "@/features/auth/store";
+
+import type { ErrorResponse } from "@/features/auth/types";
+
+import { ROUTE_TO } from "@/constants";
 
 export function useLogin() {
     const navigate = useNavigate();
@@ -26,7 +30,7 @@ export function useLogin() {
             );
 
             await navigate({
-                to: "/",
+                to: ROUTE_TO.ROOT,
                 replace: true,
             });
         },

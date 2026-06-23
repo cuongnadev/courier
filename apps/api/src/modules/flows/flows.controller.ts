@@ -11,11 +11,13 @@ import {
   UseGuards,
   Version,
 } from '@nestjs/common';
-import { AuthGuard } from '../../common/guards/auth.guard';
-import type { AuthenticatedRequest } from '../../common/types/authenticated-request.type';
-import { CreateFlowDto } from './dto/create-flow.dto';
-import { UpdateFlowDto } from './dto/update-flow.dto';
-import { FlowsService } from './flows.service';
+
+import { CreateFlowDto, UpdateFlowDto } from '@/modules/flows/dto';
+
+import { FlowsService } from '@/modules/flows/flows.service';
+
+import { AuthGuard } from '@/common/guards/auth.guard';
+import type { AuthenticatedRequest } from '@/common/types';
 
 @Controller('workspaces/:workspaceId/flows')
 @UseGuards(AuthGuard)

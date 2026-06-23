@@ -1,21 +1,8 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-
-export type AppErrorCode =
-  | 'VALIDATION_FAILED'
-  | 'UNAUTHORIZED'
-  | 'INVALID_TOKEN'
-  | 'TOKEN_EXPIRED'
-  | 'FORBIDDEN'
-  | 'NOT_FOUND'
-  | 'CONFLICT'
-  | 'INTERNAL_SERVER_ERROR'
-  | 'GENERATE_TEST_CASES_FAILED'
-  | 'GENERATE_TEST_CASES_TIMEOUT'
-  | 'INVALID_GENERATE_TEST_CASES_RESPONSE'
-  | 'GENERATE_TEST_CASES_MODEL_UNREACHABLE';
+import { ErrorCode } from '@/common/constants';
 
 type AppExceptionOptions = {
-  code: AppErrorCode;
+  code: ErrorCode;
   message: string;
   status?: number;
   hint?: string;

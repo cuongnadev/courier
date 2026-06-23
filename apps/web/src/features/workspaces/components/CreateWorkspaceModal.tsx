@@ -7,21 +7,22 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+  Button,
+  Input,
+} from "@courier/ui-kit";
 
-import { useCreateWorkspace } from "@/features/workspaces/hooks/use-create-workspace";
+import { useCreateWorkspace } from "@/features/workspaces/hooks";
+
 import {
   createWorkspaceSchema,
   type CreateWorkspaceFormValues,
-} from "@/features/workspaces/schemas/create-workspace.schema";
+} from "@/features/workspaces/schemas";
+
+import { ROUTE_TO } from "@/constants";
 
 type CreateWorkspaceModalProps = {
   open: boolean;
@@ -59,7 +60,7 @@ export function CreateWorkspaceModal({
     handleClose();
 
     void navigate({
-      to: "/workspaces/$workspaceId",
+      to: ROUTE_TO.WORKSPACE_DASHBOARD,
       params: {
         workspaceId: workspace.id,
       },

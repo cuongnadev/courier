@@ -1,6 +1,8 @@
 import { Navigate } from "@tanstack/react-router";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useAuthStore } from "@/features/auth/store";
+
+import { ROUTE_TO } from "@/constants";
 
 type PublicRouteProps = {
   children: React.ReactNode;
@@ -12,7 +14,7 @@ export function PublicRoute({ children }: PublicRouteProps) {
   );
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={ROUTE_TO.ROOT} replace />;
   }
 
   return children;

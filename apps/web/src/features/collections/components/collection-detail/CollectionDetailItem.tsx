@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 
-import type { ApiRequestListItem } from "@/features/requests/types/request.type";
+import type { ApiRequestListItem } from "@/features/requests/types";
 
 import { ChevronRightIcon } from "@/components/common/icons";
 
-import { requestMethodStyles } from "@/features/requests/utils/request-method-style.util";
+import { requestMethodStyles } from "@/features/requests/utils";
 
 import { formatDate } from "@/lib/utils";
 

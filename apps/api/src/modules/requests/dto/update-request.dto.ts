@@ -1,14 +1,37 @@
-import { IsIn, IsInt, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsString,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 import {
   HttpMethod,
   RawBodyLanguage,
   RequestBodyType,
-} from '../../../generated/prisma/enums';
+} from '@/generated/prisma/enums';
 import type {
   HttpMethod as HttpMethodType,
   RawBodyLanguage as RawBodyLanguageType,
   RequestBodyType as RequestBodyTypeType,
-} from '../../../generated/prisma/enums';
+} from '@/generated/prisma/enums';
+
+class UpdateRequestHeaderDto {
+  @IsString()
+  key!: string;
+
+  @IsOptional()
+  @IsString()
+  value?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  enabled?: boolean;
+}
 
 export class UpdateRequestDto {
   @IsOptional()
@@ -24,6 +47,12 @@ export class UpdateRequestDto {
   @IsString()
   @MinLength(1)
   uri?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateRequestHeaderDto)
+  headers?: UpdateRequestHeaderDto[];
 
   @IsOptional()
   @IsIn(Object.values(RequestBodyType))

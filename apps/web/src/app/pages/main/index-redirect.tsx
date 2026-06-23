@@ -1,9 +1,12 @@
 import { Navigate, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { useWorkspaceStore } from "@/features/workspaces/store/workspace.store";
-import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
+import { useAuthStore } from "@/features/auth/store";
+import { useWorkspaceStore } from "@/features/workspaces/store";
+
+import { useWorkspaces } from "@/features/workspaces/hooks";
+
+import { ROUTE_TO } from "@/constants";
 
 export default function IndexRedirectPage() {
   const navigate = useNavigate();
@@ -36,7 +39,7 @@ export default function IndexRedirectPage() {
     setCurrentWorkspaceId(nextWorkspaceId);
 
     void navigate({
-      to: "/workspaces/$workspaceId",
+      to: ROUTE_TO.WORKSPACE_DASHBOARD,
       params: {
         workspaceId: nextWorkspaceId,
       },
@@ -52,7 +55,7 @@ export default function IndexRedirectPage() {
   ]);
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={ROUTE_TO.LOGIN} replace />;
   }
 
   return (

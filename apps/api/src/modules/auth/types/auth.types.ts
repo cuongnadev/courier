@@ -1,4 +1,4 @@
-import { AuthTokens } from '../../../common/types/authenticated-request.type';
+import { AuthTokens } from '@/common/types';
 
 export interface AuthUser {
   id: string;

@@ -1,14 +1,12 @@
 import { Code2, PlayCircle } from "lucide-react";
 
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@courier/ui-kit";
 
 export function PreRequestScriptPanel() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="mb-4 shrink-0">
-        <p className="text-sm font-medium text-[#171717]">
-          Pre-request Script
-        </p>
+        <p className="text-sm font-medium text-[#171717]">Pre-request Script</p>
         <p className="mt-1 text-sm text-[#737373]">
           Write JavaScript that runs before this request is sent.
         </p>
@@ -22,9 +20,7 @@ export function PreRequestScriptPanel() {
             </div>
 
             <div>
-              <p className="text-sm font-semibold text-[#171717]">
-                JavaScript
-              </p>
+              <p className="text-sm font-semibold text-[#171717]">JavaScript</p>
               <p className="text-xs text-[#737373]">
                 Access request variables before sending.
               </p>

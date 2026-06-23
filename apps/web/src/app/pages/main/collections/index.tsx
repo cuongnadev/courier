@@ -2,10 +2,12 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 
 import { useCollections } from "@/features/collections/hooks";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks";
 
 import { CollectionSidebar } from "@/features/collections/components/collection-sidebar";
 import { CollectionDetail } from "@/features/collections/components/collection-detail";
-import { useCurrentWorkspace } from "@/features/workspaces/hooks/use-current-workspace";
+
+import { ROUTE_TO } from "@/constants";
 
 export default function CollectionsPage() {
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ export default function CollectionsPage() {
     if (collections.length === 0) return;
 
     void navigate({
-      to: "/workspaces/$workspaceId/collections/$collectionId",
+      to: ROUTE_TO.WORKSPACE_COLLECTION_DETAIL,
       params: {
         workspaceId,
         collectionId: collections[0].id,
@@ -43,7 +45,7 @@ export default function CollectionsPage() {
     if (!workspaceId) return;
 
     void navigate({
-      to: "/workspaces/$workspaceId/collections/$collectionId",
+      to: ROUTE_TO.WORKSPACE_COLLECTION_DETAIL,
       params: {
         workspaceId,
         collectionId: nextCollectionId,

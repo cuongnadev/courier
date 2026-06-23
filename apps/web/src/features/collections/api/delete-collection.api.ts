@@ -1,6 +1,6 @@
 import { api } from "@/lib/axios";
 
-import type { ApiResponse } from "@/types/api.type";
+import type { ApiResponse } from "@/types";
 
 type DeleteCollectionApiParams = {
   workspaceId: string;

@@ -1,7 +1,7 @@
 import type {
   ApiRequestListItem,
   ApiRequestResponse,
-} from "@/features/requests/types/request.type";
+} from "@/features/requests/types";
 
 export type ExportableRequest = ApiRequestListItem | ApiRequestResponse;
 
