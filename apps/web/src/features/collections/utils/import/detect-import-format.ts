@@ -11,11 +11,13 @@ export function detectImportFormat(data: unknown): ImportFormat {
     return "openapi";
   }
 
+  // TODO: Support Swagger 2.0 documents.
   // if (typeof obj.swagger === "string") {
   //   return "openapi";
   // }
 
   if (
+    typeof obj.name === "string" &&
     "requests" in obj &&
     Array.isArray(obj.requests)
   ) {

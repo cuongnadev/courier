@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { FileJson } from "lucide-react";
-import YAML from "yaml";
 
 import {
   Button,
@@ -50,7 +49,7 @@ export function ImportApisModal({
     onOpenChange(false);
   };
 
-  const validateFile = async (file: File) => {
+  const validateFileExtension = (file: File) => {
     const filename = file.name.toLowerCase();
 
     const isJson =
@@ -66,27 +65,13 @@ export function ImportApisModal({
       return false;
     }
 
-    try {
-      const text = await file.text();
-
-      if (isJson) {
-        JSON.parse(text);
-      }
-
-      if (isYaml) {
-        YAML.parse(text);
-      }
-      return true;
-    } catch {
-      toast.error("Invalid JSON or YAML file format.");
-      return false;
-    }
+    return true;
   };
 
-  const handleFileSelect = async (file?: File | null) => {
+  const handleFileSelect = (file?: File | null) => {
     if (!file) return;
 
-    const isValid = await validateFile(file);
+    const isValid = validateFileExtension(file);
 
     if (!isValid) {
       setSelectedFile(null);
@@ -105,11 +90,11 @@ export function ImportApisModal({
     inputRef.current?.click();
   };
 
-  const handleInputChange = async (
+  const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
-    await handleFileSelect(file);
+    handleFileSelect(file);
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
@@ -121,12 +106,12 @@ export function ImportApisModal({
     setDragActive(false);
   };
 
-  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDragActive(false);
 
     const file = event.dataTransfer.files?.[0];
-    await handleFileSelect(file);
+    handleFileSelect(file);
   };
 
   const handleRemoveFile = () => {
@@ -150,6 +135,12 @@ export function ImportApisModal({
 
       resetState();
       onOpenChange(false);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to import API specification.",
+      );
     } finally {
       setIsImporting(false);
     }

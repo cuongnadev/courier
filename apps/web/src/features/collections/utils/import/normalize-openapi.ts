@@ -58,7 +58,7 @@ export function normalizeOpenApi(
     throw new Error("Invalid OpenAPI document.");
   }
 
-  const document = data as OpenApiDocument;
+  const document = data as Partial<OpenApiDocument>;
 
   if (!document.paths) {
     throw new Error("Invalid OpenAPI document.");
@@ -68,8 +68,8 @@ export function normalizeOpenApi(
 
   const requests: ImportRequestPayload[] = [];
 
-  Object.entries(document.paths ?? {}).forEach(([path, operations]) => {
-    Object.entries(operations ?? {}).forEach(([method, operation]) => {
+  Object.entries(document.paths).forEach(([path, operations]) => {
+    Object.entries(operations).forEach(([method, operation]) => {
       if (!operation) return;
 
       const requestMethod = METHOD_MAP[
@@ -80,6 +80,7 @@ export function normalizeOpenApi(
         return;
       }
 
+      // TODO: Support OpenAPI requestBody examples, schemas and multipart/form-data.
       const example = Object.values(
         operation.requestBody?.content ?? {},
       )[0]?.example;
