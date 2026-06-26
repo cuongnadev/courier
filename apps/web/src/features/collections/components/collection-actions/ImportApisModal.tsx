@@ -16,17 +16,17 @@ import {
 
 import { UploadIcon, XIcon } from "@/components/common/icons";
 
-type ImportCollectionModalProps = {
+type ImportApisModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onImport?: (file: File) => void | Promise<void>;
 };
 
-export function ImportCollectionModal({
+export function ImportApisModal({
   open,
   onOpenChange,
   onImport,
-}: ImportCollectionModalProps) {
+}: ImportApisModalProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [dragActive, setDragActive] = useState(false);
@@ -167,20 +167,20 @@ export function ImportCollectionModal({
       >
         <DialogHeader className="border-b border-[#E5E5E5] p-6">
           <DialogTitle className="text-xl font-semibold text-[#171717]">
-            Import Collection
+            Import APIs
           </DialogTitle>
         </DialogHeader>
 
         <FieldGroup className="gap-5 p-6">
           <Field className="gap-2">
             <FieldDescription className="text-sm leading-6 text-[#525252]">
-              Import a collection from a JSON file exported from Postman,
-              Insomnia, or another API client.
+              Import a Courier collection or an OpenAPI specification 
+              in JSON or YAML format.
             </FieldDescription>
           </Field>
 
           <Field className="gap-2">
-            <FieldLabel className="text-[#404040]">Collection File</FieldLabel>
+            <FieldLabel className="text-[#404040]">API Specification File</FieldLabel>
 
             <div
               onDragOver={handleDragOver}
@@ -207,7 +207,7 @@ export function ImportCollectionModal({
                   <UploadIcon width={44} height={44} iconColor="#A3A3A3" />
 
                   <p className="text-base font-medium text-[#171717]">
-                    Drop your JSON file here
+                    Drop your JSON or YAML file here
                   </p>
 
                   <p className="mt-2 text-sm text-[#737373]">or</p>
