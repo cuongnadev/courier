@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { FileJson } from "lucide-react";
+import YAML from "yaml";
 
 import {
   Button,
@@ -50,21 +51,34 @@ export function ImportApisModal({
   };
 
   const validateFile = async (file: File) => {
+    const filename = file.name.toLowerCase();
+
     const isJson =
       file.type === "application/json" ||
-      file.name.toLowerCase().endsWith(".json");
+      filename.endsWith(".json");
 
-    if (!isJson) {
-      toast.error("Only JSON files are supported.");
+    const isYaml =
+      filename.endsWith(".yaml") ||
+      filename.endsWith(".yml");
+
+    if (!isJson && !isYaml) {
+      toast.error("Only JSON and YAML files are supported.");
       return false;
     }
 
     try {
       const text = await file.text();
-      JSON.parse(text);
+
+      if (isJson) {
+        JSON.parse(text);
+      }
+
+      if (isYaml) {
+        YAML.parse(text);
+      }
       return true;
     } catch {
-      toast.error("Invalid JSON file format.");
+      toast.error("Invalid JSON or YAML file format.");
       return false;
     }
   };
@@ -125,7 +139,7 @@ export function ImportApisModal({
 
   const handleImport = async () => {
     if (!selectedFile) {
-      toast.error("Please select a JSON file first.");
+      toast.error("Please select a JSON or YAML file first.");
       return;
     }
 
@@ -174,7 +188,7 @@ export function ImportApisModal({
         <FieldGroup className="gap-5 p-6">
           <Field className="gap-2">
             <FieldDescription className="text-sm leading-6 text-[#525252]">
-              Import a Courier collection or an OpenAPI specification 
+              Import a Courier collection or an OpenAPI specification
               in JSON or YAML format.
             </FieldDescription>
           </Field>
@@ -192,10 +206,9 @@ export function ImportApisModal({
                 justify-center rounded-[16px] border border-dashed
                 px-6 py-8 text-center transition
 
-                ${
-                  dragActive
-                    ? "border-[#FE9A00] bg-[#FFF7ED]"
-                    : "border-[#D6D3CF] bg-[#FAFAFA]"
+                ${dragActive
+                  ? "border-[#FE9A00] bg-[#FFF7ED]"
+                  : "border-[#D6D3CF] bg-[#FAFAFA]"
                 }
 
                 hover:border-[#FE9A00]
@@ -290,7 +303,7 @@ export function ImportApisModal({
               <input
                 ref={inputRef}
                 type="file"
-                accept=".json,application/json"
+                accept=".json,.yaml,.yml,application/json"
                 className="hidden"
                 onChange={handleInputChange}
               />

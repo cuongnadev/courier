@@ -7,7 +7,7 @@ import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
 import { CollectionSidebarList } from "@/features/collections/components/collection-sidebar";
 import {
   CreateCollectionModal,
-  ImportCollectionModal,
+  ImportApisModal,
   EditCollectionModal,
   DeleteCollectionDialog,
 } from "@/features/collections/components/collection-actions";
@@ -22,7 +22,7 @@ import { useCurrentWorkspace } from "@/features/workspaces/hooks";
 
 import type { CollectionResponse } from "@/features/collections/types";
 
-import { normalizeImportCollectionJson } from "@/features/collections/utils";
+import { parseImportFile } from "@/features/collections/utils";
 
 type CollectionSidebarProps = {
   selectedCollectionId?: string | null;
@@ -117,14 +117,11 @@ export function CollectionSidebar({
       )}
 
       {isImportOpen && (
-        <ImportCollectionModal
+        <ImportApisModal
           open={isImportOpen}
           onOpenChange={setIsImportOpen}
           onImport={async (file) => {
-            const text = await file.text();
-            const json = JSON.parse(text);
-
-            const payload = normalizeImportCollectionJson(json);
+            const payload = await parseImportFile(file);
 
             await importCollectionMutation.mutateAsync(payload);
           }}
