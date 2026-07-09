@@ -1,11 +1,11 @@
 import { CollectionDetailItem } from "@/features/collections/components/collection-detail";
 
-import type { ApiRequestListItem } from "@/features/requests/types";
+import type { CollectionRequest } from "@/features/collections/types";
 
 type CollectionDetailListProps = {
   workspaceId: string;
   collectionId: string;
-  requests: readonly ApiRequestListItem[];
+  requests: readonly CollectionRequest[];
 };
 
 export function CollectionDetailList({

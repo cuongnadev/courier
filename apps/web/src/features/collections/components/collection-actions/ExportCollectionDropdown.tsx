@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { toast } from "sonner";
-import { Braces, FileCode2, FileJson } from "lucide-react";
+import { Braces, FileCode2, FileJson, FileJson2 } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -14,7 +14,8 @@ import type { ExportableCollection } from "@/features/collections/types";
 import {
   downloadFile,
   exportCollectionAsCurl,
-  exportCollectionAsOpenApi,
+  exportCollectionAsOpenApiYaml,
+  exportCollectionAsOpenApiJson,
   slugify,
 } from "@/features/collections/utils";
 
@@ -29,49 +30,69 @@ export function ExportCollectionDropdown({
 }: ExportCollectionDropdownProps) {
   const filename = slugify(collection.name);
 
-  const exportAsJson = () => {
+  const handleExport = (
+    label: string,
+    fileName: string,
+    content: string,
+    mime: string,
+  ) => {
     try {
-      const content = JSON.stringify(collection, null, 2);
-
-      downloadFile(
-        `${filename}.collection.json`,
-        content,
-        "application/json;charset=utf-8",
-      );
-
-      toast.success("Collection exported.");
+      downloadFile(fileName, content, mime);
+      toast.success(`Collection exported as ${label}.`);
     } catch {
-      toast.error("Failed to export collection.");
+      toast.error(`Failed to export ${label}.`);
     }
   };
 
-  const exportAsCurl = () => {
-    try {
-      const content = exportCollectionAsCurl(collection);
+  const exportItems = [
+    {
+      label: "JSON",
+      icon: FileJson,
+      onClick: () =>
+        handleExport(
+          "JSON",
+          `${filename}.collection.json`,
+          JSON.stringify(collection, null, 2),
+          "application/json;charset=utf-8",
+        ),
+    },
+    {
+      label: "cURL",
+      icon: FileCode2,
+      onClick: () =>
+        handleExport(
+          "cURL",
+          `${filename}.curl.txt`,
+          exportCollectionAsCurl(collection),
+          "text/plain;charset=utf-8",
+        ),
+    },
+    {
+      label: "OpenAPI YAML",
+      icon: Braces,
+      onClick: () =>
+        handleExport(
+          "OpenAPI YAML",
+          `${filename}.openapi.yaml`,
+          exportCollectionAsOpenApiYaml(collection),
+          "application/x-yaml;charset=utf-8",
+        ),
+    },
+    {
+      label: "OpenAPI JSON",
+      icon: FileJson2,
+      onClick: () => {
+        const json = exportCollectionAsOpenApiJson(collection);
 
-      downloadFile(`${filename}.curl.txt`, content, "text/plain;charset=utf-8");
-
-      toast.success("Collection exported as cURL.");
-    } catch {
-      toast.error("Failed to export collection.");
-    }
-  };
-
-  const exportAsOpenApi = () => {
-    try {
-      const content = exportCollectionAsOpenApi(collection);
-
-      downloadFile(
-        `${filename}.openapi.yaml`,
-        content,
-        "application/x-yaml;charset=utf-8",
-      );
-
-      toast.success("Collection exported as OpenAPI YAML.");
-    } catch {
-      toast.error("Failed to export collection.");
-    }
-  };
+        handleExport(
+          "OpenAPI JSON",
+          `${filename}.openapi.json`,
+          JSON.stringify(json, null, 2),
+          "application/json;charset=utf-8",
+        );
+      },
+    },
+  ];
 
   return (
     <DropdownMenu>
@@ -85,47 +106,22 @@ export function ExportCollectionDropdown({
           shadow-[0_8px_30px_rgba(0,0,0,0.08)]
         "
       >
-        <DropdownMenuItem
-          onClick={exportAsJson}
-          className="
-            flex cursor-pointer items-center gap-3 rounded-lg
-            px-3 py-2.5 text-sm text-neutral-800 outline-none
-            hover:bg-[#F5F5F5]
-            focus:bg-[#F5F5F5]
-            data-[highlighted]:bg-[#F5F5F5]
-          "
-        >
-          <FileJson size={16} className="text-[#737373]" />
-          Export as JSON
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          onClick={exportAsCurl}
-          className="
-            flex cursor-pointer items-center gap-3 rounded-lg
-            px-3 py-2.5 text-sm text-neutral-800 outline-none
-            hover:bg-[#F5F5F5]
-            focus:bg-[#F5F5F5]
-            data-[highlighted]:bg-[#F5F5F5]
-          "
-        >
-          <FileCode2 size={16} className="text-[#737373]" />
-          Export as cURL
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          onClick={exportAsOpenApi}
-          className="
-            flex cursor-pointer items-center gap-3 rounded-lg
-            px-3 py-2.5 text-sm text-neutral-800 outline-none
-            hover:bg-[#F5F5F5]
-            focus:bg-[#F5F5F5]
-            data-[highlighted]:bg-[#F5F5F5]
-          "
-        >
-          <Braces size={16} className="text-[#737373]" />
-          Export as OpenAPI YAML
-        </DropdownMenuItem>
+        {exportItems.map(({ label, icon: Icon, onClick }) => (
+          <DropdownMenuItem
+            key={label}
+            onClick={onClick}
+            className="
+              flex cursor-pointer items-center gap-3 rounded-lg
+              px-3 py-2.5 text-sm text-neutral-800 outline-none
+              hover:bg-[#F5F5F5]
+              focus:bg-[#F5F5F5]
+              data-[highlighted]:bg-[#F5F5F5]
+            "
+          >
+            <Icon size={16} className="text-[#737373]" />
+            Export as {label}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

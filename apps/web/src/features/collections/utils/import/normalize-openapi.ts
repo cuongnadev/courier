@@ -1,47 +1,9 @@
 import type {
   ImportCollectionPayload,
   ImportRequestPayload,
+  OpenApiDocument,
+  OpenApiMethod,
 } from "@/features/collections/types";
-
-type OpenApiDocument = {
-  openapi?: string;
-  info?: {
-    title?: string;
-    description?: string;
-  };
-  servers?: OpenApiServer[];
-  paths?: OpenApiPaths;
-};
-
-type OpenApiServer = {
-  url: string;
-};
-
-type OpenApiPaths = Record<
-  string,
-  Partial<Record<OpenApiMethod, OpenApiOperation>>
->;
-
-type OpenApiMethod =
-  | "get"
-  | "post"
-  | "put"
-  | "patch"
-  | "delete";
-
-type OpenApiOperation = {
-  summary?: string;
-  description?: string;
-
-  requestBody?: {
-    content?: Record<
-      string,
-      {
-        example?: unknown;
-      }
-    >;
-  };
-};
 
 const METHOD_MAP = {
   get: "GET",
@@ -81,9 +43,28 @@ export function normalizeOpenApi(
       }
 
       // TODO: Support OpenAPI requestBody examples, schemas and multipart/form-data.
-      const example = Object.values(
-        operation.requestBody?.content ?? {},
-      )[0]?.example;
+      const content = operation.requestBody?.content;
+
+      const firstMedia = content
+        ? Object.values(content)[0]
+        : undefined;
+
+      const example =
+        firstMedia?.example ??
+        Object.values(firstMedia?.examples ?? {})[0]?.value;
+
+      const headers =
+        operation.parameters
+          ?.filter((p) => p.in === "header")
+          .map((p, index) => ({
+            key: p.name,
+            value:
+              p.example !== undefined
+                ? String(p.example)
+                : "",
+            enabled: true,
+            sortOrder: index,
+          })) ?? [];
 
       // TODO: Parse OpenAPI query parameters (parameters[].in === "query").
       requests.push({
@@ -107,8 +88,7 @@ export function normalizeOpenApi(
           ? JSON.stringify(example, null, 2)
           : undefined,
 
-        // TODO: Parse OpenAPI header parameters (parameters[].in === "header").
-        headers: [],
+        headers,
       });
     });
   });

@@ -1,4 +1,4 @@
-import type { CollectionColor } from "@/features/collections/types";
+import type { CollectionColor, OpenApiSchema } from "@/features/collections/types";
 import type { ApiRequestResponse, RawBodyLanguage, RequestBodyType } from "@/features/requests/types";
 import type { RequestMethod } from "@/types";
 
@@ -119,4 +119,75 @@ export type ExportedCollectionFile = {
   requestsCount: number;
 
   requests: ApiRequestResponse[];
+};
+
+export type OpenApiDocument = {
+  openapi?: string;
+  info?: {
+    title?: string;
+    description?: string;
+    version?: string;
+  };
+  servers?: OpenApiServer[];
+  paths?: OpenApiPaths;
+};
+
+export type OpenApiServer = {
+  url: string;
+};
+
+export type OpenApiPaths = Record<
+  string,
+  Partial<Record<OpenApiMethod, OpenApiOperation>>
+>;
+
+export type OpenApiMethod =
+  | "get"
+  | "post"
+  | "put"
+  | "patch"
+  | "delete";
+
+export type OpenApiMediaType = {
+  schema?: OpenApiSchema;
+
+  example?: unknown;
+
+  examples?: Record<
+    string,
+    {
+      value: unknown;
+    }
+  >;
+};
+
+export type OpenApiOperation = {
+ summary?: string;
+  description?: string;
+
+  parameters?: OpenApiParameter[];
+
+  requestBody?: {
+    required?: boolean;
+    content: Record<string, OpenApiMediaType>;
+  };
+
+  responses?: Record<
+    string,
+    {
+      description?: string;
+    }
+  >;
+};
+
+export type OpenApiParameter = {
+  name: string;
+
+  in: "query" | "header" | "path" | "cookie";
+
+  required?: boolean;
+
+  schema?: OpenApiSchema;
+
+  example?: unknown;
 };

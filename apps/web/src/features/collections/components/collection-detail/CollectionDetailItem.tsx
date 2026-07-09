@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import type { ApiRequestListItem } from "@/features/requests/types";
+import type { CollectionRequest } from "@/features/collections/types";
 
 import { ChevronRightIcon } from "@/components/common/icons";
 
@@ -11,7 +11,7 @@ import { formatDate } from "@/lib/utils";
 type CollectionDetailItemProps = {
   workspaceId: string;
   collectionId: string;
-  request: ApiRequestListItem;
+  request: CollectionRequest;
 };
 
 export function CollectionDetailItem({
