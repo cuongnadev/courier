@@ -55,24 +55,6 @@ export type ApiRequestResponse = {
   headers?: ApiRequestHeaderResponse[];
 };
 
-export type ApiRequestListItem = {
-  id: string;
-  collectionId: string;
-
-  name: string;
-  method: RequestMethod;
-  uri: string;
-
-  description: string | null;
-
-  bodyType: RequestBodyType;
-
-  headersCount: number;
-  hasBody: boolean;
-
-  updatedAt: string;
-};
-
 export type ApiRequestDetailResponse = ApiRequestResponse & {
   headers: ApiRequestHeaderResponse[];
 };

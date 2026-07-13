@@ -1,9 +1,18 @@
+import YAML from "yaml";
+
+import type {
+  ApiRequestResponse,
+} from "@/features/requests/types";
 import type {
   ExportableCollection,
-  ExportableRequest,
+  OpenApiMethod,
+  OpenApiOperation,
+  OpenApiParameter,
+  OpenApiPaths,
+  OpenApiSchema,
 } from "@/features/collections/types";
 
-function hasRawBody(request: ExportableRequest): request is ExportableRequest & {
+function hasRawBody(request: ApiRequestResponse): request is ApiRequestResponse & {
   rawBody: string | null;
   rawBodyLanguage: string;
   bodyType: string;
@@ -39,14 +48,13 @@ export function downloadFile(filename: string, content: string, type: string) {
 }
 
 function escapeShell(value: string) {
-  return value.replace(/"/g, '\\"');
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, "\\n");
 }
 
-function escapeYaml(value: string) {
-  return value.replace(/"/g, '\\"');
-}
-
-function requestHasBody(request: ExportableRequest) {
+function requestHasBody(request: ApiRequestResponse) {
   if ("hasBody" in request) {
     return request.hasBody;
   }
@@ -58,7 +66,7 @@ function requestHasBody(request: ExportableRequest) {
   return Boolean(request.rawBody || request.graphqlQuery);
 }
 
-function getRequestBodyForCurl(request: ExportableRequest) {
+function getRequestBodyForCurl(request: ApiRequestResponse) {
   if (!hasRawBody(request)) {
     return "";
   }
@@ -93,7 +101,7 @@ function safeJsonParse(value: string) {
   }
 }
 
-function getContentType(request: ExportableRequest) {
+function getContentType(request: ApiRequestResponse) {
   if (!hasRawBody(request)) {
     return null;
   }
@@ -121,7 +129,7 @@ function getContentType(request: ExportableRequest) {
   }
 }
 
-function requestToCurl(request: ExportableRequest) {
+function requestToCurl(request: ApiRequestResponse) {
   const lines = [`curl -X ${request.method} "${escapeShell(request.uri)}"`];
 
   const contentType = getContentType(request);
@@ -175,20 +183,14 @@ function normalizePathFromUri(uri: string) {
   }
 }
 
-function getOpenApiRequestBody(request: ExportableRequest) {
-  if (!hasRawBody(request)) {
-    return null;
-  }
-
-  if (request.bodyType === "NONE") {
-    return null;
-  }
+function getOpenApiRequestBody(
+  request: ApiRequestResponse,
+): OpenApiOperation["requestBody"] | null {
+  if (!hasRawBody(request)) return null;
+  if (request.bodyType === "NONE") return null;
 
   const contentType = getContentType(request);
-
-  if (!contentType) {
-    return null;
-  }
+  if (!contentType) return null;
 
   let example: unknown = request.rawBody ?? "";
 
@@ -209,17 +211,70 @@ function getOpenApiRequestBody(request: ExportableRequest) {
     required: true,
     content: {
       [contentType]: {
-        schema: {
-          type: "object",
-          example,
-        },
+        schema: inferSchema(example),
+        example,
       },
     },
   };
 }
 
-function requestToOpenApiOperation(request: ExportableRequest) {
+function inferSchema(value: unknown): OpenApiSchema {
+  if (value === null || value === undefined) {
+    return { type: "string" };
+  }
+
+  if (Array.isArray(value)) {
+    return {
+      type: "array",
+      items:
+        value.length > 0
+          ? inferSchema(value[0])
+          : { type: "string" },
+    };
+  }
+
+  if (typeof value !== "object") {
+    switch (typeof value) {
+      case "string":
+        return { type: "string" };
+      case "number":
+        return { type: "number" };
+      case "boolean":
+        return { type: "boolean" };
+      default:
+        return { type: "string" };
+    }
+  }
+
+  const obj = value as Record<string, unknown>;
+
+  const properties: Record<string, OpenApiSchema> = {};
+
+  for (const [key, val] of Object.entries(obj)) {
+    if (val === undefined) continue;
+    properties[key] = inferSchema(val);
+  }
+
+  return {
+    type: "object",
+    properties,
+  };
+}
+
+function requestToOpenApiOperation(
+  request: ApiRequestResponse,
+): OpenApiOperation {
   const requestBody = getOpenApiRequestBody(request);
+
+  const parameters: OpenApiParameter[] =
+    (request.headers ?? []).map((header) => ({
+      in: "header",
+      name: header.key,
+      schema: {
+        type: "string",
+      },
+      example: header.value,
+    }));
 
   return {
     summary: request.name,
@@ -230,15 +285,17 @@ function requestToOpenApiOperation(request: ExportableRequest) {
         description: "Successful response",
       },
     },
+    parameters,
   };
 }
 
-export function exportCollectionAsOpenApi(collection: ExportableCollection) {
-  const paths: Record<string, Record<string, unknown>> = {};
+function buildOpenApiDocument(collection: ExportableCollection) {
+  const paths: OpenApiPaths = {};
 
   for (const request of collection.requests ?? []) {
     const path = normalizePathFromUri(request.uri);
-    const method = request.method.toLowerCase();
+
+    const method = request.method.toLowerCase() as OpenApiMethod;
 
     if (!paths[path]) {
       paths[path] = {};
@@ -247,7 +304,7 @@ export function exportCollectionAsOpenApi(collection: ExportableCollection) {
     paths[path][method] = requestToOpenApiOperation(request);
   }
 
-  const openApiDocument = {
+  return {
     openapi: "3.0.0",
     info: {
       title: collection.name,
@@ -256,64 +313,15 @@ export function exportCollectionAsOpenApi(collection: ExportableCollection) {
     },
     paths,
   };
-
-  return objectToYaml(openApiDocument);
 }
 
-function objectToYaml(value: unknown, indent = 0): string {
-  const space = " ".repeat(indent);
+export function exportCollectionAsOpenApiYaml(collection: ExportableCollection) {
+  const doc = buildOpenApiDocument(collection);
+  return YAML.stringify(doc);
+}
 
-  if (value === null) {
-    return "null";
-  }
-
-  if (typeof value === "string") {
-    if (value === "") return '""';
-
-    return `"${escapeYaml(value)}"`;
-  }
-
-  if (typeof value === "number" || typeof value === "boolean") {
-    return String(value);
-  }
-
-  if (Array.isArray(value)) {
-    if (value.length === 0) return "[]";
-
-    return value
-      .map((item) => {
-        if (typeof item === "object" && item !== null) {
-          return `${space}-\n${objectToYaml(item, indent + 2)}`;
-        }
-
-        return `${space}- ${objectToYaml(item, 0)}`;
-      })
-      .join("\n");
-  }
-
-  if (typeof value === "object") {
-    const entries = Object.entries(value as Record<string, unknown>);
-
-    if (entries.length === 0) return "{}";
-
-    return entries
-      .map(([key, item]) => {
-        if (item !== null && typeof item === "object" && !Array.isArray(item)) {
-          return `${space}${key}:\n${objectToYaml(item, indent + 2)}`;
-        }
-
-        if (Array.isArray(item)) {
-          if (item.length === 0) {
-            return `${space}${key}: []`;
-          }
-
-          return `${space}${key}:\n${objectToYaml(item, indent + 2)}`;
-        }
-
-        return `${space}${key}: ${objectToYaml(item, 0)}`;
-      })
-      .join("\n");
-  }
-
-  return '""';
+export function exportCollectionAsOpenApiJson(
+  collection: ExportableCollection,
+) {
+  return buildOpenApiDocument(collection);
 }

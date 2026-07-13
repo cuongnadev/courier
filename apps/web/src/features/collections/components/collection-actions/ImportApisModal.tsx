@@ -16,17 +16,17 @@ import {
 
 import { UploadIcon, XIcon } from "@/components/common/icons";
 
-type ImportCollectionModalProps = {
+type ImportApisModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onImport?: (file: File) => void | Promise<void>;
 };
 
-export function ImportCollectionModal({
+export function ImportApisModal({
   open,
   onOpenChange,
   onImport,
-}: ImportCollectionModalProps) {
+}: ImportApisModalProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [dragActive, setDragActive] = useState(false);
@@ -49,30 +49,29 @@ export function ImportCollectionModal({
     onOpenChange(false);
   };
 
-  const validateFile = async (file: File) => {
+  const validateFileExtension = (file: File) => {
+    const filename = file.name.toLowerCase();
+
     const isJson =
       file.type === "application/json" ||
-      file.name.toLowerCase().endsWith(".json");
+      filename.endsWith(".json");
 
-    if (!isJson) {
-      toast.error("Only JSON files are supported.");
+    const isYaml =
+      filename.endsWith(".yaml") ||
+      filename.endsWith(".yml");
+
+    if (!isJson && !isYaml) {
+      toast.error("Only JSON and YAML files are supported.");
       return false;
     }
 
-    try {
-      const text = await file.text();
-      JSON.parse(text);
-      return true;
-    } catch {
-      toast.error("Invalid JSON file format.");
-      return false;
-    }
+    return true;
   };
 
-  const handleFileSelect = async (file?: File | null) => {
+  const handleFileSelect = (file?: File | null) => {
     if (!file) return;
 
-    const isValid = await validateFile(file);
+    const isValid = validateFileExtension(file);
 
     if (!isValid) {
       setSelectedFile(null);
@@ -91,11 +90,11 @@ export function ImportCollectionModal({
     inputRef.current?.click();
   };
 
-  const handleInputChange = async (
+  const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
-    await handleFileSelect(file);
+    handleFileSelect(file);
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
@@ -107,12 +106,12 @@ export function ImportCollectionModal({
     setDragActive(false);
   };
 
-  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDragActive(false);
 
     const file = event.dataTransfer.files?.[0];
-    await handleFileSelect(file);
+    handleFileSelect(file);
   };
 
   const handleRemoveFile = () => {
@@ -125,7 +124,7 @@ export function ImportCollectionModal({
 
   const handleImport = async () => {
     if (!selectedFile) {
-      toast.error("Please select a JSON file first.");
+      toast.error("Please select a JSON or YAML file first.");
       return;
     }
 
@@ -136,6 +135,12 @@ export function ImportCollectionModal({
 
       resetState();
       onOpenChange(false);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to import API specification.",
+      );
     } finally {
       setIsImporting(false);
     }
@@ -167,20 +172,20 @@ export function ImportCollectionModal({
       >
         <DialogHeader className="border-b border-[#E5E5E5] p-6">
           <DialogTitle className="text-xl font-semibold text-[#171717]">
-            Import Collection
+            Import APIs
           </DialogTitle>
         </DialogHeader>
 
         <FieldGroup className="gap-5 p-6">
           <Field className="gap-2">
             <FieldDescription className="text-sm leading-6 text-[#525252]">
-              Import a collection from a JSON file exported from Postman,
-              Insomnia, or another API client.
+              Import a Courier collection or an OpenAPI specification
+              in JSON or YAML format.
             </FieldDescription>
           </Field>
 
           <Field className="gap-2">
-            <FieldLabel className="text-[#404040]">Collection File</FieldLabel>
+            <FieldLabel className="text-[#404040]">API Specification File</FieldLabel>
 
             <div
               onDragOver={handleDragOver}
@@ -192,10 +197,9 @@ export function ImportCollectionModal({
                 justify-center rounded-[16px] border border-dashed
                 px-6 py-8 text-center transition
 
-                ${
-                  dragActive
-                    ? "border-[#FE9A00] bg-[#FFF7ED]"
-                    : "border-[#D6D3CF] bg-[#FAFAFA]"
+                ${dragActive
+                  ? "border-[#FE9A00] bg-[#FFF7ED]"
+                  : "border-[#D6D3CF] bg-[#FAFAFA]"
                 }
 
                 hover:border-[#FE9A00]
@@ -207,7 +211,7 @@ export function ImportCollectionModal({
                   <UploadIcon width={44} height={44} iconColor="#A3A3A3" />
 
                   <p className="text-base font-medium text-[#171717]">
-                    Drop your JSON file here
+                    Drop your JSON or YAML file here
                   </p>
 
                   <p className="mt-2 text-sm text-[#737373]">or</p>
@@ -290,7 +294,7 @@ export function ImportCollectionModal({
               <input
                 ref={inputRef}
                 type="file"
-                accept=".json,application/json"
+                accept=".json,.yaml,.yml,application/json"
                 className="hidden"
                 onChange={handleInputChange}
               />
