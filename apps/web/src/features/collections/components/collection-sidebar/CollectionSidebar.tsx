@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@courier/ui-kit";
-import { SearchInput } from "@/components/forms/SearchInput";
+import { SearchInput } from "@/features/search/components";
 import { UploadIcon, PlusIcon } from "@/components/common/icons";
 import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
 import { CollectionSidebarList } from "@/features/collections/components/collection-sidebar";
@@ -89,7 +89,7 @@ export function CollectionSidebar({
               </TooltipCustom>
             </div>
           </div>
-          <SearchInput placeholder="Search collections..." className="w-full" />
+          <SearchInput placeholder="Search collections..." containerClassName="w-full" />
         </div>
         <div className="min-h-0 flex-1 flex justify-center overflow-y-auto p-2 dashboard-scrollbar">
           {isLoading ? (

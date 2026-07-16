@@ -10,7 +10,7 @@ import {
   Server,
 } from "lucide-react";
 
-import { SearchInput } from "@/components/forms/SearchInput";
+import { SearchInput } from "@/features/search/components";
 import {
   Button,
   DropdownMenu,
@@ -51,6 +51,7 @@ import { useLogout } from "@/features/auth/hooks";
 import { useAuthStore } from "@/features/auth/store";
 
 import { FALLBACKAVATAR } from "@/constants";
+import { useSearchDialog } from "@/features/search/hooks";
 
 export function Header() {
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
@@ -58,6 +59,7 @@ export function Header() {
   const [isCreateRequestOpen, setIsCreateRequestOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const { openDialog } = useSearchDialog();
 
   const user = useAuthStore((state) => state.user);
   const members = createOwnerMember(user);
@@ -320,9 +322,13 @@ export function Header() {
       {/* search */}
       <div className="flex-1 max-w-2xl px-8">
         <SearchInput
+          readOnly
+          onClick={openDialog}
+          onMouseDown={(e) => e.preventDefault()}
           placeholder="Search requests, collections, flows... (⌘K)"
           shortcut="⌘K"
-          className="w-full gap-3"
+          containerClassName="w-full gap-3 cursor-pointer hover:bg-[#F5F5F5]"
+          className="cursor-pointer"
         />
       </div>
 

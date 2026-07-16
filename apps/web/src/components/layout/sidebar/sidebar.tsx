@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Link, useParams } from "@tanstack/react-router";
 
-import { SearchInput } from "@/components/forms/SearchInput";
+import { SearchInput } from "@/features/search/components";
 import { Button } from "@courier/ui-kit";
 import { WORKSPACEITEMS, TOOLITEMS, TEAMITEMS } from "@/constants/sidebar";
 
@@ -60,8 +60,8 @@ export function Sidebar() {
         {/* search */}
         <div className="p-3 w-full h-16 border-b-[1.25px] border-[#E5E5E5]">
           <SearchInput
-            placeholder="Search requests..."
-            className="w-full gap-2"
+            placeholder="Filter collections..."
+            containerClassName="w-full gap-2" 
           />
         </div>
 
