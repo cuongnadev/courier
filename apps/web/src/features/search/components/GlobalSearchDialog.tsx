@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
 
 import {
   Dialog,
@@ -8,42 +10,234 @@ import {
 } from "@courier/ui-kit";
 
 import { SearchInput } from "./SearchInput";
+import { SearchList } from "./SearchList";
+import { SearchEmpty } from "./SearchEmpty";
 
-import { useSearchDialog } from "@/features/search/hooks";
+import {
+  useSearchDialog,
+  useSearchShortcut,
+  useGlobalSearch,
+} from "@/features/search/hooks";
+
+import { normalizeSearchItems } from "@/features/search/utils";
+
+import type { SearchItem } from "@/features/search/types";
+
+import { useCollections } from "@/features/collections/hooks";
+import { useCurrentWorkspace } from "@/features/workspaces/hooks";
+
+import { ROUTE_TO } from "@/constants/route-paths";
 
 export function GlobalSearchDialog() {
+  useSearchShortcut();
+
+  const navigate = useNavigate();
+
   const { open, closeDialog } = useSearchDialog();
 
   const [query, setQuery] = useState("");
+
+  const { currentWorkspaceId } = useCurrentWorkspace();
+
+  const {
+    data: collections = [],
+    isLoading,
+  } = useCollections(currentWorkspaceId);
+
+  const items = useMemo(
+    () => normalizeSearchItems(collections),
+    [collections],
+  );
+
+  const {
+    results,
+    hasQuery,
+    isEmpty,
+  } = useGlobalSearch({
+    query,
+    items,
+  });
+
+  const handleClose = () => {
+    setQuery("");
+    closeDialog();
+  };
+
+  const handleSelect = (item: SearchItem) => {
+    handleClose();
+
+    if (item.type === "collection") {
+      navigate({
+        to: ROUTE_TO.WORKSPACE_COLLECTION_DETAIL,
+        params: {
+          workspaceId: currentWorkspaceId!,
+          collectionId: item.id,
+        },
+      });
+
+      return;
+    }
+
+    navigate({
+      to: ROUTE_TO.WORKSPACE_REQUEST_DETAIL,
+      params: {
+        workspaceId: currentWorkspaceId!,
+        collectionId: item.collectionId!,
+        requestId: item.id,
+      },
+    });
+  };
 
   return (
     <Dialog
       open={open}
       onOpenChange={(isOpen) => {
         if (!isOpen) {
-          setQuery("");
-          closeDialog();
+          handleClose();
         }
       }}
     >
-      <DialogContent className="max-w-2xl p-0">
+      <DialogContent
+        showCloseButton={false}
+        className="
+          !w-[calc(100vw-64px)]
+          !max-w-[960px]
+
+          flex
+          h-[700px]
+          flex-col
+
+          gap-0
+          overflow-hidden
+
+          rounded-[20px]
+          border border-[#E5E5E5]
+
+          bg-white
+          p-0
+
+          shadow-[0_24px_80px_rgba(0,0,0,0.18)]
+
+          [&_[data-slot=dialog-close]]:text-[#737373]
+          [&_[data-slot=dialog-close]]:hover:bg-neutral-100
+          [&_[data-slot=dialog-close]]:hover:text-[#171717]
+        "
+      >
         <DialogHeader className="sr-only">
           <DialogTitle>Global Search</DialogTitle>
         </DialogHeader>
 
-        <div className="border-b p-4">
+        {/* Header */}
+        <div className="border-b border-neutral-200 px-6 py-5">
           <SearchInput
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search requests, collections, flows..."
+            containerClassName="
+              h-12
+              w-full
+              rounded-2xl
+              border-neutral-300
+              bg-neutral-50
+            "
           />
         </div>
 
-        <div className="flex h-80 items-center justify-center text-sm text-muted-foreground">
-          Start typing to search...
+        {/* Content */}
+        <div className="custom-scrollbar flex-1 overflow-y-auto">
+          {isLoading ? (
+            <div className="flex h-full flex-col items-center justify-center gap-4">
+              <Loader2 className="size-6 animate-spin text-neutral-500" />
+
+              <p className="text-sm text-neutral-500">
+                Loading workspace...
+              </p>
+            </div>
+          ) : isEmpty || !hasQuery ? (
+            <SearchEmpty hasQuery={hasQuery} />
+          ) : (
+            <SearchList
+              items={results}
+              onSelect={handleSelect}
+            />
+          )}
+        </div>
+
+        {/* Footer */}
+        <div
+          className="
+            flex
+            items-center
+            justify-between
+
+            border-t
+            border-neutral-200
+
+            bg-white
+
+            px-6
+            py-3
+          "
+        >
+          <div className="flex items-center gap-6">
+            <FooterShortcut
+              keyLabel="↑↓"
+              label="Navigate"
+            />
+
+            <FooterShortcut
+              keyLabel="↵"
+              label="Open"
+            />
+          </div>
+
+          <FooterShortcut
+            keyLabel="Esc"
+            label="Close"
+          />
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+
+type FooterShortcutProps = {
+  keyLabel: string;
+  label: string;
+};
+
+function FooterShortcut({
+  keyLabel,
+  label,
+}: FooterShortcutProps) {
+  return (
+    <div className="flex items-center gap-2 text-sm text-neutral-500">
+      <kbd
+        className="
+          min-w-8
+          rounded-md
+          border
+          border-neutral-300
+
+          bg-neutral-50
+
+          px-2
+          py-1
+
+          text-center
+          text-xs
+          font-medium
+          text-neutral-700
+
+          shadow-sm
+        "
+      >
+        {keyLabel}
+      </kbd>
+
+      <span>{label}</span>
+    </div>
   );
 }
