@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 
@@ -16,6 +16,7 @@ import { SearchEmpty } from "./SearchEmpty";
 import {
   useSearchDialog,
   useSearchShortcut,
+  useSearchKeyboard,
   useGlobalSearch,
 } from "@/features/search/hooks";
 
@@ -36,6 +37,7 @@ export function GlobalSearchDialog() {
   const { open, closeDialog } = useSearchDialog();
 
   const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const { currentWorkspaceId } = useCurrentWorkspace();
 
@@ -58,35 +60,67 @@ export function GlobalSearchDialog() {
     items,
   });
 
-  const handleClose = () => {
+  const handleQueryChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setQuery(event.target.value);
+      setActiveIndex(0);
+    },
+    [],
+  );
+
+  const handleClose = useCallback(() => {
     setQuery("");
+    setActiveIndex(0);
     closeDialog();
-  };
+  }, [closeDialog]);
 
-  const handleSelect = (item: SearchItem) => {
-    handleClose();
+  const handleSelect = useCallback(
+    (item: SearchItem) => {
+      handleClose();
 
-    if (item.type === "collection") {
+      if (item.type === "collection") {
+        navigate({
+          to: ROUTE_TO.WORKSPACE_COLLECTION_DETAIL,
+          params: {
+            workspaceId: currentWorkspaceId!,
+            collectionId: item.id,
+          },
+        });
+
+        return;
+      }
+
       navigate({
-        to: ROUTE_TO.WORKSPACE_COLLECTION_DETAIL,
+        to: ROUTE_TO.WORKSPACE_REQUEST_DETAIL,
         params: {
           workspaceId: currentWorkspaceId!,
-          collectionId: item.id,
+          collectionId: item.collectionId!,
+          requestId: item.id,
         },
       });
+    },
+    [currentWorkspaceId, navigate, handleClose],
+  );
 
-      return;
-    }
+  const orderedResults = useMemo(() => {
+    const collections = results.filter(
+      (item) => item.type === "collection",
+    );
 
-    navigate({
-      to: ROUTE_TO.WORKSPACE_REQUEST_DETAIL,
-      params: {
-        workspaceId: currentWorkspaceId!,
-        collectionId: item.collectionId!,
-        requestId: item.id,
-      },
-    });
-  };
+    const requests = results.filter(
+      (item) => item.type === "request",
+    );
+
+    return [...collections, ...requests];
+  }, [results]);
+
+  useSearchKeyboard({
+    enabled: hasQuery && results.length > 0,
+    results: orderedResults,
+    activeIndex,
+    onActiveIndexChange: setActiveIndex,
+    onSelect: handleSelect,
+  });
 
   return (
     <Dialog
@@ -132,7 +166,7 @@ export function GlobalSearchDialog() {
           <SearchInput
             autoFocus
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={handleQueryChange}
             placeholder="Search requests, collections, flows..."
             containerClassName="
               h-12
@@ -158,7 +192,8 @@ export function GlobalSearchDialog() {
             <SearchEmpty hasQuery={hasQuery} />
           ) : (
             <SearchList
-              items={results}
+              items={orderedResults}
+              activeIndex={activeIndex}
               onSelect={handleSelect}
             />
           )}

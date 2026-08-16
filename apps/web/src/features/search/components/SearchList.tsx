@@ -4,11 +4,13 @@ import { SearchItem } from "./SearchItem";
 
 type SearchListProps = {
   items: SearchItemType[];
+  activeIndex?: number;
   onSelect?: (item: SearchItemType) => void;
 };
 
 export function SearchList({
   items,
+  activeIndex = 0,
   onSelect,
 }: SearchListProps) {
   const collections = items.filter(
@@ -23,25 +25,35 @@ export function SearchList({
     <div className="overflow-y-auto py-2">
       {collections.length > 0 && (
         <SearchSection title="Collections">
-          {collections.map((item) => (
-            <SearchItem
-              key={item.id}
-              item={item}
-              onSelect={onSelect}
-            />
-          ))}
+          {collections.map((item) => {
+            const index = items.indexOf(item);
+
+            return (
+              <SearchItem
+                key={`${item.type}-${item.id}`}
+                item={item}
+                active={index === activeIndex}
+                onSelect={onSelect}
+              />
+            );
+          })}
         </SearchSection>
       )}
 
       {requests.length > 0 && (
         <SearchSection title="Requests">
-          {requests.map((item) => (
-            <SearchItem
-              key={item.id}
-              item={item}
-              onSelect={onSelect}
-            />
-          ))}
+          {requests.map((item) => {
+            const index = items.indexOf(item);
+
+            return (
+              <SearchItem
+                key={`${item.type}-${item.id}`}
+                item={item}
+                active={index === activeIndex}
+                onSelect={onSelect}
+              />
+            );
+          })}
         </SearchSection>
       )}
     </div>

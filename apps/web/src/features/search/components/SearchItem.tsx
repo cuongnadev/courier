@@ -1,6 +1,8 @@
+import { useEffect, useRef } from "react";
+
 import { FolderOpen, Globe } from "lucide-react";
 
-import { Badge } from "@courier/ui-kit";
+import { Badge, Button } from "@courier/ui-kit";
 
 import type { SearchItem as SearchItemType } from "../types";
 
@@ -23,18 +25,32 @@ export function SearchItem({
   active = false,
   onSelect,
 }: Props) {
+  const itemRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (active) {
+      itemRef.current?.scrollIntoView({
+        block: "nearest",
+        behavior: "smooth",
+      });
+    }
+  }, [active]);
+
   return (
-    <button
+    <Button
+      ref={itemRef}
       type="button"
+      variant="ghost"
       onClick={() => onSelect?.(item)}
+
       className={`
-        flex w-full items-center justify-between
+        h-auto w-full justify-between
         rounded-xl px-5 py-3.5
-        transition-all duration-150
+        transition-colors
 
         ${
           active
-            ? "bg-amber-50"
+            ? "bg-amber-50 hover:bg-amber-50"
             : "hover:bg-neutral-50"
         }
       `}
@@ -71,6 +87,6 @@ export function SearchItem({
           {item.method}
         </Badge>
       )}
-    </button>
+    </Button>
   );
 }
