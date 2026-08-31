@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Button } from "@courier/ui-kit";
-import { SearchInput } from "@/components/forms/SearchInput";
+import { SearchInput } from "@/features/search/components";
 import { UploadIcon, PlusIcon } from "@/components/common/icons";
 import { TooltipCustom } from "@/components/common/tooltip/ToolTipCustom";
 import { CollectionSidebarList } from "@/features/collections/components/collection-sidebar";
@@ -37,6 +37,7 @@ export function CollectionSidebar({
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [editingCollection, setEditingCollection] =
     useState<CollectionResponse | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [deletingCollection, setDeletingCollection] =
     useState<CollectionResponse | null>(null);
@@ -54,6 +55,16 @@ export function CollectionSidebar({
   const { data: collections = [], isLoading } =
     useCollections(currentWorkspaceId);
 
+  const filteredCollections = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+
+    if (!query) return collections;
+
+    return collections.filter((collection) =>
+      collection.name.toLowerCase().includes(query),
+    );
+  }, [collections, searchQuery]);
+    
   const activeCollectionId = selectedCollectionId ?? "";
 
   return (
@@ -89,16 +100,26 @@ export function CollectionSidebar({
               </TooltipCustom>
             </div>
           </div>
-          <SearchInput placeholder="Search collections..." className="w-full" />
+          <SearchInput 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search collections..." 
+            containerClassName="w-full" 
+          />
         </div>
         <div className="min-h-0 flex-1 flex justify-center overflow-y-auto p-2 dashboard-scrollbar">
           {isLoading ? (
             <p className="text-sm text-gray-500">Loading collections...</p>
           ) : collections.length === 0 ? (
-            <p className="text-sm text-gray-500">No collections found.</p>
+            <p className="text-sm text-gray-500">No collections yet.</p>
+          ) : filteredCollections.length === 0 ? (
+            <p className="px-2 py-4 text-center text-sm text-gray-500">
+              No collections found.
+            </p>
           ) : (
             <CollectionSidebarList
-              collections={collections}
+              searchQuery={searchQuery}
+              collections={filteredCollections}
               activeCollectionId={activeCollectionId}
               onSelectCollection={onSelectCollection}
               onEditCollection={setEditingCollection}
