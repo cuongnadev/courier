@@ -1,0 +1,1 @@
+export { normalizeSearchItems } from './normalize-search-items';

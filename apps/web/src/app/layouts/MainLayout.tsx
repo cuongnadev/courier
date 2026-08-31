@@ -4,6 +4,8 @@ import { Navigate, Outlet, useParams } from '@tanstack/react-router';
 import { Header } from '@/components/layout/header/header';
 import { Sidebar } from '@/components/layout/sidebar/sidebar';
 
+import { GlobalSearchDialog } from '@/features/search/components';
+
 import { useAuthStore } from '@/features/auth/store';
 import { useWorkspaceStore } from '@/features/workspaces/store';
 
@@ -43,6 +45,8 @@ export default function MainLayout() {
         <main className="flex-1 overflow-auto">
           <Outlet />
         </main>
+
+        <GlobalSearchDialog />
       </div>
     </div>
   );

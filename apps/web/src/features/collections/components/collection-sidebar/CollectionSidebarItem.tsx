@@ -1,4 +1,5 @@
 import { FolderIcon } from "@/components/common/icons";
+import { HighlightText } from "@/components/common/text/HighlightText";
 
 import type { CollectionResponse } from "@/features/collections/types";
 
@@ -7,6 +8,8 @@ import { collectionBackgroundStyles } from "@/features/collections/utils";
 import { CollectionItemActions } from "../collection-actions/CollectionItemActions";
 
 type CollectionSidebarItemProps = {
+  searchQuery?: string;
+
   collection: CollectionResponse;
 
   isActive?: boolean;
@@ -17,6 +20,7 @@ type CollectionSidebarItemProps = {
 };
 
 export function CollectionSidebarItem({
+  searchQuery = "",
   collection,
   isActive = false,
   onClick,
@@ -62,7 +66,11 @@ export function CollectionSidebarItem({
                 font-medium text-[#171717]
               "
             >
-              {collection.name}
+              {/* {collection.name} */}
+              <HighlightText
+                text={collection.name}
+                query={searchQuery}
+              />
             </p>
 
             <CollectionItemActions

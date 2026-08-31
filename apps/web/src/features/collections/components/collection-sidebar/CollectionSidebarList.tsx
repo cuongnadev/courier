@@ -3,6 +3,8 @@ import type { CollectionResponse } from "@/features/collections/types";
 import { CollectionSidebarItem } from "@/features/collections/components/collection-sidebar";
 
 type CollectionSidebarListProps = {
+  searchQuery?: string;
+
   collections: CollectionResponse[];
 
   activeCollectionId?: string;
@@ -15,6 +17,7 @@ type CollectionSidebarListProps = {
 };
 
 export function CollectionSidebarList({
+  searchQuery = "",
   collections,
   activeCollectionId,
   onSelectCollection,
@@ -22,10 +25,11 @@ export function CollectionSidebarList({
   onDeleteCollection
 }: CollectionSidebarListProps) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-1 w-full">
       {collections.map((collection) => (
         <CollectionSidebarItem
           key={collection.id}
+          searchQuery={searchQuery}
           collection={collection}
           isActive={
             collection.id ===
