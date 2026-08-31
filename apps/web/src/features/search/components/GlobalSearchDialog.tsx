@@ -192,6 +192,7 @@ export function GlobalSearchDialog() {
             <SearchEmpty hasQuery={hasQuery} />
           ) : (
             <SearchList
+              query={query}
               items={orderedResults}
               activeIndex={activeIndex}
               onSelect={handleSelect}

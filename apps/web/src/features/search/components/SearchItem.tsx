@@ -3,10 +3,12 @@ import { useEffect, useRef } from "react";
 import { FolderOpen, Globe } from "lucide-react";
 
 import { Badge, Button } from "@courier/ui-kit";
+import { HighlightText } from "@/components/common/text/HighlightText";
 
 import type { SearchItem as SearchItemType } from "../types";
 
 type Props = {
+  query?: string;
   item: SearchItemType;
   active?: boolean;
   onSelect?: (item: SearchItemType) => void;
@@ -21,6 +23,7 @@ const METHOD_VARIANTS = {
 } as const;
 
 export function SearchItem({
+  query = "",
   item,
   active = false,
   onSelect,
@@ -45,7 +48,7 @@ export function SearchItem({
 
       className={`
         h-auto w-full justify-between
-        rounded-xl px-5 py-3.5
+        rounded-lg px-5 py-3.5
         transition-colors
 
         ${
@@ -68,12 +71,18 @@ export function SearchItem({
 
         <div className="min-w-0 text-left">
           <p className="truncate text-[15px] font-medium text-neutral-900">
-            {item.title}
+            <HighlightText
+              text={item.title}
+              query={query}
+            />
           </p>
 
           {item.subtitle && (
             <p className="mt-0.5 truncate text-sm text-neutral-500">
-              {item.subtitle}
+              <HighlightText
+              text={item.subtitle}
+              query={query}
+            />
             </p>
           )}
         </div>

@@ -3,12 +3,14 @@ import type { SearchItem as SearchItemType } from "../types";
 import { SearchItem } from "./SearchItem";
 
 type SearchListProps = {
+  query?: string;
   items: SearchItemType[];
   activeIndex?: number;
   onSelect?: (item: SearchItemType) => void;
 };
 
 export function SearchList({
+  query = "",
   items,
   activeIndex = 0,
   onSelect,
@@ -31,6 +33,7 @@ export function SearchList({
             return (
               <SearchItem
                 key={`${item.type}-${item.id}`}
+                query={query}
                 item={item}
                 active={index === activeIndex}
                 onSelect={onSelect}
@@ -48,6 +51,7 @@ export function SearchList({
             return (
               <SearchItem
                 key={`${item.type}-${item.id}`}
+                query={query}
                 item={item}
                 active={index === activeIndex}
                 onSelect={onSelect}
@@ -85,7 +89,7 @@ function SearchSection({
         {title}
       </div>
 
-      <div className="py-1">
+      <div className="p-1">
         {children}
       </div>
     </section>

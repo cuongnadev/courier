@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Link, useParams } from "@tanstack/react-router";
 
-import { SearchInput } from "@/features/search/components";
+// import { SearchInput } from "@/features/search/components";
 import { Button } from "@courier/ui-kit";
 import { WORKSPACEITEMS, TOOLITEMS, TEAMITEMS } from "@/constants/sidebar";
 
@@ -57,13 +57,17 @@ export function Sidebar() {
           <h2 className="text-[16px] font-semibold text-[#171717]">Courier</h2>
         </Link>
 
-        {/* search */}
-        <div className="p-3 w-full h-16 border-b-[1.25px] border-[#E5E5E5]">
+
+        {/* Navigation search
+            TODO: Add when the sidebar navigation grows large enough
+            to require filtering. Currently not needed.
+        */}
+        {/* <div className="p-3 w-full h-16 border-b-[1.25px] border-[#E5E5E5]">
           <SearchInput
             placeholder="Filter collections..."
             containerClassName="w-full gap-2" 
           />
-        </div>
+        </div> */}
 
         <div
           className="
