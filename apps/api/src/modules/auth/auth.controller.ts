@@ -8,6 +8,8 @@ import {
   UseGuards,
   Version,
   UnauthorizedException,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 
@@ -38,6 +40,7 @@ export class AuthController {
 
   @Version('1')
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
@@ -60,6 +63,7 @@ export class AuthController {
 
   @Version('1')
   @Post('refresh')
+  @HttpCode(HttpStatus.OK)
   async refresh(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -80,6 +84,7 @@ export class AuthController {
 
   @Version('1')
   @Post('logout')
+  @HttpCode(HttpStatus.OK)
   logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('refreshToken');
 
