@@ -4,6 +4,9 @@ import { queryClient } from '@/lib/query-client'
 
 export const router = createRouter({
   routeTree,
+
+  notFoundMode: "root",
+
   context: {
     queryClient
   }
