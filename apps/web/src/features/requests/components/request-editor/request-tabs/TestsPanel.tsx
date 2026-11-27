@@ -27,6 +27,8 @@ import type { GeneratedTestCase } from "@/features/requests/types/generate-test-
 import type { RequestRunResponse } from "@/features/requests/types/request-run.type";
 import type { RunRequestPayload } from "@/features/requests/types/request-run-payload.type";
 
+import { TEST_CASE_PROMPT } from "@/constants";
+
 type TestsPanelProps = {
   workspaceId: string;
   collectionId: string;
@@ -254,7 +256,8 @@ export function TestsPanel({
         collectionId,
         requestId,
         data: {
-          prompt: "Generate test cases including missing body fields",
+          prompt: TEST_CASE_PROMPT,
+          // prompt: "Generate test cases including missing body fields",
         },
       });
 

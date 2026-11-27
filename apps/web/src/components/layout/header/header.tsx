@@ -284,37 +284,126 @@ export function Header() {
           {/* icon actions */}
           <div className="flex items-center gap-1">
             {/* Import from Swagger/OpenAPI */}
-            <TooltipCustom
-              label="Import from Swagger/OpenAPI"
-              side="bottom"
-              align="center"
-              sideOffset={8}
-            >
-              <Button
-                variant="ghost"
-                size="icon"
-                className="p-2 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors"
+            <DropdownMenu>
+              <TooltipCustom
+                label="Import from Swagger/OpenAPI"
+                side="bottom"
+                align="center"
+                sideOffset={8}
               >
-                <ImportIcon />
-              </Button>
-            </TooltipCustom>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon" 
+                    aria-label="Import"
+                    className="
+                      rounded-lg p-2
+                      text-neutral-600
+                      transition-colors
+                      hover:bg-neutral-50
+                      aria-expanded:bg-neutral-50
+                      focus-visible:ring-0
+                      focus-visible:ring-offset-0
+                      focus-visible:border-transparent
+                      focus-visible:outline-none
+                    "
+                  >
+                    <ImportIcon />
+                  </Button>
+                </DropdownMenuTrigger>
+              </TooltipCustom>
+
+              <DropdownMenuContent
+                align="start"
+                sideOffset={10}
+                className="
+                                w-65
+                                rounded-[16px]
+                                border border-[#E5E5E5]
+                                bg-white
+                                p-0
+                                text-neutral-900
+                                shadow-[0_8px_30px_rgba(0,0,0,0.08)]
+                            "
+              >
+                <div className="px-4 pb-2 pt-4 text-xs font-semibold uppercase tracking-[0.04em] text-[#737373]">
+                  Import from Swagger/OpenAPI
+                </div>
+
+                <div className="px-2 pb-2">
+                  <DropdownMenuItem
+                    className="h-10 cursor-pointer rounded-lg px-3 text-sm font-medium text-[#404040] outline-none hover:bg-[#F5F5F5] focus:bg-[#F5F5F5] data-highlighted:bg-[#F5F5F5]"
+                  >
+                    <Briefcase size={18} strokeWidth={1.8} />
+                    Workspace
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    className="h-10 cursor-pointer rounded-lg px-3 text-sm font-medium text-[#404040] outline-none hover:bg-[#F5F5F5] focus:bg-[#F5F5F5] data-highlighted:bg-[#F5F5F5]"
+                  >
+                    <FolderPlus size={18} strokeWidth={1.8} />
+                    Collection
+                  </DropdownMenuItem>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Export */}
-
-            <TooltipCustom
-              label="Export"
-              side="bottom"
-              align="center"
-              sideOffset={8}
-            >
-              <Button
-                variant="ghost"
-                size="icon"
-                className="p-2 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors"
+            <DropdownMenu>
+              <TooltipCustom
+                label="Export"
+                side="bottom"
+                align="center"
+                sideOffset={8}
               >
-                <ExportIcon />
-              </Button>
-            </TooltipCustom>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Export"
+                    className="
+                      rounded-lg p-2
+                      text-neutral-600
+                      transition-colors
+                      hover:bg-neutral-50
+                      aria-expanded:bg-neutral-50
+                      focus-visible:ring-0
+                      focus-visible:ring-offset-0
+                      focus-visible:border-transparent
+                      focus-visible:outline-none
+                    "
+                  >
+                    <ExportIcon />
+                  </Button>
+                </DropdownMenuTrigger>
+              </TooltipCustom>
+
+              <DropdownMenuContent
+                align="start"
+                sideOffset={10}
+                className="
+                                w-65
+                                rounded-[16px]
+                                border border-[#E5E5E5]
+                                bg-white
+                                p-0
+                                text-neutral-900
+                                shadow-[0_8px_30px_rgba(0,0,0,0.08)]
+                            "
+              >
+                <div className="px-4 pb-2 pt-4 text-xs font-semibold uppercase tracking-[0.04em] text-[#737373]">
+                  Export
+                </div>
+
+                <div className="px-2 pb-2">
+                  <DropdownMenuItem
+                    className="h-10 cursor-pointer rounded-lg px-3 text-sm font-medium text-[#404040] outline-none hover:bg-[#F5F5F5] focus:bg-[#F5F5F5] data-highlighted:bg-[#F5F5F5]"
+                  >
+                    ...
+                  </DropdownMenuItem>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
@@ -387,7 +476,6 @@ export function Header() {
           </TooltipCustom>
 
           {/* Notifications */}
-
           <TooltipCustom
             label="Notifications"
             side="bottom"
@@ -509,7 +597,7 @@ export function Header() {
         <ShareModal
           open={shareOpen}
           onOpenChange={setShareOpen}
-          workspaceId= {currentWorkspaceItem?.id}
+          workspaceId={currentWorkspaceItem?.id}
           target={{
             id: currentWorkspaceItem!.id,
             name: currentWorkspaceItem!.name,

@@ -19,7 +19,9 @@ export function TooltipCustom({
 }: IconTooltipButtonProps) {
   return (
     <Tooltip>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipTrigger asChild onFocus={(e) => e.preventDefault()}>
+        {children}
+      </TooltipTrigger>
 
       <TooltipContent
         side={side}

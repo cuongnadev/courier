@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -78,6 +80,7 @@ export class RequestsController {
 
   @Version('1')
   @Post('collections/:collectionId/requests/:requestId/run')
+  @HttpCode(HttpStatus.OK)
   run(
     @Param('workspaceId', new ParseUUIDPipe()) workspaceId: string,
     @Param('collectionId', new ParseUUIDPipe()) collectionId: string,
